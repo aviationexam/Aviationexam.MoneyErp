@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using System;
 
 namespace Aviationexam.MoneyErp;
 
@@ -6,21 +7,20 @@ public sealed class MoneyErpAuthenticationOptionsValidate : IValidateOptions<Mon
 {
     public ValidateOptionsResult Validate(string? name, MoneyErpAuthenticationOptions options)
     {
-        /*
-        if (options.JwtExpiresAfter <= TimeSpan.Zero)
+
+        if (options.JwtEarlyExpirationOffset <= TimeSpan.Zero)
         {
             return ValidateOptionsResult.Fail(
-                $"The '{nameof(options.JwtExpiresAfter)}' option must be a positive value, '{options.JwtExpiresAfter}' given."
+                $"The '{nameof(options.JwtEarlyExpirationOffset)}' option must be a positive value, '{options.JwtEarlyExpirationOffset}' given."
             );
         }
 
-        if (options.JwtExpiresAfter > TimeSpan.FromMinutes(20))
+        if (options.JwtEarlyExpirationOffset > TimeSpan.FromMinutes(20))
         {
             return ValidateOptionsResult.Fail(
-                $"The '{nameof(options.JwtExpiresAfter)}' option must not be bigger than 20 minutes, '{options.JwtExpiresAfter}' given."
+                $"The '{nameof(options.JwtEarlyExpirationOffset)}' option must not be bigger than 20 minutes, '{options.JwtEarlyExpirationOffset}' given."
             );
         }
-        */
 
         return ValidateOptionsResult.Success;
     }
