@@ -27,7 +27,22 @@
     <PackageReference Include="Microsoft.Kiota.Serialization.Json" />
     <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" />
     <PackageReference Include="Microsoft.Kiota.Serialization.Text" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" OverrideVersion="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" OverrideVersion="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Http" OverrideVersion="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" OverrideVersion="8.0.2" />
+    <PackageReference Include="System.Text.Json" OverrideVersion="8.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
