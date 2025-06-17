@@ -22,9 +22,9 @@ public static class KiotaServiceCollectionExtensions
         foreach (var handlerType in kiotaHandlers)
         {
             builder.Services.Add(new ServiceDescriptor(
-                serviceType: handlerType,
+                serviceType: handlerType.Type,
                 serviceKey: DependencyInjectionExtensions.MoneyErpServiceKey,
-                implementationType: handlerType,
+                implementationType: handlerType.Type,
                 lifetime: ServiceLifetime.Transient
             ));
 
