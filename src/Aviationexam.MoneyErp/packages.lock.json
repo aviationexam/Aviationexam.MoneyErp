@@ -59,6 +59,15 @@
           "Microsoft.Kiota.Abstractions": "1.17.4"
         }
       },
+      "Microsoft.Kiota.Serialization.Text": {
+        "type": "Direct",
+        "requested": "[1.17.4, )",
+        "resolved": "1.17.4",
+        "contentHash": "Li2DDCzyt9bs8D0ZCIlwgb0tfFoKoLPkn8zJJndopUDNixfxl+Xp9FBT+dnbyZRYpk6L0j55Vmw16e2j2D0E3w==",
+        "dependencies": {
+          "Microsoft.Kiota.Abstractions": "1.17.4"
+        }
+      },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
         "requested": "[8.0.17, )",
@@ -187,6 +196,15 @@
         "requested": "[1.17.4, )",
         "resolved": "1.17.4",
         "contentHash": "ht4ZnBWd4IO/8gwO/XXiUIBcH0hpt0+3fZUlpOeAGSGwU0orICARDAE6K3p/xIFcdQx64MkqiobyGSOrgKJN6w==",
+        "dependencies": {
+          "Microsoft.Kiota.Abstractions": "1.17.4"
+        }
+      },
+      "Microsoft.Kiota.Serialization.Text": {
+        "type": "Direct",
+        "requested": "[1.17.4, )",
+        "resolved": "1.17.4",
+        "contentHash": "Li2DDCzyt9bs8D0ZCIlwgb0tfFoKoLPkn8zJJndopUDNixfxl+Xp9FBT+dnbyZRYpk6L0j55Vmw16e2j2D0E3w==",
         "dependencies": {
           "Microsoft.Kiota.Abstractions": "1.17.4"
         }
