@@ -13,6 +13,12 @@
 
   <Import Project="..\WarningConfiguration.targets" />
 
+  <PropertyGroup>
+    <GeneratedCodeTarget>Client</GeneratedCodeTarget>
+    <MoneyErpOpenApiSpecificationUrl>https://demo.moneyerp.cz:82/v1.0/docs/swagger.json</MoneyErpOpenApiSpecificationUrl>
+    <MoneyErpOpenApiSpecificationFile>openapi.original.json</MoneyErpOpenApiSpecificationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Kiota.Abstractions" />
     <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" />
@@ -21,5 +27,33 @@
     <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <GenerateClient>$(RESTORE_WITH_CLIENT_GENERATION)</GenerateClient>
+    <GenerateClient Condition=" '$(GenerateClient)' == '' ">true</GenerateClient>
+    <KiotaCommand>$(KIOTA_BIN)</KiotaCommand>
+    <KiotaCommand Condition=" '$(KiotaCommand)' == '' ">dotnet kiota</KiotaCommand>
+
+    <KiotaExec>$(KiotaCommand) generate</KiotaExec>
+    <KiotaExec>$(KiotaExec) --openapi $(MSBuildProjectDirectory)/$(MoneyErpOpenApiSpecificationFile)</KiotaExec>
+    <KiotaExec>$(KiotaExec) --language csharp</KiotaExec>
+    <KiotaExec>$(KiotaExec) --exclude-backward-compatible</KiotaExec>
+    <KiotaExec>$(KiotaExec) --disable-validation-rules KnownAndNotSupportedFormats</KiotaExec>
+    <KiotaExec>$(KiotaExec) --output $(MSBuildProjectDirectory)/$(GeneratedCodeTarget)</KiotaExec>
+    <KiotaExec>$(KiotaExec) --class-name MoneyErpApiClient</KiotaExec>
+    <KiotaExec>$(KiotaExec) --namespace-name Aviationexam.MoneyErp.$(GeneratedCodeTarget)</KiotaExec>
+  </PropertyGroup>
+
+  <Target Name="DownloadMoneyErpOpenApiSpecification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiSpecificationFile)')">
+    <Message Importance="High" Text="Downloading $(MoneyErpOpenApiSpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOpenApiSpecificationFile)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpOpenApiSpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOpenApiSpecificationFile)" />
+  </Target>
+
+  <Target Name="GenerateClient" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiSpecification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)')">
+    <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeTarget) using $(KiotaCommand)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="KIOTA_TUTORIAL_ENABLED=false" Command="$(KiotaExec)" />
+  </Target>
 
 </Project>
