@@ -53,6 +53,7 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
+*.sln.DotSettings.user
+
 /src/Aviationexam.MoneyErp/openapi.original.json
 /src/Aviationexam.MoneyErp/Client
-/src/Aviationexam.MoneyErp/Client/.kiota.log
