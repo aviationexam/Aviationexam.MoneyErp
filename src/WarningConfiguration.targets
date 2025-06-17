@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(ProjectName) != '' ">
-    <BaseOutputPath>..\..\..\Build\$(ProjectName)\</BaseOutputPath>
+    <BaseOutputPath>..\..\Build\$(ProjectName)\</BaseOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Label="Nuget auditing">

@@ -4,6 +4,7 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
+    <ProjectName>MoneyErp</ProjectName>
   </PropertyGroup>
 
   <PropertyGroup Label="AoT">
