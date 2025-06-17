@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.Kiota.Serialization.Form" />
     <PackageReference Include="Microsoft.Kiota.Serialization.Json" />
     <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Text" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
