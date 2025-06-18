@@ -13,6 +13,16 @@ public sealed class MoneyErpAuthenticationPostConfigure : IPostConfigureOptions<
             options.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
         }
 
+        if (options.Endpoint is { } endpoint)
+        {
+            options.Endpoint = new Uri(endpoint.OriginalString, UriKind.Absolute);
+
+            options.AllowedHosts ??= // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+            [
+                options.Endpoint.Authority,
+            ];
+        }
+
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (options.AllowedHosts is null)
         {

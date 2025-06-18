@@ -13,7 +13,11 @@ public sealed class DefaultAccessTokenProvider(
 {
     public Task<string> GetAuthorizationTokenAsync(
         Uri uri, Dictionary<string, object>? additionalAuthenticationContext, CancellationToken cancellationToken
-    ) => Task.FromResult<string>(null!);
+    )
+    {
+        var clientId = authenticationOptions.Value.ClientId;
+        return Task.FromResult<string>(null!);
+    }
 
     public AllowedHostsValidator AllowedHostsValidator { get; } = new(authenticationOptions.Value.AllowedHosts);
 }
