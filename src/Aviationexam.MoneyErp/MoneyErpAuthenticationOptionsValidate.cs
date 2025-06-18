@@ -7,7 +7,6 @@ public sealed class MoneyErpAuthenticationOptionsValidate : IValidateOptions<Mon
 {
     public ValidateOptionsResult Validate(string? name, MoneyErpAuthenticationOptions options)
     {
-
         if (options.JwtEarlyExpirationOffset <= TimeSpan.Zero)
         {
             return ValidateOptionsResult.Fail(
