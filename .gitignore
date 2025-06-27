@@ -57,4 +57,5 @@ nunit-*.xml
 
 /src/Aviationexam.MoneyErp/openapi.original.json
 /src/Aviationexam.MoneyErp/Client
+/src/Aviationexam.MoneyErp/openapi.json
 .env.local
