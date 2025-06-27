@@ -35,6 +35,10 @@ jobs:
         run: dotnet tool restore
       - name: Restore with .Net
         run: dotnet restore --nologo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openapi-original-${{ steps.gitversion.outputs.FullSemVer }}.json
+          path: src/Aviationexam.MoneyErp/openapi.original.json
       - name: Build with .Net
         run: dotnet build --configuration Release --no-restore --nologo "-p:Version=${{ steps.gitversion.outputs.FullSemVer }}"
       - name: Pack with .Net
