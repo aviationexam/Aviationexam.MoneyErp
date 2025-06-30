@@ -48,7 +48,7 @@ public class OpenApiPreprocessor(
 
         var writerOptions = new JsonWriterOptions
         {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            Encoder = JavaScriptEncoder.Default,
             Indented = true,
         };
 
