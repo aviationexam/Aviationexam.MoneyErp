@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -16,17 +17,16 @@ public class OpenApiPreprocessor(
 
     private const string Info = "info";
     private static ReadOnlySpan<byte> Version => "version"u8;
-    private const string OneOf = "oneOf";
-    private static ReadOnlySpan<byte> Ref => "$ref"u8;
+    private static ReadOnlySpan<byte> Name => "name"u8;
+    private static ReadOnlySpan<byte> In => "in"u8;
+    private static ReadOnlySpan<byte> SchemaU8 => "schema"u8;
+    private static ReadOnlySpan<byte> Type => "type"u8;
+    private static ReadOnlySpan<byte> Format => "format"u8;
     private const string Get = "get";
     private const string Paths = "paths";
-    private const string Properties = "properties";
-    private const string Type = "type";
-    private const string Enum = "enum";
-    private const string Schemas = "schemas";
-    private const string Components = "components";
-
-    private static ReadOnlySpan<byte> Deprecated => "deprecated"u8;
+    private const string Parameters = "parameters";
+    public const string Path = "path";
+    private const string Schema = "schema";
 
     public void Preprocess()
     {
@@ -72,27 +72,29 @@ public class OpenApiPreprocessor(
             switch (reader.TokenType)
             {
                 case JsonTokenType.PropertyName:
-                    lastProperty = reader.ValueSpan;
-
-                    if (
-                        currentPath.Count == 4
-                        && currentPath.ToArray() is
-                        [
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } methodName },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-                        ]
-                    )
                     {
-                        collectedMetadata.AddKnownPathMethod(pathName, methodName);
+                        lastProperty = reader.ValueSpan;
 
                         if (
-                            lastProperty.SequenceEqual("requestBody"u8)
-                            && methodName == Get
+                            currentPath.Count == 4
+                            && currentPath.ToArray() is
+                            [
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } methodName },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                            ]
                         )
                         {
-                            collectedMetadata.SkipPathMethod(pathName, methodName);
+                            collectedMetadata.AddKnownPathMethod(pathName, methodName);
+
+                            if (
+                                lastProperty.SequenceEqual("requestBody"u8)
+                                && methodName == Get
+                            )
+                            {
+                                collectedMetadata.SkipPathMethod(pathName, methodName);
+                            }
                         }
                     }
 
@@ -106,9 +108,27 @@ public class OpenApiPreprocessor(
                     break;
                 case JsonTokenType.EndArray:
                 case JsonTokenType.EndObject:
-                    currentPath.Pop();
+                    {
+                        var treeItem = currentPath.Pop();
 
-                    lastProperty = default;
+                        if (
+                            treeItem is { JsonTokenType : JsonTokenType.StartObject, PropertyName : null }
+                            && currentPath.Count == 5
+                            && currentPath.ToArray() is
+                            [
+                                { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                            ]
+                        )
+                        {
+                            collectedMetadata.CommitParameter(pathName);
+                        }
+
+                        lastProperty = default;
+                    }
 
                     break;
                 case JsonTokenType.String:
@@ -123,6 +143,76 @@ public class OpenApiPreprocessor(
                     )
                     {
                         collectedMetadata.AddVersion(reader.ValueSpan);
+                    }
+
+                    if (
+                        lastProperty.SequenceEqual(In)
+                        && currentPath.Count == 6
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                            { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                    )
+                    {
+                        collectedMetadata.AddParameterIn(reader.ValueSpan);
+                    }
+
+                    if (
+                        lastProperty.SequenceEqual(Name)
+                        && currentPath.Count == 6
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                            { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                    )
+                    {
+                        collectedMetadata.AddParameterName(reader.ValueSpan);
+                    }
+
+                    if (
+                        lastProperty.SequenceEqual(Type)
+                        && currentPath.Count == 7
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schema },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                            { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                    )
+                    {
+                        collectedMetadata.AddParameterType(reader.ValueSpan);
+                    }
+
+                    if (
+                        lastProperty.SequenceEqual(Format)
+                        && currentPath.Count == 7
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schema },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                            { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                    )
+                    {
+                        collectedMetadata.AddParameterStringFormat(reader.ValueSpan);
                     }
 
                     break;
@@ -159,26 +249,9 @@ public class OpenApiPreprocessor(
                 case JsonTokenType.PropertyName:
                     lastProperty = reader.ValueSpan;
 
-                    var isIgnorePath = currentPath.Count == 2
-                                       && currentPath.ToArray() is
-                                       [
-                                           { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
-                                           { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-                                       ]
-                                       && collectedMetadata.IsPathIgnored(reader.ValueSpan);
-
-                    var isIgnorePathMethod = currentPath.Count == 3
-                                             && currentPath.ToArray() is
-                                             [
-                                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
-                                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
-                                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-                                             ]
-                                             && collectedMetadata.IsPathMethodIgnored(pathName, reader.ValueSpan);
-
                     if (
-                        isIgnorePath
-                        || isIgnorePathMethod
+                        IsIgnorePath(ref reader, collectedMetadata, currentPath)
+                        || IsIgnorePathMethod(ref reader, collectedMetadata, currentPath)
                     )
                     {
                         reader.Skip();
@@ -187,6 +260,62 @@ public class OpenApiPreprocessor(
                     }
 
                     writer.WritePropertyName(reader.ValueSpan);
+
+                    if (
+                        lastProperty.SequenceEqual(SchemaU8)
+                        && currentPath.Count == 6
+                        && currentPath.ToArray() is
+                        [
+                            ParameterTreeItem { JsonTokenType: JsonTokenType.StartObject, PropertyName: null, In: Path, Name: { } parameterName },
+                            { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                        && collectedMetadata.ModifyPathParameterType(
+                            pathName,
+                            parameterName,
+                            out var parameterType
+                        )
+                    )
+                    {
+                        writer.WriteStartObject();
+
+                        writer.WritePropertyName(Type);
+                        writer.WriteStringValue(parameterType.Value.Type);
+
+                        if (parameterType.Value.Format is not null)
+                        {
+                            writer.WritePropertyName(Format);
+                            writer.WriteStringValue(parameterType.Value.Format);
+                        }
+
+                        writer.WriteEndObject();
+
+                        writer.WritePropertyName("original-schema"u8);
+                    }
+
+                    static bool IsIgnorePath(
+                        ref Utf8JsonReader reader, CollectedMetadata currentPath, Stack<TreeItem> treeItems
+                    ) => treeItems.Count == 2
+                         && treeItems.ToArray() is
+                         [
+                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                         ]
+                         && currentPath.IsPathIgnored(reader.ValueSpan);
+
+                    static bool IsIgnorePathMethod(
+                        ref Utf8JsonReader reader, CollectedMetadata currentPath, Stack<TreeItem> treeItems
+                    ) => treeItems.Count == 3
+                         && treeItems.ToArray() is
+                         [
+                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
+                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                         ]
+                         && currentPath.IsPathMethodIgnored(pathName, reader.ValueSpan);
 
                     break;
 
@@ -198,7 +327,24 @@ public class OpenApiPreprocessor(
 
                     break;
                 case JsonTokenType.StartObject:
-                    currentPath.Push(new TreeItem(reader.TokenType, lastProperty.IsEmpty ? null : Encoding.UTF8.GetString(lastProperty)));
+                    if (
+                        currentPath.Count == 5
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ])
+                    {
+                        currentPath.Push(new ParameterTreeItem(reader.TokenType, lastProperty.IsEmpty ? null : Encoding.UTF8.GetString(lastProperty)));
+                    }
+                    else
+                    {
+                        currentPath.Push(new TreeItem(reader.TokenType, lastProperty.IsEmpty ? null : Encoding.UTF8.GetString(lastProperty)));
+                    }
+
                     lastProperty = default;
 
                     writer.WriteStartObject();
@@ -219,6 +365,21 @@ public class OpenApiPreprocessor(
 
                     break;
                 case JsonTokenType.String:
+                    if (
+                        currentPath.Count == 6
+                        && currentPath.First() is ParameterTreeItem { JsonTokenType : JsonTokenType.StartObject } parameterTreeItem
+                    )
+                    {
+                        if (lastProperty.SequenceEqual(Name))
+                        {
+                            parameterTreeItem.Name = Encoding.UTF8.GetString(reader.ValueSpan);
+                        }
+                        else if (lastProperty.SequenceEqual(In))
+                        {
+                            parameterTreeItem.In = Encoding.UTF8.GetString(reader.ValueSpan);
+                        }
+                    }
+
                     if (reader.HasValueSequence)
                     {
                         writer.WriteRawValue(reader.ValueSequence, skipInputValidation: true);
