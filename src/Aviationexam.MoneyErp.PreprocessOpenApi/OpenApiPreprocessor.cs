@@ -63,7 +63,13 @@ public class OpenApiPreprocessor(
 
     private CollectedMetadata Collect(Utf8JsonReader reader)
     {
-        var collectedMetadata = new CollectedMetadata();
+        var collectedMetadata = new CollectedMetadata(new HashSet<string>([
+            "/v1.0/IssuedInvoice/{id}/Report/{reportConfigId}",
+            "/v1.0/PrepaymentInvoice/{id}/Report/{reportConfigId}",
+            "/v1.0/PrepaymentIssuedInvoice/{id}/Report/{reportConfigId}",
+            "/v1.0/ReceivedInvoice/{id}/Report/{reportConfigId}",
+        ]));
+
         var currentPath = new Stack<TreeItem>();
         ReadOnlySpan<byte> lastProperty = default;
 
@@ -293,7 +299,7 @@ public class OpenApiPreprocessor(
 
                         writer.WriteEndObject();
 
-                        writer.WritePropertyName("original-schema"u8);
+                        writer.WritePropertyName("x-original-schema"u8);
                     }
 
                     static bool IsIgnorePath(

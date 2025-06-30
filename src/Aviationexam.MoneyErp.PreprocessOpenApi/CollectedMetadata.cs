@@ -8,7 +8,9 @@ using ParameterType = (string Type, string? Format);
 
 namespace Aviationexam.MoneyErp.PreprocessOpenApi;
 
-public sealed partial class CollectedMetadata
+public sealed partial class CollectedMetadata(
+    ISet<string> ignoredPaths
+)
 {
     [GeneratedRegex(@"\{([^}]+)\}", RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 100)]
     private static partial Regex UrlParamRegex();
@@ -37,6 +39,11 @@ public sealed partial class CollectedMetadata
     )
     {
         var pathString = Encoding.UTF8.GetString(path);
+
+        if (ignoredPaths.Contains(pathString))
+        {
+            return true;
+        }
 
         return _knownPaths[pathString].All(x => _ignoredPathMethods.Contains((pathString, x)));
     }
