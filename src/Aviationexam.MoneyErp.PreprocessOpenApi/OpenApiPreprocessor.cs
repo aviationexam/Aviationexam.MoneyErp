@@ -660,6 +660,13 @@ public class OpenApiPreprocessor(
 
                     break;
                 case JsonTokenType.False:
+                    if (lastProperty.SequenceEqual("additionalProperties"u8))
+                    {
+                        // the openapi document is not strict and correct. It's more like a guidance.
+                        writer.WriteBooleanValue(true);
+                        break;
+                    }
+
                     writer.WriteBooleanValue(false);
 
                     break;
