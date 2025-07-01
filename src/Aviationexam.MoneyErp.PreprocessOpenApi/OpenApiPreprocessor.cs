@@ -329,7 +329,7 @@ public class OpenApiPreprocessor(
                         && currentPath.ToArray() is
                         [
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Properties },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } componentName },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
@@ -338,18 +338,24 @@ public class OpenApiPreprocessor(
                     {
                         var propertyNameAsString = Encoding.UTF8.GetString(lastProperty);
 
-                        propertyNameAsString = propertyNameAsString switch
+                        propertyNameAsString = (componentName, propertyNameAsString) switch
                         {
-                            "id" => "ID",
-                            "ic" => "IC",
-                            "dic" => "DIC",
-                            "icdph" => "ICDPH",
-                            "IdDatum" => "IdDatum",
-                            "idDopravaTuzemsko" => "IDDopravaTuzemsko",
-                            "idDopravaZahranici" => "IDDopravaZahranici",
-                            "idKrajPuvodu_ID" => "IDKrajPuvodu_ID",
-                            "idOvlivnujeIntrastat" => "IDOvlivnujeIntrastat",
-                            "idPovahaTransakce_ID" => "IDPovahaTransakce_ID",
+                            (_, "id") => "ID",
+                            (_, "ic") => "IC",
+                            (_, "ico") => "ICO",
+                            (_, "dic") => "DIC",
+                            (_, "icdph") => "ICDPH",
+                            (_, "idDatum") => "IDDatum",
+                            (_, "idDopravaTuzemsko") => "IDDopravaTuzemsko",
+                            (_, "idDopravaZahranici") => "IDDopravaZahranici",
+                            (_, "idKrajPuvodu_ID") => "IDKrajPuvodu_ID",
+                            (_, "idOvlivnujeIntrastat") => "IDOvlivnujeIntrastat",
+                            (_, "idPovahaTransakce_ID") => "IDPovahaTransakce_ID",
+                            (_, "ipHmotnost") => "IPHmotnost",
+                            (_, "ipMnozstvi") => "IPMnozstvi",
+                            (_, "ipOvlivnujeIntrastat") => "IPOvlivnujeIntrastat",
+                            (_, "ipCisloZasilky") => "IPCisloZasilky",
+                            (_, "dphEditovanoRucne") => "DPHEditovanoRucne",
                             _ => propertyNameAsString,
                         };
 
