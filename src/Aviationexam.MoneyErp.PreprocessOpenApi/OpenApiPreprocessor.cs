@@ -336,19 +336,32 @@ public class OpenApiPreprocessor(
                         ]
                     )
                     {
-                        var propertyName = Encoding.UTF8.GetString(lastProperty).ToCharArray();
+                        var propertyNameAsString = Encoding.UTF8.GetString(lastProperty);
 
-                        if (propertyName.SequenceEqual("id"))
+                        propertyNameAsString = propertyNameAsString switch
                         {
-                            propertyName[1] = 'D';
-                        }
+                            "id" => "ID",
+                            "ic" => "IC",
+                            "dic" => "DIC",
+                            "icdph" => "ICDPH",
+                            "IdDatum" => "IdDatum",
+                            "idDopravaTuzemsko" => "IDDopravaTuzemsko",
+                            "idDopravaZahranici" => "IDDopravaZahranici",
+                            "idKrajPuvodu_ID" => "IDKrajPuvodu_ID",
+                            "idOvlivnujeIntrastat" => "IDOvlivnujeIntrastat",
+                            "idPovahaTransakce_ID" => "IDPovahaTransakce_ID",
+                            _ => propertyNameAsString,
+                        };
 
-                        if (char.IsLower(propertyName[0]))
+                        if (char.IsLower(propertyNameAsString[0]))
                         {
+                            var propertyName = propertyNameAsString.ToCharArray();
                             propertyName[0] = char.ToUpperInvariant(propertyName[0]);
+
+                            propertyNameAsString = propertyName.ToString()!;
                         }
 
-                        writer.WritePropertyName(propertyName);
+                        writer.WritePropertyName(propertyNameAsString);
                     }
                     else
                     {
@@ -404,7 +417,7 @@ public class OpenApiPreprocessor(
                                 writer.WriteStartObject();
 
                                 writer.WritePropertyName(Ref);
-                                writer.WriteStringValue([.."#/components/schemas/"u8, ..PaginationStatus]);
+                                writer.WriteStringValue([.. "#/components/schemas/"u8, .. PaginationStatus]);
                                 writer.WriteEndObject();
                             }
 
@@ -524,7 +537,7 @@ public class OpenApiPreprocessor(
                     lastProperty = default;
 
                     if (
-                        lastItem is { JsonTokenType : JsonTokenType.StartObject, PropertyName: Schemas }
+                        lastItem is { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas }
                         && currentPath.Count == 2
                         && currentPath.ToArray() is
                         [
