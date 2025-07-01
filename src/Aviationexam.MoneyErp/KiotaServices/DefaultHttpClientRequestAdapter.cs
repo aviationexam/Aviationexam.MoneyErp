@@ -14,7 +14,7 @@ public class DefaultHttpClientRequestAdapter(
     IParseNodeFactory? parseNodeFactory = null,
     [FromKeyedServices(DependencyInjectionExtensions.MoneyErpServiceKey)]
     ISerializationWriterFactory? serializationWriterFactory = null,
-    [FromKeyedServices(DependencyInjectionExtensions.MoneyErpServiceKey)]
+    [FromKeyedServices(DependencyInjectionExtensions.MoneyErpHttpClient)]
     HttpClient? httpClient = null,
     [FromKeyedServices(DependencyInjectionExtensions.MoneyErpServiceKey)]
     ObservabilityOptions? observabilityOptions = null
