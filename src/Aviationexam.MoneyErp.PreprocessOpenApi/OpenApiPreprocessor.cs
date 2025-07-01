@@ -545,9 +545,9 @@ public class OpenApiPreprocessor(
                         writer.WritePropertyName("enum"u8);
                         {
                             writer.WriteStartArray();
-                            writer.WriteNumberValue(0);
                             writer.WriteNumberValue(1);
                             writer.WriteNumberValue(2);
+                            writer.WriteNumberValue(3);
                             writer.WriteEndArray();
                         }
 
@@ -569,7 +569,7 @@ public class OpenApiPreprocessor(
                                     writer.WriteStartObject();
 
                                     writer.WritePropertyName("value"u8);
-                                    writer.WriteNumberValue(0);
+                                    writer.WriteNumberValue(1);
 
                                     writer.WritePropertyName("name"u8);
                                     writer.WriteStringValue("OK"u8);

@@ -31,14 +31,14 @@ public class MoneyErpApiClientTests
                 x.ClientSecret = clientSecret;
                 x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
                 x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
-            }), shouldRedactHeaderValue: false)
+            }), shouldRedactHeaderValue: true)
             .BuildServiceProvider();
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
         var responses = await client.V10.Connection.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
-        Assert.NotNull(responses.Status);
+        Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
         Assert.NotEmpty(responses.Data);
     }
