@@ -19,9 +19,10 @@ max_line_length = 200
 csharp_space_after_cast = true
 dotnet_sort_system_directives_first = false
 dotnet_separate_import_directive_groups = false
-dotnet_style_namespace_match_folder = true
 
 csharp_indent_case_contents_when_block = true
+csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
+csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 
 dotnet_diagnostic.CA1507.severity = error
 dotnet_diagnostic.CA1852.severity = warning
