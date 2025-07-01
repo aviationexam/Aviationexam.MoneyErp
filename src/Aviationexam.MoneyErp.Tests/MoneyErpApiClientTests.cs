@@ -38,6 +38,7 @@ public class MoneyErpApiClientTests
 
         var responses = await client.V10.Connection.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
+        Assert.NotNull(responses.Status);
         Assert.NotNull(responses.Data);
         Assert.NotEmpty(responses.Data);
     }

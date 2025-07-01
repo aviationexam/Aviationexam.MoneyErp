@@ -14,6 +14,7 @@ public class OpenApiPreprocessor(
 )
 {
     private static ReadOnlySpan<byte> Utf8Bom => [0xEF, 0xBB, 0xBF];
+    private static ReadOnlySpan<byte> PaginationStatus => "PaginationStatus"u8;
 
     private const string Info = "info";
     private static ReadOnlySpan<byte> Version => "version"u8;
@@ -397,7 +398,16 @@ public class OpenApiPreprocessor(
                             WriteProperty(writer, "PageCount"u8, "integer"u8, "int32"u8);
                             WriteProperty(writer, "Message"u8, "string"u8, []);
                             WriteProperty(writer, "StackTrace"u8, "string"u8, []);
-                            WriteProperty(writer, "Status"u8, "integer"u8, "int32"u8);
+
+                            writer.WritePropertyName("Status"u8);
+                            {
+                                writer.WriteStartObject();
+
+                                writer.WritePropertyName(Ref);
+                                writer.WriteStringValue([.."#/components/schemas/"u8, ..PaginationStatus]);
+                                writer.WriteEndObject();
+                            }
+
                             writer.WritePropertyName("Data"u8);
                             {
                                 writer.WriteStartObject();
@@ -465,25 +475,25 @@ public class OpenApiPreprocessor(
                 }
 
                     static bool IsIgnorePath(
-                        ref Utf8JsonReader reader, CollectedMetadata currentPath, Stack<TreeItem> treeItems
-                    ) => treeItems.Count == 2
-                         && treeItems.ToArray() is
+                        ref Utf8JsonReader reader, CollectedMetadata collectedMetadata, Stack<TreeItem> currentPath
+                    ) => currentPath.Count == 2
+                         && currentPath.ToArray() is
                          [
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
                          ]
-                         && currentPath.IsPathIgnored(reader.ValueSpan);
+                         && collectedMetadata.IsPathIgnored(reader.ValueSpan);
 
                     static bool IsIgnorePathMethod(
-                        ref Utf8JsonReader reader, CollectedMetadata currentPath, Stack<TreeItem> treeItems
-                    ) => treeItems.Count == 3
-                         && treeItems.ToArray() is
+                        ref Utf8JsonReader reader, CollectedMetadata collectedMetadata, Stack<TreeItem> currentPath
+                    ) => currentPath.Count == 3
+                         && currentPath.ToArray() is
                          [
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
                          ]
-                         && currentPath.IsPathMethodIgnored(pathName, reader.ValueSpan);
+                         && collectedMetadata.IsPathMethodIgnored(pathName, reader.ValueSpan);
 
                     break;
 
@@ -510,8 +520,93 @@ public class OpenApiPreprocessor(
 
                     break;
                 case JsonTokenType.EndObject:
-                    currentPath.Pop();
+                    var lastItem = currentPath.Pop();
                     lastProperty = default;
+
+                    if (
+                        lastItem is { JsonTokenType : JsonTokenType.StartObject, PropertyName: Schemas }
+                        && currentPath.Count == 2
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                    )
+                    {
+                        writer.WritePropertyName(PaginationStatus);
+                        writer.WriteStartObject();
+
+                        writer.WritePropertyName(Type);
+                        writer.WriteStringValue("integer"u8);
+
+                        writer.WritePropertyName(Format);
+                        writer.WriteStringValue("int32"u8);
+
+                        writer.WritePropertyName("enum"u8);
+                        {
+                            writer.WriteStartArray();
+                            writer.WriteNumberValue(0);
+                            writer.WriteNumberValue(1);
+                            writer.WriteNumberValue(2);
+                            writer.WriteEndArray();
+                        }
+
+                        writer.WritePropertyName("x-ms-enum"u8);
+                        {
+                            writer.WriteStartObject();
+
+                            writer.WritePropertyName("name"u8);
+                            writer.WriteStringValue(PaginationStatus);
+
+                            writer.WritePropertyName("modelAsString"u8);
+                            writer.WriteBooleanValue(false);
+
+                            writer.WritePropertyName("values"u8);
+                            {
+                                writer.WriteStartArray();
+
+                                {
+                                    writer.WriteStartObject();
+
+                                    writer.WritePropertyName("value"u8);
+                                    writer.WriteNumberValue(0);
+
+                                    writer.WritePropertyName("name"u8);
+                                    writer.WriteStringValue("OK"u8);
+
+                                    writer.WriteEndObject();
+                                }
+                                {
+                                    writer.WriteStartObject();
+
+                                    writer.WritePropertyName("value"u8);
+                                    writer.WriteNumberValue(2);
+
+                                    writer.WritePropertyName("name"u8);
+                                    writer.WriteStringValue("Warning"u8);
+
+                                    writer.WriteEndObject();
+                                }
+                                {
+                                    writer.WriteStartObject();
+
+                                    writer.WritePropertyName("value"u8);
+                                    writer.WriteNumberValue(3);
+
+                                    writer.WritePropertyName("name"u8);
+                                    writer.WriteStringValue("Error"u8);
+
+                                    writer.WriteEndObject();
+                                }
+
+                                writer.WriteEndArray();
+                            }
+
+                            writer.WriteEndObject();
+                        }
+
+                        writer.WriteEndObject();
+                    }
 
                     writer.WriteEndObject();
 
