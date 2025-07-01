@@ -15,14 +15,38 @@ namespace Aviationexam.MoneyErp.KiotaServices;
 public sealed class DefaultAccessTokenProvider(
     [FromKeyedServices(DependencyInjectionExtensions.MoneyErpHttpTokenClient)]
     HttpClient httpClient,
+    TimeProvider timeProvider,
     IOptions<MoneyErpAuthenticationOptions> authenticationOptions
 ) : IAccessTokenProvider
 {
+    private TokenResponse? _cachedToken;
+    private DateTimeOffset? _tokenExpiresAt;
+
+    private readonly
+#if NET9_0_OR_GREATER
+        Lock
+#else
+        object
+#endif
+        _lock = new();
+
     public async Task<string> GetAuthorizationTokenAsync(
         Uri uri, Dictionary<string, object>? additionalAuthenticationContext, CancellationToken cancellationToken
     )
     {
         var options = authenticationOptions.Value;
+        var now = timeProvider.GetUtcNow();
+
+        lock (_lock)
+        {
+            if (_cachedToken != null && now < _tokenExpiresAt)
+            {
+                return _cachedToken.AccessToken;
+            }
+
+            _cachedToken = null;
+            _tokenExpiresAt = null;
+        }
 
         using var request = new HttpRequestMessage(HttpMethod.Post, options.TokenEndpoint);
         request.Content = new FormUrlEncodedContent([
@@ -42,6 +66,13 @@ public sealed class DefaultAccessTokenProvider(
         if (tokenResponse is null)
         {
             throw new InvalidOperationException("Failed to deserialize token response.");
+        }
+
+        var expiresAt = now + tokenResponse.ExpiresInTimeSpan - options.JwtEarlyExpirationOffset;
+        lock (_lock)
+        {
+            _cachedToken = tokenResponse;
+            _tokenExpiresAt = expiresAt;
         }
 
         return tokenResponse.AccessToken;

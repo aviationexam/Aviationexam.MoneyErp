@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 
 namespace Aviationexam.MoneyErp.KiotaServices;
@@ -12,5 +13,7 @@ public sealed class TokenResponse
 
     [JsonPropertyName("token_type")]
     public string TokenType { get; set; } = null!;
+
+    public TimeSpan ExpiresInTimeSpan => TimeSpan.FromSeconds(ExpiresIn);
 }
 
