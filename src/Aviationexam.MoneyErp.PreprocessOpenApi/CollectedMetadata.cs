@@ -19,6 +19,7 @@ public sealed partial class CollectedMetadata(
     private readonly Dictionary<string, ICollection<string>> _knownPaths = [];
     private readonly HashSet<(string Path, string Method)> _ignoredPathMethods = [];
     private readonly HashSet<PathParameter> _pathParameters = [];
+    private readonly HashSet<(string pathName, string methodName, string itemsRef)> _paginatedResponse = [];
 
     public void AddVersion(ReadOnlySpan<byte> target)
     {
@@ -271,5 +272,21 @@ public sealed partial class CollectedMetadata(
         ];
         var idx = pathName.IndexOf(parameterPlaceholder, StringComparison.Ordinal);
         return idx >= 0 ? pathName[..(idx + parameterPlaceholder.Length)] : pathName;
+    }
+
+    public void AddPaginatedResponse(
+        string pathName, string methodName, ReadOnlySpan<byte> itemsRef
+    ) => _paginatedResponse.Add((pathName, methodName, Encoding.UTF8.GetString(itemsRef)));
+
+    public bool IsPaginatedResponse(
+        string pathName, string methodName, out string? itemsRef
+    )
+    {
+        itemsRef = _paginatedResponse
+            .Where(x => x.pathName == pathName && x.methodName == methodName)
+            .Select(x => x.itemsRef)
+            .FirstOrDefault();
+
+        return itemsRef is not null;
     }
 }

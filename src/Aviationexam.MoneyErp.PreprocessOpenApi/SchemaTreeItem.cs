@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Aviationexam.MoneyErp.PreprocessOpenApi;
 
-public sealed record ParameterTreeItem(
+public sealed record SchemaTreeItem(
     JsonTokenType JsonTokenType,
     string? PropertyName
 ) : TreeItem(
@@ -10,7 +10,5 @@ public sealed record ParameterTreeItem(
     PropertyName
 )
 {
-    public string? Name { get; set; }
-
-    public string? In { get; set; }
+    public bool IsArray { get; set; }
 }
