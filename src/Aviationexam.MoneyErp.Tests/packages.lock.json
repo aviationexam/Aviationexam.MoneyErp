@@ -8,6 +8,16 @@
         "resolved": "2.0.202",
         "contentHash": "VDsrL0SRYoR6t975NExCRgZzGIYudgIETUAPnyMG17sr9I9OzNGzpwX1dHOPSd8Ue28ltnNiOL3czLmNdQngYA=="
       },
+      "Meziantou.Extensions.Logging.Xunit.v3": {
+        "type": "Direct",
+        "requested": "[1.1.6, )",
+        "resolved": "1.1.6",
+        "contentHash": "q/AkJTp/CO2xXXPYXBIOAWKpkGOjeBa4d9eEGxr9kjspCYtKPEcbjWybtlWNt4NEL0cMAgP8PEPddwAaNJcPlw==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.6",
+          "xunit.v3.extensibility.core": "2.0.3"
+        }
+      },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
         "requested": "[9.0.6, )",
