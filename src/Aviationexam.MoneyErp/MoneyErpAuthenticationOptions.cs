@@ -15,8 +15,16 @@ public sealed class MoneyErpAuthenticationOptions
     [Required]
     public TimeSpan JwtEarlyExpirationOffset { get; set; }
 
+    public string TokenPath { get; } = "/connect/token";
+
     [Required]
     public Uri Endpoint { get; set; } = null!;
+
+    [Required]
+    public Uri TokenEndpoint { get; set; } = null!;
+
+    [Required]
+    public string TokenScope { get; set; } = "S5Api";
 
     [Required]
     public IReadOnlyCollection<string> AllowedHosts { get; set; } = null!;
