@@ -2,6 +2,7 @@ using Aviationexam.MoneyErp.Client;
 using Aviationexam.MoneyErp.KiotaServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
@@ -17,19 +18,29 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddMoneyErpApiClient(
         this IServiceCollection serviceCollection,
-        Action<OptionsBuilder<MoneyErpAuthenticationOptions>> optionsBuilder
+        Action<OptionsBuilder<MoneyErpAuthenticationOptions>> optionsBuilder,
+        bool shouldRedactHeaderValue = true
     )
     {
-        serviceCollection.AddHttpClient(MoneyErpHttpClient)
+        var httpClientBuilder = serviceCollection.AddHttpClient(MoneyErpHttpClient)
             .AttachKiotaHandlers()
             .ConfigureHttpClient(static (serviceProvider, httpClient) =>
             {
                 var options = serviceProvider.GetRequiredService<IOptions<MoneyErpAuthenticationOptions>>();
                 httpClient.BaseAddress = options.Value.Endpoint;
             })
+            .AddDefaultLogger()
             .AddAsKeyed();
-        serviceCollection.AddHttpClient(MoneyErpHttpTokenClient)
+        var httpTokenClientBuilder = serviceCollection.AddHttpClient(MoneyErpHttpTokenClient)
+            .AddDefaultLogger()
             .AddAsKeyed();
+
+        if (shouldRedactHeaderValue is false)
+        {
+            serviceCollection
+                .Configure<HttpClientFactoryOptions>(httpClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false)
+                .Configure<HttpClientFactoryOptions>(httpTokenClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false);
+        }
 
         optionsBuilder(serviceCollection
             .AddOptions<MoneyErpAuthenticationOptions>()

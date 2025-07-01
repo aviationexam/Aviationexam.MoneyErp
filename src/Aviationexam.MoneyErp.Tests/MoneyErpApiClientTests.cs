@@ -1,6 +1,8 @@
 using Aviationexam.MoneyErp.Client;
 using Aviationexam.MoneyErp.Extensions;
+using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -18,6 +20,10 @@ public class MoneyErpApiClientTests
     )
     {
         await using var serviceProvider = new ServiceCollection()
+            .AddLogging(builder => builder
+                .SetMinimumLevel(LogLevel.Trace)
+                .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
+            )
             .AddSingleton<TimeProvider>(_ => TimeProvider.System)
             .AddMoneyErpApiClient(builder => builder.Configure(x =>
             {
@@ -25,12 +31,14 @@ public class MoneyErpApiClientTests
                 x.ClientSecret = clientSecret;
                 x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
                 x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
-            }))
+            }), shouldRedactHeaderValue: false)
             .BuildServiceProvider();
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
-        var responses = await client.V10.Person["0"][1].GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        var responses = await client.V10.Connection.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.NotEmpty(responses);
     }
 
     public static TheoryData<string, string, string> MoneyErpAuthentications()
