@@ -13,7 +13,7 @@ public class MoneyErpApiClientTests
 {
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestAuthenticationAsync(
+    public async Task TestGetConnectionAsync(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -37,6 +37,38 @@ public class MoneyErpApiClientTests
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
         var responses = await client.V10.Connection.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetIssuedInvoiceAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = new ServiceCollection()
+            .AddLogging(builder => builder
+                .SetMinimumLevel(LogLevel.Trace)
+                .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
+            )
+            .AddSingleton<TimeProvider>(_ => TimeProvider.System)
+            .AddMoneyErpApiClient(builder => builder.Configure(x =>
+            {
+                x.ClientId = clientId;
+                x.ClientSecret = clientSecret;
+                x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
+                x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
+            }), shouldRedactHeaderValue: false)
+            .BuildServiceProvider();
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.IssuedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
