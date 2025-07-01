@@ -33,6 +33,9 @@ public class OpenApiPreprocessor(
     private const string Content = "content";
     private const string Responses = "responses";
     private const string Items = "items";
+    private const string Schemas = "schemas";
+    private const string Components = "components";
+    private const string Properties = "properties";
 
     public void Preprocess()
     {
@@ -320,7 +323,36 @@ public class OpenApiPreprocessor(
                         break;
                     }
 
-                    writer.WritePropertyName(reader.ValueSpan);
+                    if (
+                        currentPath.Count == 5
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Properties },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                    )
+                    {
+                        var propertyName = Encoding.UTF8.GetString(lastProperty).ToCharArray();
+
+                        if (propertyName.SequenceEqual("id"))
+                        {
+                            propertyName[1] = 'D';
+                        }
+
+                        if (char.IsLower(propertyName[0]))
+                        {
+                            propertyName[0] = char.ToUpperInvariant(propertyName[0]);
+                        }
+
+                        writer.WritePropertyName(propertyName);
+                    }
+                    else
+                    {
+                        writer.WritePropertyName(reader.ValueSpan);
+                    }
 
                 {
                     if (
