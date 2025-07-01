@@ -355,10 +355,10 @@ public class OpenApiPreprocessor(
 
                         if (char.IsLower(propertyNameAsString[0]))
                         {
-                            var propertyName = propertyNameAsString.ToCharArray();
+                            var propertyName = propertyNameAsString.ToCharArray().AsSpan();
                             propertyName[0] = char.ToUpperInvariant(propertyName[0]);
 
-                            propertyNameAsString = propertyName.ToString()!;
+                            propertyNameAsString = propertyName.ToString();
                         }
 
                         writer.WritePropertyName(propertyNameAsString);
