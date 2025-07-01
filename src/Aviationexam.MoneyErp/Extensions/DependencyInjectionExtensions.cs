@@ -13,6 +13,7 @@ namespace Aviationexam.MoneyErp.Extensions;
 public static class DependencyInjectionExtensions
 {
     public const string MoneyErpHttpClient = "MoneyErp.Client";
+    public const string MoneyErpHttpTokenClient = "MoneyErp.TokenClient";
     public const string MoneyErpServiceKey = "MoneyErp";
 
     public static IServiceCollection AddMoneyErpApiClient(
@@ -21,6 +22,7 @@ public static class DependencyInjectionExtensions
     )
     {
         serviceCollection.AddHttpClient(MoneyErpHttpClient).AttachKiotaHandlers();
+        serviceCollection.AddHttpClient(MoneyErpHttpTokenClient);
 
         optionsBuilder(serviceCollection
             .AddOptions<MoneyErpAuthenticationOptions>()
@@ -34,10 +36,16 @@ public static class DependencyInjectionExtensions
         );
 
         serviceCollection.AddKeyedTransient<HttpClient>(
-            MoneyErpServiceKey,
+            MoneyErpHttpClient,
             (serviceProvider, _) => serviceProvider
                 .GetRequiredService<IHttpClientFactory>()
                 .CreateClient(MoneyErpHttpClient)
+        );
+        serviceCollection.AddKeyedTransient<HttpClient>(
+            MoneyErpHttpTokenClient,
+            (serviceProvider, _) => serviceProvider
+                .GetRequiredService<IHttpClientFactory>()
+                .CreateClient(MoneyErpHttpTokenClient)
         );
 
         serviceCollection.TryAddKeyedTransient<IRequestAdapter, DefaultHttpClientRequestAdapter>(MoneyErpServiceKey);
