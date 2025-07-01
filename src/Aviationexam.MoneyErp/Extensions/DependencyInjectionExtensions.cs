@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using System;
-using System.Net.Http;
 
 namespace Aviationexam.MoneyErp.Extensions;
 
@@ -21,8 +20,16 @@ public static class DependencyInjectionExtensions
         Action<OptionsBuilder<MoneyErpAuthenticationOptions>> optionsBuilder
     )
     {
-        serviceCollection.AddHttpClient(MoneyErpHttpClient).AttachKiotaHandlers();
-        serviceCollection.AddHttpClient(MoneyErpHttpTokenClient);
+        serviceCollection.AddHttpClient(MoneyErpHttpClient)
+            .AttachKiotaHandlers()
+            .ConfigureHttpClient(static (serviceProvider, httpClient) =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptions<MoneyErpAuthenticationOptions>>();
+                httpClient.BaseAddress = options.Value.Endpoint;
+            })
+            .AddAsKeyed();
+        serviceCollection.AddHttpClient(MoneyErpHttpTokenClient)
+            .AddAsKeyed();
 
         optionsBuilder(serviceCollection
             .AddOptions<MoneyErpAuthenticationOptions>()
@@ -33,19 +40,6 @@ public static class DependencyInjectionExtensions
         );
         serviceCollection.TryAddEnumerable(ServiceDescriptor
             .Singleton<IValidateOptions<MoneyErpAuthenticationOptions>, MoneyErpAuthenticationOptionsValidate>()
-        );
-
-        serviceCollection.AddKeyedTransient<HttpClient>(
-            MoneyErpHttpClient,
-            (serviceProvider, _) => serviceProvider
-                .GetRequiredService<IHttpClientFactory>()
-                .CreateClient(MoneyErpHttpClient)
-        );
-        serviceCollection.AddKeyedTransient<HttpClient>(
-            MoneyErpHttpTokenClient,
-            (serviceProvider, _) => serviceProvider
-                .GetRequiredService<IHttpClientFactory>()
-                .CreateClient(MoneyErpHttpTokenClient)
         );
 
         serviceCollection.TryAddKeyedTransient<IRequestAdapter, DefaultHttpClientRequestAdapter>(MoneyErpServiceKey);
