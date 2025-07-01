@@ -18,6 +18,7 @@ public class MoneyErpApiClientTests
     )
     {
         await using var serviceProvider = new ServiceCollection()
+            .AddSingleton<TimeProvider>(_ => TimeProvider.System)
             .AddMoneyErpApiClient(builder => builder.Configure(x =>
             {
                 x.ClientId = clientId;
@@ -29,7 +30,7 @@ public class MoneyErpApiClientTests
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
-        await client.V10.Person.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        var responses = await client.V10.Person["0"][1].GetAsync(cancellationToken: TestContext.Current.CancellationToken);
     }
 
     public static TheoryData<string, string, string> MoneyErpAuthentications()
