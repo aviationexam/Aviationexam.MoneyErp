@@ -30,6 +30,10 @@ jobs:
         run: dotnet build --no-restore --nologo --configuration Release
       - name: Test
         run: dotnet test --nologo --no-build --configuration Release
+        env:
+          MONEYERP_CLIENT_ID: ${{ secrets.MONEYERP_CLIENT_ID }}
+          MONEYERP_CLIENT_SECRET: ${{ secrets.MONEYERP_CLIENT_SECRET }}
+          MONEYERP_ENDPOINT: ${{ secrets.MONEYERP_ENDPOINT }}
 
   code-style:
     runs-on: ubuntu-latest
