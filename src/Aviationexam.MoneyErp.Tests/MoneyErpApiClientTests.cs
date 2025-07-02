@@ -19,20 +19,7 @@ public class MoneyErpApiClientTests
         string serverAddress
     )
     {
-        await using var serviceProvider = new ServiceCollection()
-            .AddLogging(builder => builder
-                .SetMinimumLevel(LogLevel.Trace)
-                .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
-            )
-            .AddSingleton<TimeProvider>(_ => TimeProvider.System)
-            .AddMoneyErpApiClient(builder => builder.Configure(x =>
-            {
-                x.ClientId = clientId;
-                x.ClientSecret = clientSecret;
-                x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
-                x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
-            }), shouldRedactHeaderValue: true)
-            .BuildServiceProvider();
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
@@ -51,20 +38,7 @@ public class MoneyErpApiClientTests
         string serverAddress
     )
     {
-        await using var serviceProvider = new ServiceCollection()
-            .AddLogging(builder => builder
-                .SetMinimumLevel(LogLevel.Trace)
-                .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
-            )
-            .AddSingleton<TimeProvider>(_ => TimeProvider.System)
-            .AddMoneyErpApiClient(builder => builder.Configure(x =>
-            {
-                x.ClientId = clientId;
-                x.ClientSecret = clientSecret;
-                x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
-                x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
-            }), shouldRedactHeaderValue: false)
-            .BuildServiceProvider();
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
@@ -74,6 +48,23 @@ public class MoneyErpApiClientTests
         Assert.NotNull(responses.Data);
         Assert.NotEmpty(responses.Data);
     }
+
+    private static ServiceProvider BuildServiceProvider(
+        string clientId, string clientSecret, string serverAddress
+    ) => new ServiceCollection()
+        .AddLogging(builder => builder
+            .SetMinimumLevel(LogLevel.Trace)
+            .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
+        )
+        .AddSingleton<TimeProvider>(_ => TimeProvider.System)
+        .AddMoneyErpApiClient(builder => builder.Configure(x =>
+        {
+            x.ClientId = clientId;
+            x.ClientSecret = clientSecret;
+            x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
+            x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
+        }), shouldRedactHeaderValue: true)
+        .BuildServiceProvider();
 
     public static TheoryData<string, string, string> MoneyErpAuthentications()
     {
