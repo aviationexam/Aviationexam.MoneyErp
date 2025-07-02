@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using ZLinq;
 
 namespace Aviationexam.MoneyErp.PreprocessOpenApi;
 
@@ -633,7 +633,7 @@ public class OpenApiPreprocessor(
                 case JsonTokenType.String:
                     if (
                         currentPath.Count == 6
-                        && currentPath.First() is ParameterTreeItem { JsonTokenType: JsonTokenType.StartObject } parameterTreeItem
+                        && currentPath.AsValueEnumerable().First() is ParameterTreeItem { JsonTokenType: JsonTokenType.StartObject } parameterTreeItem
                     )
                     {
                         if (lastProperty.SequenceEqual(Name))

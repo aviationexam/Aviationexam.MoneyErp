@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using ZLinq;
 using ParameterType = (string Type, string? Format);
 
 namespace Aviationexam.MoneyErp.PreprocessOpenApi;
@@ -46,7 +46,7 @@ public sealed partial class CollectedMetadata(
             return true;
         }
 
-        return _knownPaths[pathString].All(x => _ignoredPathMethods.Contains((pathString, x)));
+        return _knownPaths[pathString].AsValueEnumerable().All(x => _ignoredPathMethods.Contains((pathString, x)));
     }
 
     public bool IsPathMethodIgnored(
@@ -79,7 +79,7 @@ public sealed partial class CollectedMetadata(
 
         var templatePath = templatePathBuilder.ToString();
 
-        var pathParameters = _pathParameters.Where(x =>
+        var pathParameters = _pathParameters.AsValueEnumerable().Where(x =>
             templatePath.StartsWith(x.TemplatePath)
             && x.ParameterId == currentParameterId
         ).ToList();
@@ -209,7 +209,7 @@ public sealed partial class CollectedMetadata(
                 _parameterFormat
             );
 
-            var contains = _pathParameters.Any(x =>
+            var contains = _pathParameters.AsValueEnumerable().Any(x =>
                 x.TemplatePath == templatePath
                 && x.Name == pathParameter.Name
                 && x.Type == pathParameter.Type
@@ -283,6 +283,7 @@ public sealed partial class CollectedMetadata(
     )
     {
         itemsRef = _paginatedResponse
+            .AsValueEnumerable()
             .Where(x => x.pathName == pathName && x.methodName == methodName)
             .Select(x => x.itemsRef)
             .FirstOrDefault();

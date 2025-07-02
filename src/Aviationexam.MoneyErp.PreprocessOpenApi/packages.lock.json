@@ -19,6 +19,12 @@
         "requested": "[9.0.6, )",
         "resolved": "9.0.6",
         "contentHash": "h+ZtYTyTnTh5Ju6mHCKb3FPGx4ylJZgm9W7Y2psUnkhQRPMOIxX+TCN0ZgaR/+Yea+93XHWAaMzYTar1/EHIPg=="
+      },
+      "ZLinq": {
+        "type": "Direct",
+        "requested": "[1.4.12, )",
+        "resolved": "1.4.12",
+        "contentHash": "/Ibt52Bys+WM5suxl8JBik64IQoGshPPK2s6UoxAJGRm6PVdBa+HKIzcxfamkRuELBcmiFtx1RZeocQpqhSH/A=="
       }
     },
     "net9.0/linux-x64": {},
