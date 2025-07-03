@@ -325,6 +325,22 @@ public class OpenApiPreprocessor(
                     }
 
                     if (
+                        lastProperty.SequenceEqual("Shared.Enums.LogicOperator"u8)
+                        && currentPath.Count == 3
+                        && currentPath.ToArray() is
+                        [
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
+                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                        ]
+                    )
+                    {
+                        reader.Skip();
+
+                        break;
+                    }
+
+                    if (
                         currentPath.Count == 5
                         && currentPath.ToArray() is
                         [
@@ -556,79 +572,8 @@ public class OpenApiPreprocessor(
                         ]
                     )
                     {
-                        writer.WritePropertyName(PaginationStatus);
-                        writer.WriteStartObject();
-
-                        writer.WritePropertyName(Type);
-                        writer.WriteStringValue("integer"u8);
-
-                        writer.WritePropertyName(Format);
-                        writer.WriteStringValue("int32"u8);
-
-                        writer.WritePropertyName("enum"u8);
-                        {
-                            writer.WriteStartArray();
-                            writer.WriteNumberValue(1);
-                            writer.WriteNumberValue(2);
-                            writer.WriteNumberValue(3);
-                            writer.WriteEndArray();
-                        }
-
-                        writer.WritePropertyName("x-ms-enum"u8);
-                        {
-                            writer.WriteStartObject();
-
-                            writer.WritePropertyName("name"u8);
-                            writer.WriteStringValue(PaginationStatus);
-
-                            writer.WritePropertyName("modelAsString"u8);
-                            writer.WriteBooleanValue(false);
-
-                            writer.WritePropertyName("values"u8);
-                            {
-                                writer.WriteStartArray();
-
-                                {
-                                    writer.WriteStartObject();
-
-                                    writer.WritePropertyName("value"u8);
-                                    writer.WriteNumberValue(1);
-
-                                    writer.WritePropertyName("name"u8);
-                                    writer.WriteStringValue("OK"u8);
-
-                                    writer.WriteEndObject();
-                                }
-                                {
-                                    writer.WriteStartObject();
-
-                                    writer.WritePropertyName("value"u8);
-                                    writer.WriteNumberValue(2);
-
-                                    writer.WritePropertyName("name"u8);
-                                    writer.WriteStringValue("Warning"u8);
-
-                                    writer.WriteEndObject();
-                                }
-                                {
-                                    writer.WriteStartObject();
-
-                                    writer.WritePropertyName("value"u8);
-                                    writer.WriteNumberValue(3);
-
-                                    writer.WritePropertyName("name"u8);
-                                    writer.WriteStringValue("Error"u8);
-
-                                    writer.WriteEndObject();
-                                }
-
-                                writer.WriteEndArray();
-                            }
-
-                            writer.WriteEndObject();
-                        }
-
-                        writer.WriteEndObject();
+                        WriteLogicOperatorSchema(writer);
+                        WritePaginationStatusSchema(writer);
                     }
 
                     writer.WriteEndObject();
@@ -689,6 +634,148 @@ public class OpenApiPreprocessor(
                     throw new ArgumentOutOfRangeException(nameof(reader.TokenType), reader.TokenType, null);
             }
         }
+    }
+
+    private static void WritePaginationStatusSchema(Utf8JsonWriter writer)
+    {
+        writer.WritePropertyName(PaginationStatus);
+        writer.WriteStartObject();
+
+        writer.WritePropertyName(Type);
+        writer.WriteStringValue("integer"u8);
+
+        writer.WritePropertyName(Format);
+        writer.WriteStringValue("int32"u8);
+
+        writer.WritePropertyName("enum"u8);
+        {
+            writer.WriteStartArray();
+            writer.WriteNumberValue(1);
+            writer.WriteNumberValue(2);
+            writer.WriteNumberValue(3);
+            writer.WriteEndArray();
+        }
+
+        writer.WritePropertyName("x-ms-enum"u8);
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("name"u8);
+            writer.WriteStringValue(PaginationStatus);
+
+            writer.WritePropertyName("modelAsString"u8);
+            writer.WriteBooleanValue(false);
+
+            writer.WritePropertyName("values"u8);
+            {
+                writer.WriteStartArray();
+
+                {
+                    writer.WriteStartObject();
+
+                    writer.WritePropertyName("value"u8);
+                    writer.WriteNumberValue(1);
+
+                    writer.WritePropertyName("name"u8);
+                    writer.WriteStringValue("OK"u8);
+
+                    writer.WriteEndObject();
+                }
+                {
+                    writer.WriteStartObject();
+
+                    writer.WritePropertyName("value"u8);
+                    writer.WriteNumberValue(2);
+
+                    writer.WritePropertyName("name"u8);
+                    writer.WriteStringValue("Warning"u8);
+
+                    writer.WriteEndObject();
+                }
+                {
+                    writer.WriteStartObject();
+
+                    writer.WritePropertyName("value"u8);
+                    writer.WriteNumberValue(3);
+
+                    writer.WritePropertyName("name"u8);
+                    writer.WriteStringValue("Error"u8);
+
+                    writer.WriteEndObject();
+                }
+
+                writer.WriteEndArray();
+            }
+
+            writer.WriteEndObject();
+        }
+
+        writer.WriteEndObject();
+    }
+
+    private static void WriteLogicOperatorSchema(Utf8JsonWriter writer)
+    {
+        writer.WritePropertyName("Shared.Enums.LogicOperator");
+        writer.WriteStartObject();
+
+        writer.WritePropertyName(Type);
+        writer.WriteStringValue("string"u8);
+
+
+        writer.WritePropertyName("enum"u8);
+        {
+            writer.WriteStartArray();
+
+            writer.WriteStringValue("AND"u8);
+            writer.WriteStringValue("OR"u8);
+
+            writer.WriteEndArray();
+        }
+
+        writer.WritePropertyName("x-ms-enum"u8);
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("name"u8);
+            writer.WriteStringValue("LogicOperator"u8);
+
+            writer.WritePropertyName("modelAsString"u8);
+            writer.WriteBooleanValue(false);
+
+            writer.WritePropertyName("values"u8);
+            {
+                writer.WriteStartArray();
+
+                {
+                    writer.WriteStartObject();
+
+                    writer.WritePropertyName("value"u8);
+                    writer.WriteStringValue("AND"u8);
+
+                    writer.WritePropertyName("name"u8);
+                    writer.WriteStringValue("AND"u8);
+
+                    writer.WriteEndObject();
+                }
+                {
+                    writer.WriteStartObject();
+
+                    writer.WritePropertyName("value"u8);
+                    writer.WriteStringValue("OR"u8);
+
+                    writer.WritePropertyName("name"u8);
+                    writer.WriteStringValue("OR"u8);
+
+                    writer.WriteEndObject();
+                }
+
+                writer.WriteEndArray();
+            }
+
+            writer.WriteEndObject();
+        }
+
+        writer.WriteEndObject();
     }
 
     private void WriteProperty(
