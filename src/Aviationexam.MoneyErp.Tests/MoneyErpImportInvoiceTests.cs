@@ -489,22 +489,46 @@ public class MoneyErpImportInvoiceTests
         decimal DphSazba
     );
 
+    public sealed record InvoiceAddressData(
+        string? Email,
+        string? Telefon,
+        string Ulice,
+        string Misto,
+        string Psc,
+        string Stat,
+        string Nazev
+    );
+
     public sealed record InvoiceData(
+        // Basic identifiers
         string CisloDokladu,
         string OdkazNaDoklad,
         string VariabilniSymbol,
+
+        // Dates
         DateTimeOffset DatumVystaveni,
         DateTimeOffset DatumUcetnihoPripadu,
         DateTimeOffset DatumPlneni,
         DateTimeOffset DatumSplatnosti,
+
+        // General info
         string Vystavil,
         string Nazev,
         string? Dic,
+
+        // Money & currency
         decimal CelkovaCastkaCm,
         decimal Kurz,
         int KurzMnozstvi,
         string MenaKod,
+
+        // VAT classification
         string CleneniDphKod,
+
+        // NEW — <Group Kod="…"/>
+        string GroupKod, // <<< added
+
+        // Supplier (Adresa/Firma)
         string FirmaKod,
         bool FirmaPlatceDph,
         string? FirmaDic,
@@ -515,10 +539,18 @@ public class MoneyErpImportInvoiceTests
         string FirmaNazevStatu,
         string FirmaStatKod,
         string FirmaStatNazevEn,
+
+        // NEW – recipient addresses
+        InvoiceAddressData AdresaPrijemceFaktury, // <<< added
+        InvoiceAddressData AdresaKoncovehoPrijemce, // <<< added
+
+        // Transport & payment
         string ZpusobDopravyKod,
         string ZpusobDopravyNazev,
         string ZpusobPlatbyKod,
         string ZpusobPlatbyNazev,
+
+        // Items
         InvoiceItemData[] Polozky
     ) : IFormattable, IParsable<InvoiceData>
     {
