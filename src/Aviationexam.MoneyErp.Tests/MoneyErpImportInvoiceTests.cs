@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
@@ -25,7 +24,7 @@ public class MoneyErpImportInvoiceTests
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
-        var responses = await client.V10.Article.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        var responses = await client.V10.IssuedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
@@ -686,7 +685,7 @@ public class MoneyErpImportInvoiceTests
             ZpusobDopravyNazev,
             ZpusobPlatbyKod,
             ZpusobPlatbyNazev,
-            new JsonArray(Polozky.Select(x => (JsonNode)new JsonObject
+            new JsonArray(Polozky.AsValueEnumerable().Select(x => (JsonNode)new JsonObject
             {
                 [nameof(x.Nazev)] = x.Nazev,
                 [nameof(x.Mnozstvi)] = x.Mnozstvi,
@@ -769,7 +768,7 @@ public class MoneyErpImportInvoiceTests
                 ZpusobDopravyNazev: arr[29]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyNazev missing."),
                 ZpusobPlatbyKod: arr[30]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyKod missing."),
                 ZpusobPlatbyNazev: arr[31]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyNazev missing."),
-                Polozky: arr[32]?.AsArray().Select(static x => new InvoiceItemData(
+                Polozky: arr[32]?.AsArray().AsValueEnumerable().Select(static x => new InvoiceItemData(
                     Nazev: x![nameof(InvoiceItemData.Nazev)]?.GetValue<string>() ?? throw new FormatException("Nazev missing."),
                     Mnozstvi: x[nameof(InvoiceItemData.Mnozstvi)]?.GetValue<decimal>() ?? throw new FormatException("Mnozstvi missing."),
                     DphEditovanoRucne: x[nameof(InvoiceItemData.DphEditovanoRucne)]?.GetValue<bool>() ?? throw new FormatException("DphEditovanoRucne missing."),
