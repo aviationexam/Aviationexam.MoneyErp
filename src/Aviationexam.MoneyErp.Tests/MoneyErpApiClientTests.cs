@@ -1,6 +1,5 @@
 using Aviationexam.MoneyErp.Client;
 using Aviationexam.MoneyErp.Extensions;
-using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,7 @@ namespace Aviationexam.MoneyErp.Tests;
 public class MoneyErpApiClientTests
 {
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetArticleWorks(
         string clientId,
         string clientSecret,
@@ -35,7 +34,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetBankStatementWorks(
         string clientId,
         string clientSecret,
@@ -57,7 +56,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetCentreWorks(
         string clientId,
         string clientSecret,
@@ -79,7 +78,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetCompanyWorks(
         string clientId,
         string clientSecret,
@@ -101,7 +100,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetConnectionWorks(
         string clientId,
         string clientSecret,
@@ -123,7 +122,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetIssuedInvoiceWorks(
         string clientId,
         string clientSecret,
@@ -145,7 +144,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetIssuedOrderWorks(
         string clientId,
         string clientSecret,
@@ -167,7 +166,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetJobOrderWorks(
         string clientId,
         string clientSecret,
@@ -189,7 +188,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetOperationWorks(
         string clientId,
         string clientSecret,
@@ -211,7 +210,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetPersonWorks(
         string clientId,
         string clientSecret,
@@ -233,7 +232,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetPrepaymentInvoiceWorks(
         string clientId,
         string clientSecret,
@@ -255,7 +254,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetPrepaymentIssuedInvoiceWorks(
         string clientId,
         string clientSecret,
@@ -277,7 +276,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetReceivedInvoiceWorks(
         string clientId,
         string clientSecret,
@@ -299,7 +298,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetReceivedOrderWorks(
         string clientId,
         string clientSecret,
@@ -321,7 +320,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetStaffWorks(
         string clientId,
         string clientSecret,
@@ -343,7 +342,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetTypeOfActivityWorks(
         string clientId,
         string clientSecret,
@@ -365,7 +364,7 @@ public class MoneyErpApiClientTests
     }
 
     [Theory]
-    [MemberData(nameof(MoneyErpAuthentications))]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData))]
     public async Task GetActivityWorks(
         string clientId,
         string clientSecret,
@@ -402,34 +401,4 @@ public class MoneyErpApiClientTests
             x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
         }), shouldRedactHeaderValue: false)
         .BuildServiceProvider();
-
-    public static TheoryData<string, string, string> MoneyErpAuthentications()
-    {
-        Loader.LoadEnvFile(".env.local");
-
-        var clientId = Environment.GetEnvironmentVariable("MONEYERP_CLIENT_ID")?.Trim();
-        var clientSecret = Environment.GetEnvironmentVariable("MONEYERP_CLIENT_SECRET")?.Trim();
-        var endpoint = Environment.GetEnvironmentVariable("MONEYERP_ENDPOINT")?.Trim();
-
-        if (
-            clientId is null
-            || clientSecret is null
-            || endpoint is null
-        )
-        {
-            return
-            [
-                new TheoryDataRow<string, string, string>(string.Empty, string.Empty, string.Empty) { Skip = "Authentication is not provided." },
-            ];
-        }
-
-        return
-        [
-            new TheoryDataRow<string, string, string>(
-                clientId,
-                clientSecret,
-                endpoint
-            ),
-        ];
-    }
 }
