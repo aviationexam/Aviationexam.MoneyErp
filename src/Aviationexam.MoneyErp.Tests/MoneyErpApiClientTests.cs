@@ -1,5 +1,6 @@
 using Aviationexam.MoneyErp.Client;
 using Aviationexam.MoneyErp.Extensions;
+using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -49,6 +50,25 @@ public class MoneyErpApiClientTests
         Assert.NotEmpty(responses.Data);
     }
 
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetCompanyAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Company.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+    }
+
     private static ServiceProvider BuildServiceProvider(
         string clientId, string clientSecret, string serverAddress
     ) => new ServiceCollection()
@@ -68,6 +88,8 @@ public class MoneyErpApiClientTests
 
     public static TheoryData<string, string, string> MoneyErpAuthentications()
     {
+        Loader.LoadEnvFile(".env.local");
+
         var clientId = Environment.GetEnvironmentVariable("MONEYERP_CLIENT_ID")?.Trim();
         var clientSecret = Environment.GetEnvironmentVariable("MONEYERP_CLIENT_SECRET")?.Trim();
         var endpoint = Environment.GetEnvironmentVariable("MONEYERP_ENDPOINT")?.Trim();
