@@ -16,7 +16,13 @@ public static class Loader
         }
 
         FileInfo fileInfo = new(filePath);
-        var envFileFullPath = Path.Join(fileInfo.Directory!.Parent!.Parent!.FullName, envFileName);
+        var rootDirectory = fileInfo.Directory?.Parent?.Parent?.FullName;
+        if (rootDirectory is null)
+        {
+            return;
+        }
+
+        var envFileFullPath = Path.Join(rootDirectory, envFileName);
 
         if (!File.Exists(envFileFullPath))
         {
