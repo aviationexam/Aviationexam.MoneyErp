@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" VersionOverride="9.0.6" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Http" />
@@ -39,11 +40,13 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" OverrideVersion="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" OverrideVersion="8.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Http" OverrideVersion="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" OverrideVersion="8.0.2" />
-    <PackageReference Include="System.Text.Json" OverrideVersion="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" VersionOverride="8.0.17" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" VersionOverride="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" VersionOverride="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Http" VersionOverride="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" VersionOverride="8.0.2" />
+    <PackageReference Include="System.Text.Json" VersionOverride="8.0.5" />
   </ItemGroup>
 
   <PropertyGroup>

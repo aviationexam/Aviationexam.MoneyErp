@@ -7,6 +7,7 @@
     <PackageVersion Include="Meziantou.Analyzer" Version="2.0.203" />
   </ItemGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.6" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.6" />

@@ -7,6 +7,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using System;
+#if NET8_0
+using System.Net.Http;
+#endif
 
 namespace Aviationexam.MoneyErp.Extensions;
 
@@ -29,11 +32,22 @@ public static class DependencyInjectionExtensions
                 var options = serviceProvider.GetRequiredService<IOptions<MoneyErpAuthenticationOptions>>();
                 httpClient.BaseAddress = options.Value.Endpoint;
             })
-            .AddDefaultLogger()
-            .AddAsKeyed();
+            .AddDefaultLogger();
         var httpTokenClientBuilder = serviceCollection.AddHttpClient(MoneyErpHttpTokenClient)
-            .AddDefaultLogger()
-            .AddAsKeyed();
+            .AddDefaultLogger();
+
+#if NET9_0_OR_GREATER
+        httpClientBuilder.AddAsKeyed();
+        httpTokenClientBuilder.AddAsKeyed();
+#else
+        serviceCollection.AddKeyedTransient<HttpClient>(httpClientBuilder.Name,
+            static (serviceProvider, key) => serviceProvider.GetRequiredService<IHttpClientFactory>()
+                .CreateClient(key!.ToString()!)
+        ).AddKeyedTransient<HttpClient>(httpTokenClientBuilder.Name,
+            static (serviceProvider, key) => serviceProvider.GetRequiredService<IHttpClientFactory>()
+                .CreateClient(key!.ToString()!)
+        );
+#endif
 
         if (shouldRedactHeaderValue is false)
         {

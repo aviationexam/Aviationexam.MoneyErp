@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="ZLinq" />
   </ItemGroup>
 
