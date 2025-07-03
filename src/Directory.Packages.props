@@ -4,7 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.202" />
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.203" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.5" />
@@ -16,12 +16,12 @@
     <PackageVersion Include="System.Text.Json" Version="9.0.6" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.17.4" />
-    <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.17.4" />
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.17.4" />
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.17.4" />
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.17.4" />
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.17.4" />
+    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.19.0" />
+    <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.19.0" />
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.19.0" />
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.19.0" />
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.19.0" />
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.19.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="ZLinq" Version="1.4.12" />
