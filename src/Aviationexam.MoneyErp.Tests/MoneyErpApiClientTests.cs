@@ -14,7 +14,7 @@ public class MoneyErpApiClientTests
 {
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetArticleAsync(
+    public async Task GetArticleWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -36,7 +36,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetBankStatementAsync(
+    public async Task GetBankStatementWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -58,7 +58,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetCentreAsync(
+    public async Task GetCentreWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -80,7 +80,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetCompanyAsync(
+    public async Task GetCompanyWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -102,7 +102,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetConnectionAsync(
+    public async Task GetConnectionWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -124,7 +124,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetIssuedInvoiceAsync(
+    public async Task GetIssuedInvoiceWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -146,7 +146,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetIssuedOrderAsync(
+    public async Task GetIssuedOrderWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -168,7 +168,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetJobOrderAsync(
+    public async Task GetJobOrderWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -190,7 +190,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetOperationAsync(
+    public async Task GetOperationWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -212,7 +212,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetPersonAsync(
+    public async Task GetPersonWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -234,7 +234,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetPrepaymentInvoiceAsync(
+    public async Task GetPrepaymentInvoiceWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -256,7 +256,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetPrepaymentIssuedInvoiceAsync(
+    public async Task GetPrepaymentIssuedInvoiceWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -278,7 +278,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetReceivedInvoiceAsync(
+    public async Task GetReceivedInvoiceWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -300,7 +300,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetReceivedOrderAsync(
+    public async Task GetReceivedOrderWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -322,7 +322,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetStaffAsync(
+    public async Task GetStaffWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -344,7 +344,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetTypeOfActivityAsync(
+    public async Task GetTypeOfActivityWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -366,7 +366,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetActivityAsync(
+    public async Task GetActivityWorks(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -400,7 +400,7 @@ public class MoneyErpApiClientTests
             x.ClientSecret = clientSecret;
             x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
             x.Endpoint = new Uri(serverAddress, UriKind.RelativeOrAbsolute);
-        }), shouldRedactHeaderValue: true)
+        }), shouldRedactHeaderValue: false)
         .BuildServiceProvider();
 
     public static TheoryData<string, string, string> MoneyErpAuthentications()
