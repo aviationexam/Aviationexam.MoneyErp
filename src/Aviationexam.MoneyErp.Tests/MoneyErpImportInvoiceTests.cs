@@ -1,11 +1,18 @@
 using Aviationexam.MoneyErp.Client;
+using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.Company;
 using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.IssuedInvoice;
 using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.Shop;
+using Aviationexam.MoneyErp.Client.Models.Shared.Enums;
+using Aviationexam.MoneyErp.Client.V10.Company;
+using Aviationexam.MoneyErp.Extensions;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Kiota.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
@@ -25,6 +32,183 @@ public class MoneyErpImportInvoiceTests
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        ICollection<(Guid firmaId, int value)> ids = [];
+        foreach (var data in invoiceData)
+        {
+            //FirmaKod
+            //FirmaPlatceDph
+            //FirmaDic
+            //FirmaNazev
+            //FirmaUlice
+            //FirmaMisto
+            //FirmaKodPsc
+            //FirmaNazevStatu
+            //FirmaStatKod
+            //FirmaStatNazevEn
+            var requestInformation = client.AddCustomQueryParameters(
+                client.V10.Company.ToGetRequestInformation(x => { x.QueryParameters.LogicOperator = LogicOperator.AND; }),
+                queryParameterBuilder =>
+                {
+                    queryParameterBuilder.Add("filter.Filters[0].PropertyName", nameof(CompanyOutputDto.Kod));
+                    queryParameterBuilder.Add("filter.Filters[0].Operation", "Equal");
+                    queryParameterBuilder.Add("filter.Filters[0].ExpectedValue", data.FirmaKod);
+                }
+            );
+
+            var company = await client.V10.Company.GetAsync(
+                requestInformation, TestContext.Current.CancellationToken
+            );
+            var companyGuid = company?.Data?.AsValueEnumerable().SingleOrDefault()?.ID;
+
+            if (companyGuid is null)
+            {
+                var companyGuids = await client.V10.Company.PostAsync(
+                    [
+                        new CompanyInputDto
+                        {
+                            AdditionalData = null,
+                            Attachments = null,
+                            CinnostUkoncena = null,
+                            CiselnaRadaID = null,
+                            CisloS3 = null,
+                            CisloZRady = null,
+                            DatovaSchrankaID = null,
+                            DatovaSchrankaNazev = null,
+                            DatovaSchrankaSpojeniID = null,
+                            DatumKontolyDIC = null,
+                            DatumKontrolyDleIC = null,
+                            DatumPosledniKontrolyPlatceDPH = null,
+                            DatumPosty = null,
+                            DatumUkonceniCinnosti = null,
+                            DIC = data.FirmaDic,
+                            EkoKomKlient = null,
+                            Email = null,
+                            EmailSpojeniID = null,
+                            FaktMisto = data.FirmaMisto,
+                            FaktNazev = data.FirmaNazev,
+                            FaktPsc = data.FirmaKodPsc,
+                            FaktPscID = null,
+                            FaktStat = data.FirmaNazevStatu,
+                            FaktStatID = null,
+                            FaktUlice = data.FirmaUlice,
+                            FaxCislo = null,
+                            FaxKlapka = null,
+                            FaxMistniCislo = null,
+                            FaxPredvolba = null,
+                            FaxPredvolbaStat = null,
+                            FaxSpojeniID = null,
+                            FaxStatID = null,
+                            FyzickaOsoba = null,
+                            GpsLat = null,
+                            GpsLong = null,
+                            GroupID = null,
+                            HlavniOsobaID = null,
+                            HlavniUcetID = null,
+                            HodnotaKreditu = null,
+                            HodnotaSlevy = null,
+                            ICDPH = null,
+                            ICO = null,
+                            ID = null,
+                            Kod = data.FirmaKod,
+                            KodDanovehoUradu = null,
+                            KrajID = null,
+                            LogoID = null,
+                            MojeFirmabankovniSpojeniID = null,
+                            NadrazenaFirmaID = null,
+                            Nazev = data.FirmaNazev,
+                            ObchMisto = null,
+                            ObchNazev = null,
+                            ObchodniPodminkyDistributorLihu = null,
+                            ObchodniPodminkyDistributorLihuRegistracniCislo = null,
+                            ObchPsc = null,
+                            ObchPscID = null,
+                            ObchStat = null,
+                            ObchStatID = null,
+                            ObchUlice = null,
+                            OdlisnaAdresaProvozovny = null,
+                            OdlisnaFakturacniAdresa = null,
+                            PlatceDPH = data.FirmaPlatceDph,
+                            PosilatPostu = null,
+                            PosledniCisloOsoby = null,
+                            PosledniStavZHistorieRegistruId = null,
+                            PouzivatKredit = null,
+                            Poznamka = null,
+                            PrenestNazev = null,
+                            PrevzitBankovniSpojeni = null,
+                            PrevzitObchodniPodminky = null,
+                            PrevzitObchodniUdaje = null,
+                            PrimarniUcetPohledavkyID = null,
+                            PrimarniUcetPoskytnutaZalohaID = null,
+                            PrimarniUcetPrijataZalohaID = null,
+                            PrimarniUcetZavazkyID = null,
+                            ProvMisto = null,
+                            ProvNazev = null,
+                            ProvPsc = null,
+                            ProvPscID = null,
+                            ProvStat = null,
+                            ProvStatID = null,
+                            ProvUlice = null,
+                            RegionID = null,
+                            SpecifickySymbol = null,
+                            SplatnostPohledavek = null,
+                            SplatnostZavazku = null,
+                            Spojeni = null,
+                            StavPlatceDPHComputed = null,
+                            StavPlatceDPHVracenyWSStav = null,
+                            Tel1Cislo = null,
+                            Tel1Klapka = null,
+                            Tel1MistniCislo = null,
+                            Tel1Predvolba = null,
+                            Tel1PredvolbaStat = null,
+                            Tel1StatID = null,
+                            Tel1Typ = null,
+                            Tel2Cislo = null,
+                            Tel2Klapka = null,
+                            Tel2MistniCislo = null,
+                            Tel2Predvolba = null,
+                            Tel2PredvolbaStat = null,
+                            Tel2StatID = null,
+                            Tel2Typ = null,
+                            Tel3Cislo = null,
+                            Tel3Klapka = null,
+                            Tel3MistniCislo = null,
+                            Tel3Predvolba = null,
+                            Tel3PredvolbaStat = null,
+                            Tel3StatID = null,
+                            Tel3Typ = null,
+                            Tel4Cislo = null,
+                            Tel4Klapka = null,
+                            Tel4MistniCislo = null,
+                            Tel4Predvolba = null,
+                            Tel4PredvolbaStat = null,
+                            Tel4StatID = null,
+                            Tel4Typ = null,
+                            TelefonSpojeni1ID = null,
+                            TelefonSpojeni2ID = null,
+                            TelefonSpojeni3ID = null,
+                            TelefonSpojeni4ID = null,
+                            UctyNactenyZRegistruDPH = null,
+                            UvadetNaDokladech = null,
+                            VariabilniSymbol = null,
+                            VcetnePodrizenych = null,
+                            VlastniSleva = null,
+                            VlastniSplatnostPohledavek = null,
+                            VlastniSplatnostZavazku = null,
+                            Www = null,
+                            WwwSpojeniID = null,
+                            Zprava = null,
+                            ZpusobDopravyID = null,
+                            ZpusobPlatbyID = null,
+                            ZpusobVyberuCeny = null
+                        },
+                    ],
+                    cancellationToken: TestContext.Current.CancellationToken
+                );
+
+                companyGuid = companyGuids?.AsValueEnumerable().Single();
+            }
+        }
 
         var response = await client.V10.IssuedInvoice.PostAsync([
             .. invoiceData.AsValueEnumerable().Select(invoice => new IssuedInvoiceInputDto
@@ -102,7 +286,7 @@ public class MoneyErpImportInvoiceTests
         Assert.NotEmpty(response);
     }
 
-    private class MoneyErpInvoiceClassData() : TheoryData<MoneyErpAuthenticationsClassData.AuthenticationData?, InvoiceData[]>(
+    private sealed class MoneyErpInvoiceClassData() : TheoryData<MoneyErpAuthenticationsClassData.AuthenticationData?, InvoiceData[]>(
         GetData()
     )
     {

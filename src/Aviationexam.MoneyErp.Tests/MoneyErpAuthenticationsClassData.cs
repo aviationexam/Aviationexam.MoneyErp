@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Aviationexam.MoneyErp.Tests;
 
-public class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuthenticationsClassData.AuthenticationData?>(
+public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuthenticationsClassData.AuthenticationData?>(
     GetData()
 )
 {
