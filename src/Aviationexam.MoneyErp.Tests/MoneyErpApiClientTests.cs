@@ -14,6 +14,94 @@ public class MoneyErpApiClientTests
 {
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetArticleAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Article.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetBankStatementAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.BankStatement.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        //Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetCentreAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Centre.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetCompanyAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Company.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
     public async Task TestGetConnectionAsync(
         string clientId,
         string clientSecret,
@@ -58,7 +146,7 @@ public class MoneyErpApiClientTests
 
     [Theory]
     [MemberData(nameof(MoneyErpAuthentications))]
-    public async Task TestGetCompanyAsync(
+    public async Task TestGetIssuedOrderAsync(
         string clientId,
         string clientSecret,
         string serverAddress
@@ -68,7 +156,227 @@ public class MoneyErpApiClientTests
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
-        var responses = await client.V10.Company.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        var responses = await client.V10.IssuedOrder.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetJobOrderAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.JobOrder.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetOperationAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Operation.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetPersonAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Person.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        //Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetPrepaymentInvoiceAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.PrepaymentInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        //Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetPrepaymentIssuedInvoiceAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.PrepaymentIssuedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetReceivedInvoiceAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.ReceivedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetReceivedOrderAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.ReceivedOrder.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetStaffAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Staff.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetTypeOfActivityAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.TypeOfActivity.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responses);
+        Assert.Equal(1, responses.Status);
+        Assert.NotNull(responses.Data);
+        //Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+    }
+
+    [Theory]
+    [MemberData(nameof(MoneyErpAuthentications))]
+    public async Task TestGetActivityAsync(
+        string clientId,
+        string clientSecret,
+        string serverAddress
+    )
+    {
+        await using var serviceProvider = BuildServiceProvider(clientId, clientSecret, serverAddress);
+
+        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var responses = await client.V10.Activity.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);

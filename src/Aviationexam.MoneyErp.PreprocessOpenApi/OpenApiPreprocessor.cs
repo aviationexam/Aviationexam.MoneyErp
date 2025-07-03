@@ -357,6 +357,9 @@ public class OpenApiPreprocessor(
                             (_, "ipCisloZasilky") => "IPCisloZasilky",
                             (_, "dphEditovanoRucne") => "DPHEditovanoRucne",
                             ("ApiCore.Services.Company.CompanyOutputDto", "www") => "WWW",
+                            ("ApiCore.Services.Article.ArticleOutputDto", "plu") => "PLU",
+                            ("ApiCore.Services.Article.ArticleOutputDto", "pluCislo") => "PLUCislo",
+                            ("ApiCore.Services.Article.ArticleOutputDto", "retela") => "RETELA",
                             _ => propertyNameAsString,
                         };
 
