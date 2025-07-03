@@ -1,4 +1,6 @@
 using Aviationexam.MoneyErp.Client;
+using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.IssuedInvoice;
+using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.Shop;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -24,14 +26,83 @@ public class MoneyErpImportInvoiceTests
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
-        var responses = await client.V10.IssuedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
-        Assert.NotNull(responses);
-        Assert.Equal(1, responses.Status);
-        Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        foreach (var invoice in invoiceData)
+        {
+            var response = await client.V10.IssuedInvoice.PostAsync([
+                new IssuedInvoiceInputDto
+                {
+                    CisloDokladu = invoice.CisloDokladu,
+                    OdkazNaDoklad = invoice.OdkazNaDoklad,
+                    VariabilniSymbol = invoice.VariabilniSymbol,
+                    DatumVystaveni = invoice.DatumVystaveni,
+                    DatumUcetnihoPripadu = invoice.DatumUcetnihoPripadu,
+                    DatumPlneni = invoice.DatumPlneni,
+                    DatumSplatnosti = invoice.DatumSplatnosti,
+                    Vystavil = invoice.Vystavil,
+                    Nazev = invoice.Nazev,
+                    DIC = invoice.Dic,
+                    CelkovaCastkaCM = (double) invoice.CelkovaCastkaCm,
+                    UcetniKurzKurz = (double) invoice.Kurz,
+                    //invoice.KurzMnozstvi,
+                    MenaID = invoice.MenaKod == "EUR" ? Guid.Parse("") : null,
+                    CleneniDPHID = invoice.CleneniDphKod == "19Ř24OSS_S" ? Guid.Parse("") : null,
+                    GroupID = invoice.GroupKod == "" ? Guid.Parse("") : null,
+                    FirmaID = invoice.FirmaKod == "" ? Guid.Parse("") : null,
+                    AdresaPrijemceFakturyKontaktniOsobaID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
 
-        Assert.Empty(responses.AdditionalData);
-        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
+                    //invoice.AdresaPrijemceFaktury.Email,
+                    //invoice.AdresaPrijemceFaktury.Telefon,
+                    //invoice.AdresaPrijemceFaktury.Ulice,
+                    //invoice.AdresaPrijemceFaktury.Misto,
+                    //invoice.AdresaPrijemceFaktury.Psc,
+                    //invoice.AdresaPrijemceFaktury.Stat,
+                    //invoice.AdresaPrijemceFaktury.Nazev,
+                    AdresaKoncovehoPrijemceEmail = invoice.AdresaKoncovehoPrijemce.Email,
+                    AdresaKoncovehoPrijemceTelefon = invoice.AdresaKoncovehoPrijemce.Telefon,
+                    AdresaKoncovehoPrijemceKontaktniOsobaID = invoice.AdresaKoncovehoPrijemce.Nazev == "" ? Guid.Parse("") : null,
+                    //invoice.AdresaKoncovehoPrijemce.Ulice,
+                    //invoice.AdresaKoncovehoPrijemce.Misto,
+                    //invoice.AdresaKoncovehoPrijemce.Psc,
+                    //invoice.AdresaKoncovehoPrijemce.Stat,
+                    ZpusobDopravyID = invoice.ZpusobDopravyKod == "" ? Guid.Parse("") : null,
+                    ZpusobPlatbyID = invoice.ZpusobPlatbyKod == "" ? Guid.Parse("") : null,
+                    Polozky =
+                    [
+                        .. invoice.Polozky.AsValueEnumerable().Select(x => new IssuedInvoiceItemInputDto
+                        {
+                            Nazev = x.Nazev,
+                            Mnozstvi = (double) x.Mnozstvi,
+                            DPHEditovanoRucne = x.DphEditovanoRucne,
+                            DruhSazbyDPH = x.DruhSazbyDph,
+                            PredkontaceID = x.PredkontaceKod == "" ? Guid.Parse("") : null,
+                            Jednotka = x.Jednotka,
+                            CisloPolozky = x.CisloPolozky,
+                            TypObsahu = x.TypObsahu,
+                            CleneniDPHID = x.CleneniDphKod == "" ? Guid.Parse("") : null,
+                            TypCeny = x.TypCeny,
+                            ObsahPolozky = new ContentOfItemWithArticleInputDto
+                            {
+                                ArtiklID = x.ArtiklPlu == "" ? Guid.Parse("") : null,
+                                SkladID = x.SkladKod == "" ? Guid.Parse("") : null,
+                            },
+                            CelkovaCena = (double) x.CelkovaCena,
+                            CelkovaCenaCM = (double) x.CelkovaCenaCm,
+                            DphCelkem = (double) x.DphCelkem,
+                            DphZaklad = (double) x.DphZaklad,
+                            DphDan = (double) x.DphDan,
+                            DphCelkemCM = (double) x.DphCelkemCm,
+                            DphZakladCM = (double) x.DphZakladCm,
+                            DphDanCM = (double) x.DphDanCm,
+                            DphSazba = (double) x.DphSazba,
+                        }),
+                    ],
+                    Poznamka = invoice.Poznamka,
+                },
+            ], cancellationToken: TestContext.Current.CancellationToken);
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response);
+        }
     }
 
     private class MoneyErpInvoiceClassData() : TheoryData<MoneyErpAuthenticationsClassData.AuthenticationData?, InvoiceData[]>(
@@ -685,7 +756,7 @@ public class MoneyErpImportInvoiceTests
             ZpusobDopravyNazev,
             ZpusobPlatbyKod,
             ZpusobPlatbyNazev,
-            new JsonArray(Polozky.AsValueEnumerable().Select(x => (JsonNode)new JsonObject
+            new JsonArray(Polozky.AsValueEnumerable().Select(x => (JsonNode) new JsonObject
             {
                 [nameof(x.Nazev)] = x.Nazev,
                 [nameof(x.Mnozstvi)] = x.Mnozstvi,
