@@ -98,7 +98,7 @@ public class MoneyErpImportInvoiceTests
                             FirmaNazevStatu: "Switzerland",
                             FirmaStatKod: "CH",
                             FirmaStatNazevEn: "Switzerland"
-                        )
+                        ),
                     ]
                 )
                 {
@@ -135,7 +135,7 @@ public class MoneyErpImportInvoiceTests
                             FirmaNazevStatu: "Hungary",
                             FirmaStatKod: "HU",
                             FirmaStatNazevEn: "Hungary"
-                        )
+                        ),
                     ]
                 )
                 {
@@ -172,7 +172,7 @@ public class MoneyErpImportInvoiceTests
                             FirmaNazevStatu: "Lithuania",
                             FirmaStatKod: "LT",
                             FirmaStatNazevEn: "Lithuania"
-                        )
+                        ),
                     ]
                 )
                 {
@@ -182,6 +182,29 @@ public class MoneyErpImportInvoiceTests
         }
     }
 
+    public sealed record InvoiceItemData(
+        string Nazev,
+        decimal Mnozstvi,
+        bool DphEditovanoRucne,
+        int DruhSazbyDph,
+        string PredkontaceKod,
+        string Jednotka,
+        int CisloPolozky,
+        int TypObsahu,
+        string CleneniDphKod,
+        int TypCeny,
+        string ArtiklPlu,
+        string SkladKod,
+        decimal CelkovaCena,
+        decimal CelkovaCenaCm,
+        decimal DphCelkem,
+        decimal DphZaklad,
+        decimal DphDan,
+        decimal DphCelkemCm,
+        decimal DphZakladCm,
+        decimal DphDanCm,
+        decimal DphSazba
+    );
     public sealed record InvoiceData(
         string CisloDokladu,
         string OdkazNaDoklad,
