@@ -4,9 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
+using ZLinq;
 
 namespace Aviationexam.MoneyErp.Tests;
 
@@ -70,7 +72,37 @@ public class MoneyErpImportInvoiceTests
                             FirmaKodPsc: "93426",
                             FirmaNazevStatu: "Germany",
                             FirmaStatKod: "DE",
-                            FirmaStatNazevEn: "Germany"
+                            FirmaStatNazevEn: "Germany",
+                            ZpusobDopravyKod: "D",
+                            ZpusobDopravyNazev: "Download",
+                            ZpusobPlatbyKod: "PE",
+                            ZpusobPlatbyNazev: "Online by Card",
+                            Polozky:
+                            [
+                                new(
+                                    Nazev: "PPL Fragenkatalog (DAeC) 12 Monate",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 1,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "PLU00167",
+                                    SkladKod: "01",
+                                    CelkovaCena: 1715.68m,
+                                    CelkovaCenaCm: 69m,
+                                    DphCelkem: 1715.68m,
+                                    DphZaklad: 1441.67m,
+                                    DphDan: 274.01m,
+                                    DphCelkemCm: 69m,
+                                    DphZakladCm: 57.98m,
+                                    DphDanCm: 11.02m,
+                                    DphSazba: 19
+                                ),
+                            ]
                         ),
                         new InvoiceData(
                             CisloDokladu: "IN2504261",
@@ -97,7 +129,37 @@ public class MoneyErpImportInvoiceTests
                             FirmaKodPsc: "1974",
                             FirmaNazevStatu: "Switzerland",
                             FirmaStatKod: "CH",
-                            FirmaStatNazevEn: "Switzerland"
+                            FirmaStatNazevEn: "Switzerland",
+                            ZpusobDopravyKod: "D",
+                            ZpusobDopravyNazev: "Download",
+                            ZpusobPlatbyKod: "PE",
+                            ZpusobPlatbyNazev: "Online by Card",
+                            Polozky:
+                            [
+                                new(
+                                    Nazev: "EASA -1 month subscription",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 2,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 1,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř26",
+                                    TypCeny: 0,
+                                    ArtiklPlu: "PLU00167",
+                                    SkladKod: "01",
+                                    CelkovaCena: 721.08m,
+                                    CelkovaCenaCm: 29m,
+                                    DphCelkem: 721.08m,
+                                    DphZaklad: 721.08m,
+                                    DphDan: 0,
+                                    DphCelkemCm: 29m,
+                                    DphZakladCm: 29m,
+                                    DphDanCm: 0,
+                                    DphSazba: 0
+                                ),
+                            ]
                         ),
                     ]
                 )
@@ -134,7 +196,37 @@ public class MoneyErpImportInvoiceTests
                             FirmaKodPsc: "2161",
                             FirmaNazevStatu: "Hungary",
                             FirmaStatKod: "HU",
-                            FirmaStatNazevEn: "Hungary"
+                            FirmaStatNazevEn: "Hungary",
+                            ZpusobDopravyKod: "D",
+                            ZpusobDopravyNazev: "Download",
+                            ZpusobPlatbyKod: "PE",
+                            ZpusobPlatbyNazev: "Online by Card",
+                            Polozky:
+                            [
+                                new(
+                                    Nazev: "LMS Tariff fee-EASA-EN-3 months",
+                                    Mnozstvi: 156,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 2,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 1,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř21",
+                                    TypCeny: 0,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 83629.95m,
+                                    CelkovaCenaCm: 3363.36m,
+                                    DphCelkem: 83629.95m,
+                                    DphZaklad: 83629.95m,
+                                    DphDan: 0,
+                                    DphCelkemCm: 3363.36m,
+                                    DphZakladCm: 3363.36m,
+                                    DphDanCm: 0,
+                                    DphSazba: 0
+                                ),
+                            ]
                         ),
                     ]
                 )
@@ -171,7 +263,198 @@ public class MoneyErpImportInvoiceTests
                             FirmaKodPsc: "11000",
                             FirmaNazevStatu: "Lithuania",
                             FirmaStatKod: "LT",
-                            FirmaStatNazevEn: "Lithuania"
+                            FirmaStatNazevEn: "Lithuania",
+                            ZpusobDopravyKod: "D",
+                            ZpusobDopravyNazev: "Download",
+                            ZpusobPlatbyKod: "PE",
+                            ZpusobPlatbyNazev: "Online by Card",
+                            Polozky:
+                            [
+                                new(
+                                    Nazev: "010 - Air Law eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 1,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 820.54m,
+                                    CelkovaCenaCm: 33m,
+                                    DphCelkem: 820.54m,
+                                    DphZaklad: 678.07m,
+                                    DphDan: 142.47m,
+                                    DphCelkemCm: 33m,
+                                    DphZakladCm: 27.27m,
+                                    DphDanCm: 5.73m,
+                                    DphSazba: 21
+                                ),
+                                new(
+                                    Nazev: "031 - Mass & Balance eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 2,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 820.54m,
+                                    CelkovaCenaCm: 33m,
+                                    DphCelkem: 820.54m,
+                                    DphZaklad: 678.07m,
+                                    DphDan: 142.47m,
+                                    DphCelkemCm: 33m,
+                                    DphZakladCm: 27.27m,
+                                    DphDanCm: 5.73m,
+                                    DphSazba: 21
+                                ),
+                                new(
+                                    Nazev: "040 - Human Performance & Limitations eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 3,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 969.73m,
+                                    CelkovaCenaCm: 39m,
+                                    DphCelkem: 969.73m,
+                                    DphZaklad: 801.4m,
+                                    DphDan: 168.33m,
+                                    DphCelkemCm: 39m,
+                                    DphZakladCm: 32.23m,
+                                    DphDanCm: 6.77m,
+                                    DphSazba: 21
+                                ),
+                                new(
+                                    Nazev: "050 - Meteorology eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 4,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 969.73m,
+                                    CelkovaCenaCm: 39m,
+                                    DphCelkem: 969.73m,
+                                    DphZaklad: 801.4m,
+                                    DphDan: 168.33m,
+                                    DphCelkemCm: 39m,
+                                    DphZakladCm: 32.23m,
+                                    DphDanCm: 6.77m,
+                                    DphSazba: 21
+                                ),
+                                new(
+                                    Nazev: "061 - General Navigation eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 5,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 969.73m,
+                                    CelkovaCenaCm: 39m,
+                                    DphCelkem: 969.73m,
+                                    DphZaklad: 801.4m,
+                                    DphDan: 168.33m,
+                                    DphCelkemCm: 39m,
+                                    DphZakladCm: 32.23m,
+                                    DphDanCm: 6.77m,
+                                    DphSazba: 21
+                                ),
+                                new(
+                                    Nazev: "062 - Radio Navigation eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 6,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 969.73m,
+                                    CelkovaCenaCm: 39m,
+                                    DphCelkem: 969.73m,
+                                    DphZaklad: 801.4m,
+                                    DphDan: 168.33m,
+                                    DphCelkemCm: 39m,
+                                    DphZakladCm: 32.23m,
+                                    DphDanCm: 6.77m,
+                                    DphSazba: 21
+                                ),
+                                new(
+                                    Nazev: "070 - Operational Procedures eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 7,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 820.54m,
+                                    CelkovaCenaCm: 33m,
+                                    DphCelkem: 820.54m,
+                                    DphZaklad: 678.07m,
+                                    DphDan: 142.47m,
+                                    DphCelkemCm: 33m,
+                                    DphZakladCm: 27.27m,
+                                    DphDanCm: 5.73m,
+                                    DphSazba: 21
+                                ),
+                                new(
+                                    Nazev: "090 - Communications eTextbook",
+                                    Mnozstvi: 1,
+                                    DphEditovanoRucne: true,
+                                    DruhSazbyDph: 1,
+                                    PredkontaceKod: "FV002",
+                                    Jednotka: "pcs",
+                                    CisloPolozky: 8,
+                                    TypObsahu: 1,
+                                    CleneniDphKod: "19Ř24OSS_S",
+                                    TypCeny: 1,
+                                    ArtiklPlu: "ART00001",
+                                    SkladKod: "01",
+                                    CelkovaCena: 820.54m,
+                                    CelkovaCenaCm: 33m,
+                                    DphCelkem: 820.54m,
+                                    DphZaklad: 678.07m,
+                                    DphDan: 142.47m,
+                                    DphCelkemCm: 33m,
+                                    DphZakladCm: 27.27m,
+                                    DphDanCm: 5.73m,
+                                    DphSazba: 21
+                                ),
+                            ]
                         ),
                     ]
                 )
@@ -205,6 +488,7 @@ public class MoneyErpImportInvoiceTests
         decimal DphDanCm,
         decimal DphSazba
     );
+
     public sealed record InvoiceData(
         string CisloDokladu,
         string OdkazNaDoklad,
@@ -230,7 +514,12 @@ public class MoneyErpImportInvoiceTests
         string FirmaKodPsc,
         string FirmaNazevStatu,
         string FirmaStatKod,
-        string FirmaStatNazevEn
+        string FirmaStatNazevEn,
+        string ZpusobDopravyKod,
+        string ZpusobDopravyNazev,
+        string ZpusobPlatbyKod,
+        string ZpusobPlatbyNazev,
+        InvoiceItemData[] Polozky
     ) : IFormattable, IParsable<InvoiceData>
     {
         public string ToString(string? format, IFormatProvider? formatProvider) => new JsonArray(
@@ -258,12 +547,40 @@ public class MoneyErpImportInvoiceTests
             FirmaKodPsc,
             FirmaNazevStatu,
             FirmaStatKod,
-            FirmaStatNazevEn
+            FirmaStatNazevEn,
+            ZpusobDopravyKod,
+            ZpusobDopravyNazev,
+            ZpusobPlatbyKod,
+            ZpusobPlatbyNazev,
+            new JsonArray(Polozky.AsValueEnumerable().Select(JsonNode (x) => new JsonObject
+            {
+                [nameof(x.Nazev)] = x.Nazev,
+                [nameof(x.Mnozstvi)] = x.Mnozstvi,
+                [nameof(x.DphEditovanoRucne)] = x.DphEditovanoRucne,
+                [nameof(x.DruhSazbyDph)] = x.DruhSazbyDph,
+                [nameof(x.PredkontaceKod)] = x.PredkontaceKod,
+                [nameof(x.Jednotka)] = x.Jednotka,
+                [nameof(x.CisloPolozky)] = x.CisloPolozky,
+                [nameof(x.TypObsahu)] = x.TypObsahu,
+                [nameof(x.CleneniDphKod)] = x.CleneniDphKod,
+                [nameof(x.TypCeny)] = x.TypCeny,
+                [nameof(x.ArtiklPlu)] = x.ArtiklPlu,
+                [nameof(x.SkladKod)] = x.SkladKod,
+                [nameof(x.CelkovaCena)] = x.CelkovaCena,
+                [nameof(x.CelkovaCenaCm)] = x.CelkovaCenaCm,
+                [nameof(x.DphCelkem)] = x.DphCelkem,
+                [nameof(x.DphZaklad)] = x.DphZaklad,
+                [nameof(x.DphDan)] = x.DphDan,
+                [nameof(x.DphCelkemCm)] = x.DphCelkemCm,
+                [nameof(x.DphZakladCm)] = x.DphZakladCm,
+                [nameof(x.DphDanCm)] = x.DphDanCm,
+                [nameof(x.DphSazba)] = x.DphSazba,
+            }).ToArray())
         ).ToString();
 
         public static InvoiceData Parse(string s, IFormatProvider? provider)
         {
-            if (JsonNode.Parse(s) is not JsonArray { Count: 25 } arr)
+            if (JsonNode.Parse(s) is not JsonArray { Count: 30 } arr)
             {
                 throw new FormatException("Input string is not a valid InvoiceData JSON array.");
             }
@@ -293,7 +610,34 @@ public class MoneyErpImportInvoiceTests
                 FirmaKodPsc: arr[21]?.GetValue<string>() ?? throw new FormatException("FirmaKodPsc missing."),
                 FirmaNazevStatu: arr[22]?.GetValue<string>() ?? throw new FormatException("FirmaNazevStatu missing."),
                 FirmaStatKod: arr[23]?.GetValue<string>() ?? throw new FormatException("FirmaStatKod missing."),
-                FirmaStatNazevEn: arr[24]?.GetValue<string>() ?? throw new FormatException("FirmaStatNazevEN missing.")
+                FirmaStatNazevEn: arr[24]?.GetValue<string>() ?? throw new FormatException("FirmaStatNazevEN missing."),
+                ZpusobDopravyKod: arr[25]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyKod missing."),
+                ZpusobDopravyNazev: arr[26]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyNazev missing."),
+                ZpusobPlatbyKod: arr[27]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyKod missing."),
+                ZpusobPlatbyNazev: arr[28]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyNazev missing."),
+                Polozky: arr[29]?.AsArray().Select(x => new InvoiceItemData(
+                    Nazev: x[nameof(InvoiceItemData.Nazev)]?.GetValue<string>() ?? throw new FormatException("Nazev missing."),
+                    Mnozstvi: x[nameof(InvoiceItemData.Mnozstvi)]?.GetValue<decimal>() ?? throw new FormatException("Mnozstvi missing."),
+                    DphEditovanoRucne: x[nameof(InvoiceItemData.DphEditovanoRucne)]?.GetValue<bool>() ?? throw new FormatException("DphEditovanoRucne missing."),
+                    DruhSazbyDph: x[nameof(InvoiceItemData.DruhSazbyDph)]?.GetValue<int>() ?? throw new FormatException("DruhSazbyDph missing."),
+                    PredkontaceKod: x[nameof(InvoiceItemData.PredkontaceKod)]?.GetValue<string>() ?? throw new FormatException("PredkontaceKod missing."),
+                    Jednotka: x[nameof(InvoiceItemData.Jednotka)]?.GetValue<string>() ?? throw new FormatException("Jednotka missing."),
+                    CisloPolozky: x[nameof(InvoiceItemData.CisloPolozky)]?.GetValue<int>() ?? throw new FormatException("CisloPolozky missing."),
+                    TypObsahu: x[nameof(InvoiceItemData.TypObsahu)]?.GetValue<int>() ?? throw new FormatException("TypObsahu missing."),
+                    CleneniDphKod: x[nameof(InvoiceItemData.CleneniDphKod)]?.GetValue<string>() ?? throw new FormatException("CleneniDphKod missing."),
+                    TypCeny: x[nameof(InvoiceItemData.TypCeny)]?.GetValue<int>() ?? throw new FormatException("TypCeny missing."),
+                    ArtiklPlu: x[nameof(InvoiceItemData.ArtiklPlu)]?.GetValue<string>() ?? throw new FormatException("ArtiklPlu missing."),
+                    SkladKod: x[nameof(InvoiceItemData.SkladKod)]?.GetValue<string>() ?? throw new FormatException("SkladKod missing."),
+                    CelkovaCena: x[nameof(InvoiceItemData.CelkovaCena)]?.GetValue<decimal>() ?? throw new FormatException("CelkovaCena missing."),
+                    CelkovaCenaCm: x[nameof(InvoiceItemData.CelkovaCenaCm)]?.GetValue<decimal>() ?? throw new FormatException("CelkovaCenaCm missing."),
+                    DphCelkem: x[nameof(InvoiceItemData.DphCelkem)]?.GetValue<decimal>() ?? throw new FormatException("DphCelkem missing."),
+                    DphZaklad: x[nameof(InvoiceItemData.DphZaklad)]?.GetValue<decimal>() ?? throw new FormatException("DphZaklad missing."),
+                    DphDan: x[nameof(InvoiceItemData.DphDan)]?.GetValue<decimal>() ?? throw new FormatException("DphDan missing."),
+                    DphCelkemCm: x[nameof(InvoiceItemData.DphCelkemCm)]?.GetValue<decimal>() ?? throw new FormatException("DphCelkemCm missing."),
+                    DphZakladCm: x[nameof(InvoiceItemData.DphZakladCm)]?.GetValue<decimal>() ?? throw new FormatException("DphZakladCm missing."),
+                    DphDanCm: x[nameof(InvoiceItemData.DphDanCm)]?.GetValue<decimal>() ?? throw new FormatException("DphDanCm missing."),
+                    DphSazba: x[nameof(InvoiceItemData.DphSazba)]?.GetValue<decimal>() ?? throw new FormatException("DphSazba missing.")
+                )).ToArray() ?? throw new FormatException("Polozky missing.")
             );
         }
 
