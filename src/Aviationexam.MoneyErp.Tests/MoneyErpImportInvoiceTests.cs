@@ -263,7 +263,7 @@ public class MoneyErpImportInvoiceTests
 
         public static InvoiceData Parse(string s, IFormatProvider? provider)
         {
-            if (JsonNode.Parse(s) is not JsonArray { Count: 24 } arr)
+            if (JsonNode.Parse(s) is not JsonArray { Count: 25 } arr)
             {
                 throw new FormatException("Input string is not a valid InvoiceData JSON array.");
             }
@@ -293,7 +293,7 @@ public class MoneyErpImportInvoiceTests
                 FirmaKodPsc: arr[21]?.GetValue<string>() ?? throw new FormatException("FirmaKodPsc missing."),
                 FirmaNazevStatu: arr[22]?.GetValue<string>() ?? throw new FormatException("FirmaNazevStatu missing."),
                 FirmaStatKod: arr[23]?.GetValue<string>() ?? throw new FormatException("FirmaStatKod missing."),
-                FirmaStatNazevEn: arr[23]?.GetValue<string>() ?? throw new FormatException("FirmaStatNazevEN missing.")
+                FirmaStatNazevEn: arr[24]?.GetValue<string>() ?? throw new FormatException("FirmaStatNazevEN missing.")
             );
         }
 
