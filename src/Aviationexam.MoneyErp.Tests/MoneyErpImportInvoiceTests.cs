@@ -121,7 +121,8 @@ public class MoneyErpImportInvoiceTests
                                     DphDanCm: 11.02m,
                                     DphSazba: 19
                                 ),
-                            ]
+                            ],
+                            Poznamka: null
                         ),
                         new InvoiceData(
                             CisloDokladu: "IN2504261",
@@ -197,7 +198,8 @@ public class MoneyErpImportInvoiceTests
                                     DphDanCm: 0,
                                     DphSazba: 0
                                 ),
-                            ]
+                            ],
+                            Poznamka: null
                         ),
                     ]
                 )
@@ -283,7 +285,8 @@ public class MoneyErpImportInvoiceTests
                                     DphDanCm: 0,
                                     DphSazba: 0
                                 ),
-                            ]
+                            ],
+                            Poznamka: "c207975c-4ae5-488e-ac6b-b9acb87d1a62"
                         ),
                     ]
                 )
@@ -530,7 +533,8 @@ public class MoneyErpImportInvoiceTests
                                     DphDanCm: 5.73m,
                                     DphSazba: 21
                                 ),
-                            ]
+                            ],
+                            Poznamka: null
                         ),
                     ]
                 )
@@ -627,7 +631,8 @@ public class MoneyErpImportInvoiceTests
         string ZpusobPlatbyNazev,
 
         // Items
-        InvoiceItemData[] Polozky
+        InvoiceItemData[] Polozky,
+        string? Poznamka
     ) : IFormattable, IParsable<InvoiceData>
     {
         public string ToString(string? format, IFormatProvider? formatProvider) => new JsonArray(
@@ -681,7 +686,7 @@ public class MoneyErpImportInvoiceTests
             ZpusobDopravyNazev,
             ZpusobPlatbyKod,
             ZpusobPlatbyNazev,
-            new JsonArray(Polozky.Select(JsonNode (x) => new JsonObject
+            new JsonArray(Polozky.Select(x => (JsonNode)new JsonObject
             {
                 [nameof(x.Nazev)] = x.Nazev,
                 [nameof(x.Mnozstvi)] = x.Mnozstvi,
@@ -704,12 +709,13 @@ public class MoneyErpImportInvoiceTests
                 [nameof(x.DphZakladCm)] = x.DphZakladCm,
                 [nameof(x.DphDanCm)] = x.DphDanCm,
                 [nameof(x.DphSazba)] = x.DphSazba,
-            }).ToArray())
+            }).ToArray()),
+            Poznamka
         ).ToString();
 
         public static InvoiceData Parse(string s, IFormatProvider? provider)
         {
-            if (JsonNode.Parse(s) is not JsonArray { Count: 33 } arr)
+            if (JsonNode.Parse(s) is not JsonArray { Count: 34 } arr)
             {
                 throw new FormatException("Input string is not a valid InvoiceData JSON array.");
             }
@@ -785,7 +791,8 @@ public class MoneyErpImportInvoiceTests
                     DphZakladCm: x[nameof(InvoiceItemData.DphZakladCm)]?.GetValue<decimal>() ?? throw new FormatException("DphZakladCm missing."),
                     DphDanCm: x[nameof(InvoiceItemData.DphDanCm)]?.GetValue<decimal>() ?? throw new FormatException("DphDanCm missing."),
                     DphSazba: x[nameof(InvoiceItemData.DphSazba)]?.GetValue<decimal>() ?? throw new FormatException("DphSazba missing.")
-                )).ToArray() ?? throw new FormatException("Polozky missing.")
+                )).ToArray() ?? throw new FormatException("Polozky missing."),
+                Poznamka: arr[33]?.GetValue<string?>()
             );
         }
 
