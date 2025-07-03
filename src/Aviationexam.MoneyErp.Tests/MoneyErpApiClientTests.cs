@@ -29,6 +29,9 @@ public class MoneyErpApiClientTests
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
         Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
     }
 
     [Theory]
@@ -48,6 +51,9 @@ public class MoneyErpApiClientTests
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
         Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
     }
 
     [Theory]
@@ -67,6 +73,9 @@ public class MoneyErpApiClientTests
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
         Assert.NotEmpty(responses.Data);
+
+        Assert.Empty(responses.AdditionalData);
+        Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
     }
 
     private static ServiceProvider BuildServiceProvider(

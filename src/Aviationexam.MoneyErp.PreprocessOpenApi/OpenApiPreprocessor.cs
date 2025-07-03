@@ -356,6 +356,7 @@ public class OpenApiPreprocessor(
                             (_, "ipOvlivnujeIntrastat") => "IPOvlivnujeIntrastat",
                             (_, "ipCisloZasilky") => "IPCisloZasilky",
                             (_, "dphEditovanoRucne") => "DPHEditovanoRucne",
+                            ("ApiCore.Services.Company.CompanyOutputDto", "www") => "WWW",
                             _ => propertyNameAsString,
                         };
 
