@@ -63,6 +63,7 @@ public class MoneyErpImportInvoiceTests
                             KurzMnozstvi: 1,
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř24OSS_S",
+                            GroupKod: "DE",
                             FirmaKod: "UID786464",
                             FirmaPlatceDph: false,
                             FirmaDic: null,
@@ -73,6 +74,24 @@ public class MoneyErpImportInvoiceTests
                             FirmaNazevStatu: "Germany",
                             FirmaStatKod: "DE",
                             FirmaStatNazevEn: "Germany",
+                            AdresaPrijemceFaktury: new(
+                                Email: "x@x.com",
+                                Telefon: "0049123456789",
+                                Ulice: "Street 1",
+                                Misto: "Roding Strahlfeld",
+                                Psc: "93426",
+                                Stat: "Germany",
+                                Nazev: "John Doe"
+                            ),
+                            AdresaKoncovehoPrijemce: new(
+                                Email: "x@x.com",
+                                Telefon: "004917611762621",
+                                Ulice: "Street 1",
+                                Misto: "Roding Strahlfeld",
+                                Psc: "93426",
+                                Stat: "Germany",
+                                Nazev: "John Doe"
+                            ),
                             ZpusobDopravyKod: "D",
                             ZpusobDopravyNazev: "Download",
                             ZpusobPlatbyKod: "PE",
@@ -120,6 +139,7 @@ public class MoneyErpImportInvoiceTests
                             KurzMnozstvi: 1,
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř26",
+                            GroupKod: "CZ",
                             FirmaKod: "UID819953",
                             FirmaPlatceDph: false,
                             FirmaDic: null,
@@ -130,6 +150,24 @@ public class MoneyErpImportInvoiceTests
                             FirmaNazevStatu: "Switzerland",
                             FirmaStatKod: "CH",
                             FirmaStatNazevEn: "Switzerland",
+                            AdresaPrijemceFaktury: new(
+                                Email: "x@x.com",
+                                Telefon: "0793123456",
+                                Ulice: "Street 1",
+                                Misto: "Arbaz",
+                                Psc: "1974",
+                                Stat: "Switzerland",
+                                Nazev: "John Doe"
+                            ),
+                            AdresaKoncovehoPrijemce: new(
+                                Email: "x@x.com",
+                                Telefon: "0793123456",
+                                Ulice: "Street 1",
+                                Misto: "Arbaz",
+                                Psc: "1974",
+                                Stat: "Switzerland",
+                                Nazev: "John Doe"
+                            ),
                             ZpusobDopravyKod: "D",
                             ZpusobDopravyNazev: "Download",
                             ZpusobPlatbyKod: "PE",
@@ -187,6 +225,7 @@ public class MoneyErpImportInvoiceTests
                             KurzMnozstvi: 1,
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř21",
+                            GroupKod: "CZ",
                             FirmaKod: "LMS28119",
                             FirmaPlatceDph: true,
                             FirmaDic: "HU26524162",
@@ -197,6 +236,24 @@ public class MoneyErpImportInvoiceTests
                             FirmaNazevStatu: "Hungary",
                             FirmaStatKod: "HU",
                             FirmaStatNazevEn: "Hungary",
+                            AdresaPrijemceFaktury: new(
+                                Email: "x@x.com",
+                                Telefon: null,
+                                Ulice: "Street 1",
+                                Misto: "Csomad",
+                                Psc: "2161",
+                                Stat: "Hungary",
+                                Nazev: "Easy"
+                            ),
+                            AdresaKoncovehoPrijemce: new(
+                                Email: "x@ex.com",
+                                Telefon: null,
+                                Ulice: "Street 1",
+                                Misto: "Csomad",
+                                Psc: "2161",
+                                Stat: "Hungary",
+                                Nazev: "Easy"
+                            ),
                             ZpusobDopravyKod: "D",
                             ZpusobDopravyNazev: "Download",
                             ZpusobPlatbyKod: "PE",
@@ -254,6 +311,7 @@ public class MoneyErpImportInvoiceTests
                             KurzMnozstvi: 1,
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř24OSS_S",
+                            GroupKod: "LT",
                             FirmaKod: "UID233969",
                             FirmaPlatceDph: false,
                             FirmaDic: null,
@@ -264,6 +322,24 @@ public class MoneyErpImportInvoiceTests
                             FirmaNazevStatu: "Lithuania",
                             FirmaStatKod: "LT",
                             FirmaStatNazevEn: "Lithuania",
+                            AdresaPrijemceFaktury: new(
+                                Email: "x@x.com",
+                                Telefon: null,
+                                Ulice: "Street 1",
+                                Misto: "Vilnius",
+                                Psc: "11000",
+                                Stat: "Lithuania",
+                                Nazev: "John Doe"
+                            ),
+                            AdresaKoncovehoPrijemce: new(
+                                Email: "x@x.com",
+                                Telefon: null,
+                                Ulice: "Street 1",
+                                Misto: "Vilnius",
+                                Psc: "11000",
+                                Stat: "Lithuania",
+                                Nazev: "John Doe"
+                            ),
                             ZpusobDopravyKod: "D",
                             ZpusobDopravyNazev: "Download",
                             ZpusobPlatbyKod: "PE",
@@ -570,6 +646,7 @@ public class MoneyErpImportInvoiceTests
             KurzMnozstvi,
             MenaKod,
             CleneniDphKod,
+            GroupKod,
             FirmaKod,
             FirmaPlatceDph,
             FirmaDic,
@@ -580,11 +657,31 @@ public class MoneyErpImportInvoiceTests
             FirmaNazevStatu,
             FirmaStatKod,
             FirmaStatNazevEn,
+            new JsonObject
+            {
+                [nameof(AdresaPrijemceFaktury.Email)] = AdresaPrijemceFaktury.Email,
+                [nameof(AdresaPrijemceFaktury.Telefon)] = AdresaPrijemceFaktury.Telefon,
+                [nameof(AdresaPrijemceFaktury.Ulice)] = AdresaPrijemceFaktury.Ulice,
+                [nameof(AdresaPrijemceFaktury.Misto)] = AdresaPrijemceFaktury.Misto,
+                [nameof(AdresaPrijemceFaktury.Psc)] = AdresaPrijemceFaktury.Psc,
+                [nameof(AdresaPrijemceFaktury.Stat)] = AdresaPrijemceFaktury.Stat,
+                [nameof(AdresaPrijemceFaktury.Nazev)] = AdresaPrijemceFaktury.Nazev,
+            },
+            new JsonObject
+            {
+                [nameof(AdresaKoncovehoPrijemce.Email)] = AdresaKoncovehoPrijemce.Email,
+                [nameof(AdresaKoncovehoPrijemce.Telefon)] = AdresaKoncovehoPrijemce.Telefon,
+                [nameof(AdresaKoncovehoPrijemce.Ulice)] = AdresaKoncovehoPrijemce.Ulice,
+                [nameof(AdresaKoncovehoPrijemce.Misto)] = AdresaKoncovehoPrijemce.Misto,
+                [nameof(AdresaKoncovehoPrijemce.Psc)] = AdresaKoncovehoPrijemce.Psc,
+                [nameof(AdresaKoncovehoPrijemce.Stat)] = AdresaKoncovehoPrijemce.Stat,
+                [nameof(AdresaKoncovehoPrijemce.Nazev)] = AdresaKoncovehoPrijemce.Nazev,
+            },
             ZpusobDopravyKod,
             ZpusobDopravyNazev,
             ZpusobPlatbyKod,
             ZpusobPlatbyNazev,
-            new JsonArray(Polozky.AsValueEnumerable().Select(JsonNode (x) => new JsonObject
+            new JsonArray(Polozky.Select(JsonNode (x) => new JsonObject
             {
                 [nameof(x.Nazev)] = x.Nazev,
                 [nameof(x.Mnozstvi)] = x.Mnozstvi,
@@ -612,7 +709,7 @@ public class MoneyErpImportInvoiceTests
 
         public static InvoiceData Parse(string s, IFormatProvider? provider)
         {
-            if (JsonNode.Parse(s) is not JsonArray { Count: 30 } arr)
+            if (JsonNode.Parse(s) is not JsonArray { Count: 33 } arr)
             {
                 throw new FormatException("Input string is not a valid InvoiceData JSON array.");
             }
@@ -633,22 +730,41 @@ public class MoneyErpImportInvoiceTests
                 KurzMnozstvi: arr[12]?.GetValue<int>() ?? throw new FormatException("KurzMnozstvi missing."),
                 MenaKod: arr[13]?.GetValue<string>() ?? throw new FormatException("MenaKod missing."),
                 CleneniDphKod: arr[14]?.GetValue<string>() ?? throw new FormatException("CleneniDPHKod missing."),
-                FirmaKod: arr[15]?.GetValue<string>() ?? throw new FormatException("FirmaKod missing."),
-                FirmaPlatceDph: arr[16]?.GetValue<bool>() ?? throw new FormatException("FirmaPlatceDPH missing."),
-                FirmaDic: arr[17]?.GetValue<string?>(),
-                FirmaNazev: arr[18]?.GetValue<string>() ?? throw new FormatException("FirmaNazev missing."),
-                FirmaUlice: arr[19]?.GetValue<string>() ?? throw new FormatException("FirmaUlice missing."),
-                FirmaMisto: arr[20]?.GetValue<string>() ?? throw new FormatException("FirmaMisto missing."),
-                FirmaKodPsc: arr[21]?.GetValue<string>() ?? throw new FormatException("FirmaKodPsc missing."),
-                FirmaNazevStatu: arr[22]?.GetValue<string>() ?? throw new FormatException("FirmaNazevStatu missing."),
-                FirmaStatKod: arr[23]?.GetValue<string>() ?? throw new FormatException("FirmaStatKod missing."),
-                FirmaStatNazevEn: arr[24]?.GetValue<string>() ?? throw new FormatException("FirmaStatNazevEN missing."),
-                ZpusobDopravyKod: arr[25]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyKod missing."),
-                ZpusobDopravyNazev: arr[26]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyNazev missing."),
-                ZpusobPlatbyKod: arr[27]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyKod missing."),
-                ZpusobPlatbyNazev: arr[28]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyNazev missing."),
-                Polozky: arr[29]?.AsArray().Select(x => new InvoiceItemData(
-                    Nazev: x[nameof(InvoiceItemData.Nazev)]?.GetValue<string>() ?? throw new FormatException("Nazev missing."),
+                GroupKod: arr[15]?.GetValue<string>() ?? throw new FormatException("GroupKod missing."),
+                FirmaKod: arr[16]?.GetValue<string>() ?? throw new FormatException("FirmaKod missing."),
+                FirmaPlatceDph: arr[17]?.GetValue<bool>() ?? throw new FormatException("FirmaPlatceDPH missing."),
+                FirmaDic: arr[18]?.GetValue<string?>(),
+                FirmaNazev: arr[19]?.GetValue<string>() ?? throw new FormatException("FirmaNazev missing."),
+                FirmaUlice: arr[20]?.GetValue<string>() ?? throw new FormatException("FirmaUlice missing."),
+                FirmaMisto: arr[21]?.GetValue<string>() ?? throw new FormatException("FirmaMisto missing."),
+                FirmaKodPsc: arr[22]?.GetValue<string>() ?? throw new FormatException("FirmaKodPsc missing."),
+                FirmaNazevStatu: arr[23]?.GetValue<string>() ?? throw new FormatException("FirmaNazevStatu missing."),
+                FirmaStatKod: arr[24]?.GetValue<string>() ?? throw new FormatException("FirmaStatKod missing."),
+                FirmaStatNazevEn: arr[25]?.GetValue<string>() ?? throw new FormatException("FirmaStatNazevEN missing."),
+                AdresaPrijemceFaktury: new InvoiceAddressData(
+                    Email: arr[26]?[nameof(InvoiceAddressData.Email)]?.GetValue<string?>(),
+                    Telefon: arr[26]?[nameof(InvoiceAddressData.Telefon)]?.GetValue<string?>(),
+                    Ulice: arr[26]?[nameof(InvoiceAddressData.Ulice)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Ulice missing."),
+                    Misto: arr[26]?[nameof(InvoiceAddressData.Misto)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Misto missing."),
+                    Psc: arr[26]?[nameof(InvoiceAddressData.Psc)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Psc missing."),
+                    Stat: arr[26]?[nameof(InvoiceAddressData.Stat)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Stat missing."),
+                    Nazev: arr[26]?[nameof(InvoiceAddressData.Nazev)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Nazev missing.")
+                ),
+                AdresaKoncovehoPrijemce: new InvoiceAddressData(
+                    Email: arr[27]?[nameof(InvoiceAddressData.Email)]?.GetValue<string?>(),
+                    Telefon: arr[27]?[nameof(InvoiceAddressData.Telefon)]?.GetValue<string?>(),
+                    Ulice: arr[27]?[nameof(InvoiceAddressData.Ulice)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Ulice missing."),
+                    Misto: arr[27]?[nameof(InvoiceAddressData.Misto)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Misto missing."),
+                    Psc: arr[27]?[nameof(InvoiceAddressData.Psc)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Psc missing."),
+                    Stat: arr[27]?[nameof(InvoiceAddressData.Stat)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Stat missing."),
+                    Nazev: arr[27]?[nameof(InvoiceAddressData.Nazev)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Nazev missing.")
+                ),
+                ZpusobDopravyKod: arr[28]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyKod missing."),
+                ZpusobDopravyNazev: arr[29]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyNazev missing."),
+                ZpusobPlatbyKod: arr[30]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyKod missing."),
+                ZpusobPlatbyNazev: arr[31]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyNazev missing."),
+                Polozky: arr[32]?.AsArray().Select(static x => new InvoiceItemData(
+                    Nazev: x![nameof(InvoiceItemData.Nazev)]?.GetValue<string>() ?? throw new FormatException("Nazev missing."),
                     Mnozstvi: x[nameof(InvoiceItemData.Mnozstvi)]?.GetValue<decimal>() ?? throw new FormatException("Mnozstvi missing."),
                     DphEditovanoRucne: x[nameof(InvoiceItemData.DphEditovanoRucne)]?.GetValue<bool>() ?? throw new FormatException("DphEditovanoRucne missing."),
                     DruhSazbyDph: x[nameof(InvoiceItemData.DruhSazbyDph)]?.GetValue<int>() ?? throw new FormatException("DruhSazbyDph missing."),
