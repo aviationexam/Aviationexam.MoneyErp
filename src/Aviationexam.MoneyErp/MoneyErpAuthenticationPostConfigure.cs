@@ -24,6 +24,9 @@ public sealed class MoneyErpAuthenticationPostConfigure : IPostConfigureOptions<
 
             // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
             options.TokenEndpoint ??= new Uri(options.Endpoint, options.TokenPath);
+
+            // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+            options.GraphQlEndpoint ??= new Uri(options.Endpoint, options.GraphQlPath);
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
