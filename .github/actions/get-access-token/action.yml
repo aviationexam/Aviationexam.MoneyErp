@@ -1,0 +1,39 @@
+name: 'Get Access Token'
+description: 'Requests an access token from OpenIddict.'
+inputs:
+  token_server_url:
+    description: 'The base URL of the token server.'
+    required: true
+  client_id:
+    description: 'The client ID.'
+    required: true
+  client_secret:
+    description: 'The client secret.'
+    required: true
+outputs:
+  access_token:
+    description: 'The access token.'
+    value: ${{ steps.get_token.outputs.access_token }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Request access token from OpenIddict
+      id: get_token
+      shell: bash
+      run: |
+        response=$(curl -s --request POST "${{ inputs.token_server_url }}/connect/token" \
+          --header "Content-Type: application/x-www-form-urlencoded" \
+          --data-urlencode "grant_type=client_credentials" \
+          --data-urlencode "client_id=${{ inputs.client_id }}" \
+          --data-urlencode "client_secret=${{ inputs.client_secret }}" \
+          --data-urlencode "scope=S5Api")
+
+        token=$(echo "$response" | jq -r .access_token)
+
+        if [ "$token" == "null" ] || [ -z "$token" ]; then
+          echo "Error: Could not retrieve access token"
+          exit 1
+        fi
+
+        echo "::add-mask::$token"
+        echo "access_token=$token" >> "$GITHUB_OUTPUT"
