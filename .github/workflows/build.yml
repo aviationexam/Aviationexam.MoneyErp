@@ -20,8 +20,8 @@ jobs:
             8.0.x
             9.0.x
       - uses: actions/checkout@v4
-      - name: Fetch all history for all tags and branches
-        run: git fetch --prune --unshallow
+        with:
+          fetch-depth: 0  # This will fetch the full history
       - name: Get access token
         id: get_token
         uses: ./.github/actions/get-access-token
