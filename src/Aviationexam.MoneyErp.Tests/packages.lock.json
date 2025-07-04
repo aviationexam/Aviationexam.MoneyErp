@@ -27,12 +27,6 @@
           "Microsoft.Net.Http.Headers": "9.0.6"
         }
       },
-      "Microsoft.NET.ILLink.Tasks": {
-        "type": "Direct",
-        "requested": "[9.0.6, )",
-        "resolved": "9.0.6",
-        "contentHash": "TXy3SbJzGXQbxxIxCjdrp8bwEyTDImyYNpTpd6v7P3JL2Y7dno8EYG7dPezfYTa5SoWKdhbH9cbnwHHs3BR5gA=="
-      },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[17.14.1, )",
@@ -291,7 +285,6 @@
       "aviationexam.moneyerp": {
         "type": "Project",
         "dependencies": {
-          "Aviationexam.MoneyErp.GraphQl": "[1.0.0, )",
           "Microsoft.AspNetCore.WebUtilities": "[9.0.6, )",
           "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",

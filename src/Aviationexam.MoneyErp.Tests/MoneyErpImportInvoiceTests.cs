@@ -4,6 +4,7 @@ using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.IssuedInvoice;
 using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.Shop;
 using Aviationexam.MoneyErp.Client.Models.Shared.Enums;
 using Aviationexam.MoneyErp.Extensions;
+using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -13,6 +14,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
 using ZLinq;
+using Guid = System.Guid;
 
 namespace Aviationexam.MoneyErp.Tests;
 
@@ -70,7 +72,14 @@ public class MoneyErpImportInvoiceTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
+        var graphQLClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+
+        var version = await graphQLClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
+        var b = await graphQLClient.Query(x => x.Companies(selector: c => c.ID), cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(version.Data);
+        Assert.NotEmpty(version.Data);
 
         ICollection<(Guid? firmaId, int value)> ids = [];
         foreach (var data in invoiceData)
@@ -337,7 +346,7 @@ public class MoneyErpImportInvoiceTests
                     //invoice.AdresaKoncovehoPrijemce.Stat,
                     ZpusobDopravyID = invoice.ZpusobDopravyKod == "" ? Guid.Parse("") : null,
                     ZpusobPlatbyID = invoice.ZpusobPlatbyKod == "" ? Guid.Parse("") : null,
-                    PredkontaceID = GetPredkontaceId(invoice.Polozky.AsValueEnumerable().Select(x=>x.PredkontaceKod).Distinct().FirstOrDefault()),
+                    PredkontaceID = GetPredkontaceId(invoice.Polozky.AsValueEnumerable().Select(x => x.PredkontaceKod).Distinct().FirstOrDefault()),
                     Polozky =
                     [
                         .. invoice.Polozky.AsValueEnumerable().Select(x => new IssuedInvoiceItemInputDto

@@ -1,4 +1,5 @@
 using Aviationexam.MoneyErp.Extensions;
+using Aviationexam.MoneyErp.Graphql.Extensions;
 using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,10 @@ public static class ServiceProviderFactory
             x.ClientSecret = authenticationData.ClientSecret;
             x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
             x.Endpoint = new Uri(authenticationData.ServerAddress, UriKind.RelativeOrAbsolute);
+        }), shouldRedactHeaderValue)
+        .AddMoneyErpApiGraphQlClient(builder => builder.Configure(x =>
+        {
+            x.GraphQlEndpoint = new Uri(authenticationData.ServerAddress, UriKind.RelativeOrAbsolute);
         }), shouldRedactHeaderValue)
         .BuildServiceProvider();
 }

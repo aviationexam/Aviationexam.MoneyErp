@@ -8,6 +8,10 @@
 
   <Import Project="..\WarningConfiguration.targets" />
 
+  <PropertyGroup Label="Aot ready">
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+
   <PropertyGroup>
     <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
@@ -31,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.MoneyErp.Graphql\Aviationexam.MoneyErp.Graphql.csproj" />
     <ProjectReference Include="..\Aviationexam.MoneyErp\Aviationexam.MoneyErp.csproj" />
   </ItemGroup>
 
