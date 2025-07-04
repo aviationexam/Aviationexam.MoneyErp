@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="AoT">
-    <PublishAot>true</PublishAot>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 

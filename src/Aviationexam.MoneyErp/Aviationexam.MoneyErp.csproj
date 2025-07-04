@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="AoT">
-    <PublishAot>true</PublishAot>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
@@ -51,6 +51,10 @@
     <PackageReference Include="Microsoft.Extensions.Http" VersionOverride="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" VersionOverride="8.0.2" />
     <PackageReference Include="System.Text.Json" VersionOverride="8.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.MoneyErp.GraphQl\Aviationexam.MoneyErp.GraphQl.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
