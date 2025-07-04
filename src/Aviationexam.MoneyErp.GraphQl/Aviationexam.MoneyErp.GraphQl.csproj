@@ -14,13 +14,16 @@
 
   <Import Project="..\WarningConfiguration.targets" />
 
-  <PropertyGroup Condition=" Exists('$(MSBuildProjectDirectory)/obj/ZeroQL/config.zeroql.json.g.cs') ">
-    <ZeroQLOnBuildTriggerEnabled>False</ZeroQLOnBuildTriggerEnabled>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="ZeroQL" />
-    <PackageReference Include="ZLinq" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <PackageReference Include="System.Text.Json" VersionOverride="8.0.5" />
   </ItemGroup>
 
 </Project>
