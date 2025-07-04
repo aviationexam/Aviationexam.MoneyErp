@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="ZeroQL" Version="7.0.3" />
+    <PackageVersion Include="ZeroQL.Runtime" Version="7.0.3" />
     <PackageVersion Include="ZLinq" Version="1.4.12" />
   </ItemGroup>
   <ItemGroup>

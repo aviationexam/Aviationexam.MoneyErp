@@ -308,7 +308,7 @@
           "Microsoft.Extensions.Http": "[9.0.6, )",
           "Microsoft.Extensions.Options": "[9.0.6, )",
           "System.Text.Json": "[9.0.6, )",
-          "ZeroQL": "[7.0.3, )"
+          "ZeroQL.Runtime": "[7.0.3, )"
         }
       },
       "Castle.Core": {
@@ -434,11 +434,11 @@
         "resolved": "9.0.6",
         "contentHash": "h+ZtYTyTnTh5Ju6mHCKb3FPGx4ylJZgm9W7Y2psUnkhQRPMOIxX+TCN0ZgaR/+Yea+93XHWAaMzYTar1/EHIPg=="
       },
-      "ZeroQL": {
+      "ZeroQL.Runtime": {
         "type": "CentralTransitive",
         "requested": "[7.0.3, )",
         "resolved": "7.0.3",
-        "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
+        "contentHash": "byzm9NFFg4KkccXXcdgqkTeNPA7XZezaDwHGGBNzmSDjvKel6Cf7dfdGWs4nztw6T4trdxvfg0ge0xId+p2XoA=="
       }
     },
     "net9.0/linux-x64": {

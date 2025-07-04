@@ -22,7 +22,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZeroQL" />
+    <PackageReference Include="ZeroQL.Runtime" />
+    <PackageReference Include="ZeroQL" PrivateAssets="all">
+      <IncludeAssets>compile; runtime; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
