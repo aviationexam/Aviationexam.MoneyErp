@@ -1,5 +1,4 @@
 using Aviationexam.MoneyErp.Client;
-using Aviationexam.MoneyErp.GraphQLClient;
 using Aviationexam.MoneyErp.KiotaServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -86,33 +85,6 @@ public static class DependencyInjectionExtensions
         serviceCollection.AddTransient<MoneyErpApiClient>(serviceProvider => new MoneyErpApiClient(
             serviceProvider.GetRequiredKeyedService<IRequestAdapter>(MoneyErpServiceKey)
         ));
-
-        serviceCollection.AddMoneyErpApiGraphQlClient(
-            shouldRedactHeaderValue: shouldRedactHeaderValue
-        );
-
-        return serviceCollection;
-    }
-
-    public static IServiceCollection AddMoneyErpApiGraphQlClient(
-        this IServiceCollection serviceCollection,
-        bool shouldRedactHeaderValue = true
-    )
-    {
-        var httpClientBuilder = serviceCollection
-            .AddHttpClient<MoneyErpGraphQLClient>()
-            .ConfigureHttpClient(static (serviceProvider, httpClient) =>
-            {
-                var options = serviceProvider.GetRequiredService<IOptions<MoneyErpAuthenticationOptions>>();
-                httpClient.BaseAddress = options.Value.GraphQlEndpoint;
-            })
-            .AddDefaultLogger();
-
-        if (shouldRedactHeaderValue is false)
-        {
-            serviceCollection
-                .Configure<HttpClientFactoryOptions>(httpClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false);
-        }
 
         return serviceCollection;
     }
