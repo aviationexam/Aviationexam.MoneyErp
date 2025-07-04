@@ -3,12 +3,9 @@ using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.Company;
 using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.IssuedInvoice;
 using Aviationexam.MoneyErp.Client.Models.ApiCore.Services.Shop;
 using Aviationexam.MoneyErp.Client.Models.Shared.Enums;
-using Aviationexam.MoneyErp.Client.V10.Company;
 using Aviationexam.MoneyErp.Extensions;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Kiota.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -21,6 +18,49 @@ namespace Aviationexam.MoneyErp.Tests;
 
 public class MoneyErpImportInvoiceTests
 {
+    private static Guid? GetStateFromCode(
+        string code
+    ) => code switch
+    {
+        "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
+        _ => null,
+    };
+
+    private static Guid? GetCurrencyCode(
+        string code
+    ) => code switch
+    {
+        "CZK" => Guid.Parse("00f9adb2-d300-42c3-9240-ae1320b019cc"),
+        "EUR" => Guid.Parse("e9daab77-0517-4f36-ac41-9b798182a7ae"),
+        _ => null,
+    };
+
+    private static Guid? GetVatGrouping(
+        string code
+    ) => code switch
+    {
+        "19Ř01,02" => Guid.Parse("9de3ad17-6b5f-4b16-91f7-8adedb45d78c"),
+        "19Ř20" => Guid.Parse("75b45b4f-4d84-4e8e-8397-0018dcf74ded"),
+        _ => null,
+    };
+
+    private static Guid? GetGroupId(
+        string code
+    ) => code switch
+    {
+        "DE" => Guid.Parse("43fc48a6-c90f-4024-8998-e24efb2d4f39"),
+        "CZ" => Guid.Parse("4ec4c75b-7c26-447f-ad94-ff1ecdabaeb9"),
+        _ => null,
+    };
+
+    private static Guid? GetPredkontaceId(
+        string? code
+    ) => code switch
+    {
+        "FV002" => Guid.Parse("9157f742-e135-4add-b41b-1bc6d1cbe892"),
+        _ => null,
+    };
+
     [Theory]
     [ClassData(typeof(MoneyErpInvoiceClassData))]
     public async Task ImportInvoiceWorks(
@@ -35,6 +75,8 @@ public class MoneyErpImportInvoiceTests
         ICollection<(Guid? firmaId, int value)> ids = [];
         foreach (var data in invoiceData)
         {
+            var stateId = GetStateFromCode(data.FirmaStatKod);
+
             //FirmaKod
             //FirmaPlatceDph
             //FirmaDic
@@ -62,14 +104,17 @@ public class MoneyErpImportInvoiceTests
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[3].PropertyName", nameof(CompanyOutputDto.FaktPsc)));
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[3].Operation", "Equal"));
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[3].ExpectedValue", data.FirmaKodPsc));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].PropertyName", nameof(CompanyOutputDto.FaktStat)));
+                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].PropertyName", nameof(CompanyOutputDto.PlatceDPH)));
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].ExpectedValue", data.FirmaNazevStatu));
+                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].ExpectedValue", data.FirmaPlatceDph ? "true" : "false"));
+                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].PropertyName", "FaktStat_ID"));
+                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].Operation", "Equal"));
+                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].ExpectedValue", stateId.ToString()));
                     if (!string.IsNullOrEmpty(data.FirmaDic))
                     {
-                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].PropertyName", nameof(CompanyOutputDto.DIC)));
-                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].Operation", "Equal"));
-                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].ExpectedValue", data.FirmaDic));
+                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[6].PropertyName", nameof(CompanyOutputDto.DIC)));
+                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[6].Operation", "Equal"));
+                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[6].ExpectedValue", data.FirmaDic));
                     }
                 }
             );
@@ -78,8 +123,10 @@ public class MoneyErpImportInvoiceTests
                 requestInformation, TestContext.Current.CancellationToken
             );
             var companyGuid = company?.Data?.AsValueEnumerable()
+                .Where(x => x.Deleted is false)
                 .Where(x => string.IsNullOrEmpty(data.FirmaDic) ? string.IsNullOrEmpty(x.DIC) : x.DIC == data.FirmaDic)
-                .SingleOrDefault()?
+                .OrderBy(x => x.CreateDate)
+                .FirstOrDefault()?
                 .ID;
 
             if (companyGuid is null)
@@ -268,9 +315,9 @@ public class MoneyErpImportInvoiceTests
                     CelkovaCastkaCM = (double) invoice.CelkovaCastkaCm,
                     UcetniKurzKurz = (double) invoice.Kurz,
                     //invoice.KurzMnozstvi,
-                    MenaID = invoice.MenaKod == "EUR" ? Guid.Parse("") : null,
-                    CleneniDPHID = invoice.CleneniDphKod == "19Ř24OSS_S" ? Guid.Parse("") : null,
-                    GroupID = invoice.GroupKod == "" ? Guid.Parse("") : null,
+                    MenaID = GetCurrencyCode(invoice.MenaKod),
+                    CleneniDPHID = GetVatGrouping(invoice.CleneniDphKod),
+                    GroupID = GetGroupId(invoice.GroupKod),
                     FirmaID = ids.firmaId,
                     AdresaPrijemceFakturyKontaktniOsobaID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
 
@@ -290,6 +337,7 @@ public class MoneyErpImportInvoiceTests
                     //invoice.AdresaKoncovehoPrijemce.Stat,
                     ZpusobDopravyID = invoice.ZpusobDopravyKod == "" ? Guid.Parse("") : null,
                     ZpusobPlatbyID = invoice.ZpusobPlatbyKod == "" ? Guid.Parse("") : null,
+                    PredkontaceID = GetPredkontaceId(invoice.Polozky.AsValueEnumerable().Select(x=>x.PredkontaceKod).Distinct().FirstOrDefault()),
                     Polozky =
                     [
                         .. invoice.Polozky.AsValueEnumerable().Select(x => new IssuedInvoiceItemInputDto
@@ -298,7 +346,7 @@ public class MoneyErpImportInvoiceTests
                             Mnozstvi = (double) x.Mnozstvi,
                             DPHEditovanoRucne = x.DphEditovanoRucne,
                             DruhSazbyDPH = x.DruhSazbyDph,
-                            PredkontaceID = x.PredkontaceKod == "" ? Guid.Parse("") : null,
+                            PredkontaceID = GetPredkontaceId(x.PredkontaceKod),
                             Jednotka = x.Jednotka,
                             CisloPolozky = x.CisloPolozky,
                             TypObsahu = x.TypObsahu,
