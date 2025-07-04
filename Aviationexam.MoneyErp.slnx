@@ -12,6 +12,14 @@
     <File Path=".env.local" />
     <File Path=".config\dotnet-tools.json" />
   </Folder>
+  <Folder Name="/Solution Items/actions/">
+  </Folder>
+  <Folder Name="/Solution Items/actions/get-access-token">
+    <File Path=".github\actions\get-access-token\action.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/actions/fetch-graphql-schema">>
+    <File Path=".github\actions\fetch-graphql-schema\action.yml" />
+  </Folder>
   <Folder Name="/Solution Items/workflow/">
     <File Path=".github\workflows\build.yml" />
     <File Path=".github\workflows\nightly-release.yml" />

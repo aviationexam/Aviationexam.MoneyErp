@@ -39,6 +39,11 @@ jobs:
           client_id: ${{ secrets.MONEYERP_CLIENT_ID }}
           client_secret: ${{ secrets.MONEYERP_CLIENT_SECRET }}
       - name: Fetch GrapQL schema
+        uses: ./.github/actions/fetch-graphql-schema
+        with:
+          endpoint: ${{ secrets.MONEYERP_ENDPOINT }}
+          access_token: ${{ steps.get_token.outputs.access_token }}
+      - name: Fetch GrapQL schema
         run: |
           cd src/Aviationexam.MoneyErp.GraphQl
 
