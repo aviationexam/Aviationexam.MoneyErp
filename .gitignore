@@ -62,3 +62,4 @@ nunit-*.xml
 /src/Aviationexam.MoneyErp.GraphQl/schema.graphql
 /src/Aviationexam.MoneyErp.GraphQl/schema.json
 /src/Aviationexam.MoneyErp.GraphQl/schema-fixed.json
+/src/Aviationexam.MoneyErp.GraphQl/GraphQlClient.g.cs
