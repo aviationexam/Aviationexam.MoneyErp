@@ -59,3 +59,6 @@ nunit-*.xml
 /src/Aviationexam.MoneyErp/Client
 /src/Aviationexam.MoneyErp/openapi.json
 .env.local
+/src/Aviationexam.MoneyErp.GraphQl/schema.graphql
+/src/Aviationexam.MoneyErp.GraphQl/schema.json
+/src/Aviationexam.MoneyErp.GraphQl/schema-fixed.json
