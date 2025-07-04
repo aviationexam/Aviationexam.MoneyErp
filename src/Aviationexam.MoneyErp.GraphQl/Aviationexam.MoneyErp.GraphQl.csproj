@@ -14,6 +14,10 @@
 
   <Import Project="..\WarningConfiguration.targets" />
 
+  <PropertyGroup Condition=" Exists('$(MSBuildProjectDirectory)/obj/ZeroQL/config.zeroql.json.g.cs') ">
+    <ZeroQLOnBuildTriggerEnabled>False</ZeroQLOnBuildTriggerEnabled>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="ZeroQL" />
   </ItemGroup>
