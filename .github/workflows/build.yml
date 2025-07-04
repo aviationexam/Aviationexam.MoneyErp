@@ -26,7 +26,7 @@ jobs:
         id: get_token
         uses: ./.github/actions/get-access-token
         with:
-          token_server_url: ${{ secrets.TOKEN_SERVER_URL }}
+          token_server_url: ${{ secrets.MONEYERP_ENDPOINT }}
           client_id: ${{ secrets.CLIENT_ID }}
           client_secret: ${{ secrets.CLIENT_SECRET }}
       - name: Fetch GrapQL schema
