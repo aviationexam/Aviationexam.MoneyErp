@@ -51,6 +51,8 @@ jobs:
 
           jq '{data: .Data}' schema.json > schema-fixed.json
 
+          npm install -g graphql-json-to-sdl
+
           graphql-json-to-sdl schema-fixed.json > schema.graphql
         env:
           MONEYERP_ENDPOINT: ${{ secrets.MONEYERP_ENDPOINT }}
