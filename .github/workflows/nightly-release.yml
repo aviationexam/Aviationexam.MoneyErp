@@ -36,8 +36,8 @@ jobs:
         uses: ./.github/actions/get-access-token
         with:
           token_server_url: ${{ secrets.MONEYERP_ENDPOINT }}
-          client_id: ${{ secrets.CLIENT_ID }}
-          client_secret: ${{ secrets.CLIENT_SECRET }}
+          client_id: ${{ secrets.MONEYERP_CLIENT_ID }}
+          client_secret: ${{ secrets.MONEYERP_CLIENT_SECRET }}
       - name: Fetch GrapQL schema
         run: |
           cd src/Aviationexam.MoneyErp.GraphQl
