@@ -25,6 +25,7 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.19.0" />
   </ItemGroup>
   <ItemGroup>
+    <PackageVersion Include="ZeroQL" Version="7.0.3" />
     <PackageVersion Include="ZLinq" Version="1.4.12" />
   </ItemGroup>
   <ItemGroup>

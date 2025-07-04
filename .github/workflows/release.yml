@@ -40,7 +40,9 @@ jobs:
       - name: Build with .Net
         run: dotnet build --configuration Release --no-restore --nologo "-p:Version=${{ steps.gitversion.outputs.FullSemVer }}"
       - name: Pack with .Net
-        run: dotnet pack src/Aviationexam.MoneyErp/Aviationexam.MoneyErp.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
+        run: |
+          dotnet pack src/Aviationexam.MoneyErp/Aviationexam.MoneyErp.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
+          dotnet pack src/Aviationexam.MoneyErp.GraphQl/Aviationexam.MoneyErp.GraphQl.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
       - uses: actions/upload-artifact@v4
         with:
           name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}

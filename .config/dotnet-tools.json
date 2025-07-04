@@ -8,6 +8,13 @@
         "kiota"
       ],
       "rollForward": false
+    },
+    "zeroql.cli": {
+      "version": "7.0.3",
+      "commands": [
+        "zeroql"
+      ],
+      "rollForward": false
     }
   }
 }
