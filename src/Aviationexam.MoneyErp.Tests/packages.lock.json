@@ -310,6 +310,10 @@
       "aviationexam.moneyerp.graphql": {
         "type": "Project",
         "dependencies": {
+          "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",
+          "Microsoft.Extensions.Http": "[9.0.6, )",
+          "Microsoft.Extensions.Options": "[9.0.6, )",
           "System.Text.Json": "[9.0.6, )",
           "ZeroQL": "[7.0.3, )"
         }
