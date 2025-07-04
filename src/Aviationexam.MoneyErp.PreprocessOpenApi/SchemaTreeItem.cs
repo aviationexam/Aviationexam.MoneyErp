@@ -11,4 +11,8 @@ public sealed record SchemaTreeItem(
 )
 {
     public bool IsArray { get; set; }
+
+    public string? Type { get; set; }
+
+    public string? Format { get; set; }
 }

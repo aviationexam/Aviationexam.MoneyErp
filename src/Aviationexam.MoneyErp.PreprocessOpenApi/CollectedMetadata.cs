@@ -19,7 +19,7 @@ public sealed partial class CollectedMetadata(
     private readonly Dictionary<string, ICollection<string>> _knownPaths = [];
     private readonly HashSet<(string Path, string Method)> _ignoredPathMethods = [];
     private readonly HashSet<PathParameter> _pathParameters = [];
-    private readonly HashSet<(string pathName, string methodName, string itemsRef)> _paginatedResponse = [];
+    private readonly HashSet<(string pathName, string methodName, ISchema schema)> _paginatedResponse = [];
 
     public void AddVersion(ReadOnlySpan<byte> target)
     {
@@ -276,16 +276,20 @@ public sealed partial class CollectedMetadata(
 
     public void AddPaginatedResponse(
         string pathName, string methodName, ReadOnlySpan<byte> itemsRef
-    ) => _paginatedResponse.Add((pathName, methodName, Encoding.UTF8.GetString(itemsRef)));
+    ) => _paginatedResponse.Add((pathName, methodName, new RefSchema(Encoding.UTF8.GetString(itemsRef))));
+
+    public void AddPaginatedResponse(
+        string pathName, string methodName, string type, string? format
+    ) => _paginatedResponse.Add((pathName, methodName, new InlineSchema(type, format)));
 
     public bool IsPaginatedResponse(
-        string pathName, string methodName, out string? itemsRef
+        string pathName, string methodName, out ISchema? itemsRef
     )
     {
         itemsRef = _paginatedResponse
             .AsValueEnumerable()
             .Where(x => x.pathName == pathName && x.methodName == methodName)
-            .Select(x => x.itemsRef)
+            .Select(x => x.schema)
             .FirstOrDefault();
 
         return itemsRef is not null;
