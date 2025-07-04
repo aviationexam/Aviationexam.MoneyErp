@@ -12,7 +12,6 @@ using Microsoft.Kiota.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
@@ -29,7 +28,7 @@ public class MoneyErpImportInvoiceTests
         InvoiceData[] invoiceData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 

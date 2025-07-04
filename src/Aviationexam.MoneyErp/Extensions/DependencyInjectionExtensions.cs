@@ -3,6 +3,7 @@ using Aviationexam.MoneyErp.KiotaServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
@@ -15,8 +16,8 @@ namespace Aviationexam.MoneyErp.Extensions;
 
 public static class DependencyInjectionExtensions
 {
-    public const string MoneyErpHttpClient = "MoneyErp.Client";
-    public const string MoneyErpHttpTokenClient = "MoneyErp.TokenClient";
+    public const string MoneyErpHttpClient = "MoneyErp.HttpClient";
+    public const string MoneyErpHttpTokenClient = "MoneyErp.HttpTokenClient";
     public const string MoneyErpServiceKey = "MoneyErp";
 
     public static IServiceCollection AddMoneyErpApiClient(
@@ -25,6 +26,11 @@ public static class DependencyInjectionExtensions
         bool shouldRedactHeaderValue = true
     )
     {
+        serviceCollection.AddKeyedScoped<LoggingHandler>(
+            MoneyErpHttpClient,
+            static (serviceProvider, key) => new LoggingHandler(serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(key!.ToString()!))
+        );
+
         var httpClientBuilder = serviceCollection.AddHttpClient(MoneyErpHttpClient)
             .AttachKiotaHandlers()
             .ConfigureHttpClient(static (serviceProvider, httpClient) =>
@@ -35,6 +41,11 @@ public static class DependencyInjectionExtensions
             .AddDefaultLogger();
         var httpTokenClientBuilder = serviceCollection.AddHttpClient(MoneyErpHttpTokenClient)
             .AddDefaultLogger();
+
+        serviceCollection.Configure<HttpClientFactoryOptions>(
+            httpClientBuilder.Name,
+            options => options.HttpMessageHandlerBuilderActions.Add(b => b.AdditionalHandlers.Add(b.Services.GetRequiredKeyedService<LoggingHandler>(httpClientBuilder.Name)))
+        );
 
 #if NET9_0_OR_GREATER
         httpClientBuilder.AddAsKeyed();

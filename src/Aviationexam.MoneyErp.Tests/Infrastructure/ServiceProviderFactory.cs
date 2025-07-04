@@ -10,7 +10,8 @@ namespace Aviationexam.MoneyErp.Tests.Infrastructure;
 public static class ServiceProviderFactory
 {
     public static ServiceProvider Create(
-        MoneyErpAuthenticationsClassData.AuthenticationData authenticationData
+        MoneyErpAuthenticationsClassData.AuthenticationData authenticationData,
+        bool shouldRedactHeaderValue = true
     ) => new ServiceCollection()
         .AddLogging(builder => builder
             .SetMinimumLevel(LogLevel.Trace)
@@ -23,6 +24,6 @@ public static class ServiceProviderFactory
             x.ClientSecret = authenticationData.ClientSecret;
             x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
             x.Endpoint = new Uri(authenticationData.ServerAddress, UriKind.RelativeOrAbsolute);
-        }), shouldRedactHeaderValue: false)
+        }), shouldRedactHeaderValue)
         .BuildServiceProvider();
 }
