@@ -92,20 +92,35 @@ public class MoneyErpImportInvoiceTests
                             ICO = null,
                             DIC = data.FirmaDic,
                             FaktNazev = data.FirmaNazev,
+                            FaktUlice = data.FirmaUlice,
                             FaktMisto = data.FirmaMisto,
                             FaktPsc = data.FirmaKodPsc,
                             FaktStat = data.FirmaNazevStatu,
-                            FaktUlice = data.FirmaUlice,
+                            FaktStatID = data.FirmaStatKod switch
+                            {
+                                "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
+                                _ => null,
+                            },
                             ObchNazev = data.FirmaNazev,
+                            ObchUlice = data.FirmaUlice,
                             ObchMisto = data.FirmaMisto,
                             ObchPsc = data.FirmaKodPsc,
                             ObchStat = data.FirmaNazevStatu,
-                            ObchUlice = data.FirmaUlice,
+                            ObchStatID = data.FirmaStatKod switch
+                            {
+                                "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
+                                _ => null,
+                            },
                             ProvNazev = data.FirmaNazev,
+                            ProvUlice = data.FirmaUlice,
                             ProvMisto = data.FirmaMisto,
                             ProvPsc = data.FirmaKodPsc,
                             ProvStat = data.FirmaNazevStatu,
-                            ProvUlice = data.FirmaUlice,
+                            ProvStatID = data.FirmaStatKod switch
+                            {
+                                "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
+                                _ => null,
+                            },
                             Kod = data.FirmaKod,
                             Nazev = data.FirmaNazev,
                             PlatceDPH = data.FirmaPlatceDph,
