@@ -8,12 +8,6 @@
         "resolved": "2.0.203",
         "contentHash": "t9I9cpNNe4do0KxVZ8uHGXIMohyZZyaCiMw5L6m4mLZKQhEGdWolFxfH0VL1YIWG2J6B/G1JFXX+oD5JyDuQ6A=="
       },
-      "Microsoft.DotNet.ILCompiler": {
-        "type": "Direct",
-        "requested": "[8.0.17, )",
-        "resolved": "8.0.17",
-        "contentHash": "09sjUN6lE2os7s3qZDKsZQvng84wquilKCMY+cWD993evNSW9kII9Gm6j+xI0bT/x0CNDdhkHDyAbB47ObF8Bw=="
-      },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
         "requested": "[8.0.17, )",
@@ -33,50 +27,14 @@
         "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
       }
     },
-    "net8.0/linux-x64": {
-      "Microsoft.DotNet.ILCompiler": {
-        "type": "Direct",
-        "requested": "[8.0.17, )",
-        "resolved": "8.0.17",
-        "contentHash": "09sjUN6lE2os7s3qZDKsZQvng84wquilKCMY+cWD993evNSW9kII9Gm6j+xI0bT/x0CNDdhkHDyAbB47ObF8Bw==",
-        "dependencies": {
-          "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "8.0.17"
-        }
-      },
-      "runtime.linux-x64.Microsoft.DotNet.ILCompiler": {
-        "type": "Transitive",
-        "resolved": "8.0.17",
-        "contentHash": "agBzgKp9qjC8jem23ik2fpYbYZWroAYcG7y6SOL8wOdB2uacBS5ERLQvc0enGaRmP5mJoCLqDkq9WFWvrHDhfw=="
-      }
-    },
-    "net8.0/win-x64": {
-      "Microsoft.DotNet.ILCompiler": {
-        "type": "Direct",
-        "requested": "[8.0.17, )",
-        "resolved": "8.0.17",
-        "contentHash": "09sjUN6lE2os7s3qZDKsZQvng84wquilKCMY+cWD993evNSW9kII9Gm6j+xI0bT/x0CNDdhkHDyAbB47ObF8Bw==",
-        "dependencies": {
-          "runtime.win-x64.Microsoft.DotNet.ILCompiler": "8.0.17"
-        }
-      },
-      "runtime.win-x64.Microsoft.DotNet.ILCompiler": {
-        "type": "Transitive",
-        "resolved": "8.0.17",
-        "contentHash": "yIP2Mt0aAjyrfppVh3QQ67uFRy/G6lhcibhnunJABz3ulnOFM0U9x4V76IHf+0BrTTN/aIVw9gwUD6tbJXmJZg=="
-      }
-    },
+    "net8.0/linux-x64": {},
+    "net8.0/win-x64": {},
     "net9.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
         "requested": "[2.0.203, )",
         "resolved": "2.0.203",
         "contentHash": "t9I9cpNNe4do0KxVZ8uHGXIMohyZZyaCiMw5L6m4mLZKQhEGdWolFxfH0VL1YIWG2J6B/G1JFXX+oD5JyDuQ6A=="
-      },
-      "Microsoft.DotNet.ILCompiler": {
-        "type": "Direct",
-        "requested": "[9.0.6, )",
-        "resolved": "9.0.6",
-        "contentHash": "O7Row/kOgEA3PXpeCVKpDJ9ooAoJDoKoxpZC86voOAwV2NA1jTbQ0Nn0VCuoTT/IvU0T7YNlPldAS0mOrppXmw=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
@@ -97,37 +55,7 @@
         "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
       }
     },
-    "net9.0/linux-x64": {
-      "Microsoft.DotNet.ILCompiler": {
-        "type": "Direct",
-        "requested": "[9.0.6, )",
-        "resolved": "9.0.6",
-        "contentHash": "O7Row/kOgEA3PXpeCVKpDJ9ooAoJDoKoxpZC86voOAwV2NA1jTbQ0Nn0VCuoTT/IvU0T7YNlPldAS0mOrppXmw==",
-        "dependencies": {
-          "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "9.0.6"
-        }
-      },
-      "runtime.linux-x64.Microsoft.DotNet.ILCompiler": {
-        "type": "Transitive",
-        "resolved": "9.0.6",
-        "contentHash": "7BKDVYqGziR2Xb/Cij3Ya9ejJ7FjBm/SBZZLXxTz7CRig/JPCn8TKGiwsXmJAtxsITGz970eGzQGcZI6iKhuxQ=="
-      }
-    },
-    "net9.0/win-x64": {
-      "Microsoft.DotNet.ILCompiler": {
-        "type": "Direct",
-        "requested": "[9.0.6, )",
-        "resolved": "9.0.6",
-        "contentHash": "O7Row/kOgEA3PXpeCVKpDJ9ooAoJDoKoxpZC86voOAwV2NA1jTbQ0Nn0VCuoTT/IvU0T7YNlPldAS0mOrppXmw==",
-        "dependencies": {
-          "runtime.win-x64.Microsoft.DotNet.ILCompiler": "9.0.6"
-        }
-      },
-      "runtime.win-x64.Microsoft.DotNet.ILCompiler": {
-        "type": "Transitive",
-        "resolved": "9.0.6",
-        "contentHash": "CnNmfPtanygd9DnZ/Qe0dLjvPtP4ujx1uDRsS8UEeFS2cg72fYVNo7tje3/F26NjfnwDRE6xGX0c/eczhSps4g=="
-      }
-    }
+    "net9.0/linux-x64": {},
+    "net9.0/win-x64": {}
   }
 }
