@@ -25,12 +25,6 @@
         "requested": "[7.0.3, )",
         "resolved": "7.0.3",
         "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
-      },
-      "ZLinq": {
-        "type": "Direct",
-        "requested": "[1.4.12, )",
-        "resolved": "1.4.12",
-        "contentHash": "/Ibt52Bys+WM5suxl8JBik64IQoGshPPK2s6UoxAJGRm6PVdBa+HKIzcxfamkRuELBcmiFtx1RZeocQpqhSH/A=="
       }
     },
     "net8.0/linux-x64": {
@@ -89,12 +83,6 @@
         "requested": "[7.0.3, )",
         "resolved": "7.0.3",
         "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
-      },
-      "ZLinq": {
-        "type": "Direct",
-        "requested": "[1.4.12, )",
-        "resolved": "1.4.12",
-        "contentHash": "/Ibt52Bys+WM5suxl8JBik64IQoGshPPK2s6UoxAJGRm6PVdBa+HKIzcxfamkRuELBcmiFtx1RZeocQpqhSH/A=="
       }
     },
     "net9.0/linux-x64": {

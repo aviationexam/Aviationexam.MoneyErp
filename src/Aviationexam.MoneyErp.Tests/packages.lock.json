@@ -310,7 +310,6 @@
       "aviationexam.moneyerp.graphql": {
         "type": "Project",
         "dependencies": {
-          "ZLinq": "[1.4.12, )",
           "ZeroQL": "[7.0.3, )"
         }
       },
