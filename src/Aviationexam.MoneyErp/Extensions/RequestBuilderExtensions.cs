@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.MoneyErp.Extensions;
 
@@ -13,23 +12,51 @@ public static class RequestBuilderExtensions
     public static RequestInformation AddCustomQueryParameters<TClient>(
         this TClient requestBuilder,
         RequestInformation requestInformation,
-        Action<Dictionary<string, StringValues>> queryParameterBuilder
+        Action<ISet<KeyValuePair<string, string?>>> queryParameterBuilder
     ) where TClient : BaseRequestBuilder
     {
         requestBuilder.SetBaseUrlForRequestInformation(requestInformation);
 
-        var query = QueryHelpers.ParseQuery(requestInformation.URI.Query);
+        var query = QueryHelpers.ParseQuery(requestInformation.URI.Query)
+            .AsValueEnumerable()
+            .SelectMany(x => x.Value.AsValueEnumerable().Select(v => KeyValuePair.Create(x.Key, v)))
+            .ToHashSet();
         queryParameterBuilder(query);
 
-        var pathParameters = requestInformation.PathParameters.ToDictionary();
-        var queryParameters = requestInformation.QueryParameters.ToDictionary();
+        var pathParameters = requestInformation.PathParameters.AsValueEnumerable().ToDictionary();
+        var queryParameters = requestInformation.QueryParameters.AsValueEnumerable().ToDictionary();
 
-        requestInformation.URI = new Uri(QueryHelpers.AddQueryString(requestInformation.URI.GetLeftPart(UriPartial.Path), query));
+        requestInformation.URI = new Uri($"{requestInformation.URI.GetLeftPart(UriPartial.Path)}{query.SerializeQuery()}", UriKind.Absolute);
 
         requestInformation.PathParameters = pathParameters;
         requestInformation.QueryParameters = queryParameters;
 
         return requestInformation;
+    }
+
+    private static string SerializeQuery(
+        this ISet<KeyValuePair<string, string?>> query
+    )
+    {
+        var queryString = query
+            .AsValueEnumerable()
+            .Select(kvp =>
+            {
+                if (string.IsNullOrEmpty(kvp.Value))
+                {
+                    return Uri.EscapeDataString(kvp.Key);
+                }
+
+                return $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value ?? string.Empty)}";
+            })
+            .JoinToString('&');
+
+        if (!string.IsNullOrEmpty(queryString))
+        {
+            return $"?{queryString}";
+        }
+
+        return queryString;
     }
 
     public static void SetBaseUrlForRequestInformation<TClient>(
