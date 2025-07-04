@@ -138,6 +138,12 @@
         "resolved": "8.0.5",
         "contentHash": "0f1B50Ss7rqxXiaBJyzUu9bWFOO2/zSlifZ/UNMdiIpDYe4cY4LQQicP4nirK1OS31I43rn062UIJ1Q9bpmHpg=="
       },
+      "ZLinq": {
+        "type": "Direct",
+        "requested": "[1.4.12, )",
+        "resolved": "1.4.12",
+        "contentHash": "/Ibt52Bys+WM5suxl8JBik64IQoGshPPK2s6UoxAJGRm6PVdBa+HKIzcxfamkRuELBcmiFtx1RZeocQpqhSH/A=="
+      },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
         "resolved": "8.0.0",
@@ -394,6 +400,12 @@
         "requested": "[9.0.6, )",
         "resolved": "9.0.6",
         "contentHash": "h+ZtYTyTnTh5Ju6mHCKb3FPGx4ylJZgm9W7Y2psUnkhQRPMOIxX+TCN0ZgaR/+Yea+93XHWAaMzYTar1/EHIPg=="
+      },
+      "ZLinq": {
+        "type": "Direct",
+        "requested": "[1.4.12, )",
+        "resolved": "1.4.12",
+        "contentHash": "/Ibt52Bys+WM5suxl8JBik64IQoGshPPK2s6UoxAJGRm6PVdBa+HKIzcxfamkRuELBcmiFtx1RZeocQpqhSH/A=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",

@@ -302,7 +302,8 @@
           "Microsoft.Kiota.Serialization.Json": "[1.19.0, )",
           "Microsoft.Kiota.Serialization.Multipart": "[1.19.0, )",
           "Microsoft.Kiota.Serialization.Text": "[1.19.0, )",
-          "System.Text.Json": "[9.0.6, )"
+          "System.Text.Json": "[9.0.6, )",
+          "ZLinq": "[1.4.12, )"
         }
       },
       "Castle.Core": {
