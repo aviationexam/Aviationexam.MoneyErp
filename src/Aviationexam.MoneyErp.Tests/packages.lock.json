@@ -310,6 +310,7 @@
       "aviationexam.moneyerp.graphql": {
         "type": "Project",
         "dependencies": {
+          "System.Text.Json": "[9.0.6, )",
           "ZeroQL": "[7.0.3, )"
         }
       },
