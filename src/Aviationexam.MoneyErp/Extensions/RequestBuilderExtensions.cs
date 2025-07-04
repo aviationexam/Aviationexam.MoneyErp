@@ -40,15 +40,7 @@ public static class RequestBuilderExtensions
     {
         var queryString = query
             .AsValueEnumerable()
-            .Select(kvp =>
-            {
-                if (string.IsNullOrEmpty(kvp.Value))
-                {
-                    return Uri.EscapeDataString(kvp.Key);
-                }
-
-                return $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value ?? string.Empty)}";
-            })
+            .Select(kvp => $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value ?? string.Empty)}")
             .JoinToString('&');
 
         if (!string.IsNullOrEmpty(queryString))
