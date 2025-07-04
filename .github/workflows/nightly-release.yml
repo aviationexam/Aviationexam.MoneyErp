@@ -43,25 +43,10 @@ jobs:
         with:
           endpoint: ${{ secrets.MONEYERP_ENDPOINT }}
           access_token: ${{ steps.get_token.outputs.access_token }}
-      - name: Fetch GrapQL schema
-        run: |
-          cd src/Aviationexam.MoneyErp.GraphQl
-
-          curl -sS -f -X POST "${{ secrets.MONEYERP_ENDPOINT }}/graphql" \
-               -H "Content-Type: application/json" \
-               -H "Authorization: Bearer ${{ steps.get_token.outputs.access_token }}" \
-               -d '{ "query": "query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { ...FullType } directives { name description locations args { ...InputValue } } } } fragment FullType on __Type { kind name description fields(includeDeprecated: true) { name description args { ...InputValue } type { ...TypeRef } isDeprecated deprecationReason } inputFields { ...InputValue } interfaces { ...TypeRef } enumValues(includeDeprecated: true) { name description isDeprecated deprecationReason } possibleTypes { ...TypeRef } } fragment InputValue on __InputValue { name description type { ...TypeRef } defaultValue } fragment TypeRef on __Type { kind name ofType { kind name ofType { kind name ofType { kind name } } } }" }' \
-               > schema.json
-
-          jq '{data: .Data}' schema.json > schema-fixed.json
-
-          npm install -g graphql-json-to-sdl
-
-          graphql-json-to-sdl schema-fixed.json schema.graphql
       - uses: actions/upload-artifact@v4
         with:
           name: schema-${{ steps.gitversion.outputs.FullSemVer }}.graphql
-          path: src/Aviationexam.MoneyErp.GraphQl/schema.graphql
+          path: src/Aviationexam.MoneyErp.Graphql/schema.graphql
       - name: Tool restore
         run: dotnet tool restore
       - name: Restore with .Net
@@ -75,7 +60,7 @@ jobs:
       - name: Pack with .Net
         run: |
           dotnet pack src/Aviationexam.MoneyErp/Aviationexam.MoneyErp.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
-          dotnet pack src/Aviationexam.MoneyErp.GraphQl/Aviationexam.MoneyErp.GraphQl.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
+          dotnet pack src/Aviationexam.MoneyErp.Graphql/Aviationexam.MoneyErp.Graphql.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
       - uses: actions/upload-artifact@v4
         with:
           name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}

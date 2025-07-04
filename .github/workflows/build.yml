@@ -37,7 +37,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: schema.graphql
-          path: src/Aviationexam.MoneyErp.GraphQl/schema.graphql
+          path: src/Aviationexam.MoneyErp.Graphql/schema.graphql
       - name: Tool restore
         run: dotnet tool restore
       - name: Restore

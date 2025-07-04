@@ -26,7 +26,7 @@
     <File Path=".github\workflows\pr-build.yml" />
     <File Path=".github\workflows\release.yml" />
   </Folder>
-  <Project Path="src\Aviationexam.MoneyErp.GraphQl\Aviationexam.MoneyErp.GraphQl.csproj" Type="Classic C#" />
+  <Project Path="src\Aviationexam.MoneyErp.Graphql\Aviationexam.MoneyErp.Graphql.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.MoneyErp.Tests\Aviationexam.MoneyErp.Tests.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.MoneyErp\Aviationexam.MoneyErp.csproj" Type="Classic C#" />

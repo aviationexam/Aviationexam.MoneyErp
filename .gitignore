@@ -59,7 +59,7 @@ nunit-*.xml
 /src/Aviationexam.MoneyErp/Client
 /src/Aviationexam.MoneyErp/openapi.json
 .env.local
-/src/Aviationexam.MoneyErp.GraphQl/schema.graphql
-/src/Aviationexam.MoneyErp.GraphQl/schema.json
-/src/Aviationexam.MoneyErp.GraphQl/schema-fixed.json
-/src/Aviationexam.MoneyErp.GraphQl/GraphQlClient.g.cs
+/src/Aviationexam.MoneyErp.Graphql/schema.graphql
+/src/Aviationexam.MoneyErp.Graphql/schema.json
+/src/Aviationexam.MoneyErp.Graphql/schema-fixed.json
+/src/Aviationexam.MoneyErp.Graphql/GraphqlClient.g.cs

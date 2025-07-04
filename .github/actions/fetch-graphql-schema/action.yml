@@ -20,7 +20,7 @@ runs:
     - id: fetch_schema
       shell: bash
       run: |
-        cd src/Aviationexam.MoneyErp.GraphQl
+        cd src/Aviationexam.MoneyErp.Graphql
 
         curl -sS -f -X POST "${{ inputs.endpoint }}/graphql" \
              -H "Content-Type: application/json" \
@@ -33,4 +33,4 @@ runs:
         npm install -g graphql-json-to-sdl
         graphql-json-to-sdl schema-fixed.json schema.graphql
 
-        echo "schema_path=src/Aviationexam.MoneyErp.GraphQl/schema.graphql" >> "$GITHUB_OUTPUT"
+        echo "schema_path=src/Aviationexam.MoneyErp.Graphql/schema.graphql" >> "$GITHUB_OUTPUT"
