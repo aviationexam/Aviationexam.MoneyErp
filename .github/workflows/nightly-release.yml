@@ -53,7 +53,7 @@ jobs:
 
           npm install -g graphql-json-to-sdl
 
-          graphql-json-to-sdl schema-fixed.json > schema.graphql
+          graphql-json-to-sdl schema-fixed.json schema.graphql
         env:
           MONEYERP_ENDPOINT: ${{ secrets.MONEYERP_ENDPOINT }}
           MONEYERL_ACCESS_TOKEN: ${{ needs.call-token-workflow.outputs.access_token }}
