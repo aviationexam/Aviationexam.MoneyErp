@@ -21,7 +21,7 @@ runs:
       id: get_token
       shell: bash
       run: |
-        response=$(curl -s --request POST "${{ inputs.token_server_url }}/connect/token" \
+        response=$(curl -sS -f --request POST "${{ inputs.token_server_url }}/connect/token" \
           --header "Content-Type: application/x-www-form-urlencoded" \
           --data-urlencode "grant_type=client_credentials" \
           --data-urlencode "client_id=${{ inputs.client_id }}" \
