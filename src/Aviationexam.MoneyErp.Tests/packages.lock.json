@@ -291,6 +291,7 @@
       "aviationexam.moneyerp": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.MoneyErp.GraphQl": "[1.0.0, )",
           "Microsoft.AspNetCore.WebUtilities": "[9.0.6, )",
           "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",
@@ -304,6 +305,13 @@
           "Microsoft.Kiota.Serialization.Text": "[1.19.0, )",
           "System.Text.Json": "[9.0.6, )",
           "ZLinq": "[1.4.12, )"
+        }
+      },
+      "aviationexam.moneyerp.graphql": {
+        "type": "Project",
+        "dependencies": {
+          "ZLinq": "[1.4.12, )",
+          "ZeroQL": "[7.0.3, )"
         }
       },
       "Castle.Core": {
@@ -428,6 +436,12 @@
         "requested": "[9.0.6, )",
         "resolved": "9.0.6",
         "contentHash": "h+ZtYTyTnTh5Ju6mHCKb3FPGx4ylJZgm9W7Y2psUnkhQRPMOIxX+TCN0ZgaR/+Yea+93XHWAaMzYTar1/EHIPg=="
+      },
+      "ZeroQL": {
+        "type": "CentralTransitive",
+        "requested": "[7.0.3, )",
+        "resolved": "7.0.3",
+        "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
       }
     },
     "net9.0/linux-x64": {
