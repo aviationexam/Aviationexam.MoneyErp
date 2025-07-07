@@ -29,7 +29,10 @@ public static class DependencyInjectionExtensions
         var serviceCollection = builder.Services;
         serviceCollection.AddKeyedScoped<LoggingHandler>(
             MoneyErpRestApiHttpClient,
-            static (serviceProvider, key) => new LoggingHandler(serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(key!.ToString()!))
+            static (serviceProvider, key) => new LoggingHandler(
+                serviceProvider.GetRequiredService<TimeProvider>(),
+                serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(key!.ToString()!)
+            )
         );
 
         var httpClientBuilder = serviceCollection.AddHttpClient(MoneyErpRestApiHttpClient)

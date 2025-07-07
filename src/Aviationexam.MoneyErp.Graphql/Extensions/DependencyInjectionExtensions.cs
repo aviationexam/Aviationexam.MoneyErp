@@ -1,9 +1,11 @@
+using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.ZeroQLServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using ZeroQL.Pipelines;
@@ -21,6 +23,13 @@ public static class DependencyInjectionExtensions
     )
     {
         var serviceCollection = builder.Services;
+        serviceCollection.AddKeyedScoped<LoggingHandler>(
+            MoneyErpGraphqlHttpClient,
+            static (serviceProvider, key) => new LoggingHandler(
+                serviceProvider.GetRequiredService<TimeProvider>(),
+                serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(key!.ToString()!)
+            )
+        );
 
         var httpClientBuilder = serviceCollection
             .AddHttpClient<AuthenticatedHttpHandler>(MoneyErpGraphqlHttpClient)
@@ -30,6 +39,11 @@ public static class DependencyInjectionExtensions
                 httpClient.BaseAddress = options.Value.GraphqlEndpoint;
             })
             .AddDefaultLogger();
+
+        serviceCollection.Configure<HttpClientFactoryOptions>(
+            httpClientBuilder.Name,
+            options => options.HttpMessageHandlerBuilderActions.Add(b => b.AdditionalHandlers.Add(b.Services.GetRequiredKeyedService<LoggingHandler>(httpClientBuilder.Name)))
+        );
 
         if (shouldRedactHeaderValue is false)
         {

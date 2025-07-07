@@ -1,12 +1,14 @@
 using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aviationexam.MoneyErp.RestApi;
+namespace Aviationexam.MoneyErp.Common;
 
 public class LoggingHandler(
+    TimeProvider timeProvider,
     ILogger logger
 ) : DelegatingHandler
 {
@@ -31,15 +33,15 @@ public class LoggingHandler(
             logger.LogTrace("Request Body: {RequestBody}", requestBody);
         }
 
-        var stopwatch = Stopwatch.StartNew();
+        var now = timeProvider.GetTimestamp();
 
         var response = await base.SendAsync(request, cancellationToken);
 
-        stopwatch.Stop();
+        var requestTimespan = timeProvider.GetElapsedTime(now);
 
         logger.LogInformation(
-            "HTTP {Method} {Uri} responded {StatusCode} ({StatusCodeNumber}) in {ElapsedMilliseconds}ms",
-            request.Method, request.RequestUri, response.StatusCode, (int) response.StatusCode, stopwatch.ElapsedMilliseconds
+            "HTTP {Method} {Uri} responded {StatusCode} ({StatusCodeNumber}) in {Elapsed}ms",
+            request.Method, request.RequestUri, response.StatusCode, (int) response.StatusCode, requestTimespan
         );
 
         if (
