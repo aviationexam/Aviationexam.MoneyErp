@@ -1,4 +1,4 @@
-using Aviationexam.MoneyErp.RestApi.Tests.Infrastructure;
+using Aviationexam.MoneyErp.Tests.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
