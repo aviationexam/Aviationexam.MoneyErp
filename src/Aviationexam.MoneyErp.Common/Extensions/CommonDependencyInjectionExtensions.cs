@@ -33,7 +33,6 @@ public static class CommonDependencyInjectionExtensions
         );
 #endif
 
-
         if (shouldRedactHeaderValue is false)
         {
             serviceCollection.Configure<HttpClientFactoryOptions>(httpTokenClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false);
