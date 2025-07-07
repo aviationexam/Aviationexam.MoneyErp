@@ -1,3 +1,4 @@
+using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Extensions;
 using Aviationexam.MoneyErp.Graphql.Extensions;
 using Meziantou.Extensions.Logging.Xunit.v3;
@@ -19,16 +20,15 @@ public static class ServiceProviderFactory
             .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
         )
         .AddSingleton<TimeProvider>(_ => TimeProvider.System)
-        .AddMoneyErpApiClient(builder => builder.Configure(x =>
+        .AddMoneyErp(builder => builder.Configure(x =>
         {
             x.ClientId = authenticationData.ClientId;
             x.ClientSecret = authenticationData.ClientSecret;
             x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
             x.Endpoint = new Uri(authenticationData.ServerAddress, UriKind.RelativeOrAbsolute);
-        }), shouldRedactHeaderValue)
-        .AddMoneyErpApiGraphQlClient(builder => builder.Configure(x =>
-        {
-            x.GraphQlEndpoint = new Uri(authenticationData.ServerAddress, UriKind.RelativeOrAbsolute);
-        }), shouldRedactHeaderValue)
+        }))
+        .AddRestApiClient(_ => { }, shouldRedactHeaderValue)
+        .AddGraphQlClient(_ => { }, shouldRedactHeaderValue)
+        .Services
         .BuildServiceProvider();
 }

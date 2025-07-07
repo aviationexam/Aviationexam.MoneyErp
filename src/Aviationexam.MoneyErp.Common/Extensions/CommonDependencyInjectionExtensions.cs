@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
 using System;
-using System.Net.Http;
 
 namespace Aviationexam.MoneyErp.Common.Extensions;
 

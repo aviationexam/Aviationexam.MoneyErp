@@ -285,6 +285,7 @@
       "aviationexam.moneyerp": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.MoneyErp.Common": "[1.0.0, )",
           "Microsoft.AspNetCore.WebUtilities": "[9.0.6, )",
           "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",
@@ -300,9 +301,20 @@
           "ZLinq": "[1.4.12, )"
         }
       },
+      "aviationexam.moneyerp.common": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",
+          "Microsoft.Extensions.Http": "[9.0.6, )",
+          "Microsoft.Extensions.Options": "[9.0.6, )",
+          "System.Text.Json": "[9.0.6, )"
+        }
+      },
       "aviationexam.moneyerp.graphql": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.MoneyErp.Common": "[1.0.0, )",
           "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",
           "Microsoft.Extensions.Http": "[9.0.6, )",

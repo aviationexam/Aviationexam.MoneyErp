@@ -45,6 +45,10 @@
     <PackageReference Include="System.Text.Json" VersionOverride="8.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.MoneyErp.Common\Aviationexam.MoneyErp.Common.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <GenerateClient>$(RESTORE_WITH_CLIENT_GENERATION)</GenerateClient>
     <GenerateClient Condition=" '$(GenerateClient)' == '' ">true</GenerateClient>

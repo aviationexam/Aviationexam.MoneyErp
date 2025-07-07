@@ -72,11 +72,11 @@ public class MoneyErpImportInvoiceTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
-        var graphQLClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
+        var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
-        var version = await graphQLClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
-        var b = await graphQLClient.Query(x => x.Companies(selector: c => c.ID), cancellationToken: TestContext.Current.CancellationToken);
+        var version = await graphqlClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
+        var b = await graphqlClient.Query(x => x.Companies(selector: c => c.ID), cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(version.Data);
         Assert.NotEmpty(version.Data);

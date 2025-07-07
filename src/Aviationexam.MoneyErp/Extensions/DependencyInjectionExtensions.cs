@@ -20,7 +20,7 @@ public static class DependencyInjectionExtensions
 {
     public const string MoneyErpRestApiHttpClient = "MoneyErp.RestApiHttpClient";
 
-    public static MoneyErpBuilder AddMoneyErpApiClient(
+    public static MoneyErpBuilder AddRestApiClient(
         this MoneyErpBuilder builder,
         Action<OptionsBuilder<MoneyErpRestApiOptions>> optionsBuilder,
         bool shouldRedactHeaderValue = true
@@ -40,7 +40,6 @@ public static class DependencyInjectionExtensions
                 httpClient.BaseAddress = options.Value.Endpoint;
             })
             .AddDefaultLogger();
-
 
         serviceCollection.Configure<HttpClientFactoryOptions>(
             httpClientBuilder.Name,
