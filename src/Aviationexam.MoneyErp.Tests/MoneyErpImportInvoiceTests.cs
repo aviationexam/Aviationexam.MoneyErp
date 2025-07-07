@@ -21,22 +21,6 @@ namespace Aviationexam.MoneyErp.Tests;
 
 public class MoneyErpImportInvoiceTests
 {
-    private static Guid? GetStateFromCode(
-        string code
-    ) => code switch
-    {
-        "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
-        _ => null,
-    };
-
-    private static Guid? GetPredkontaceId(
-        string? code
-    ) => code switch
-    {
-        "FV002" => Guid.Parse("9157f742-e135-4add-b41b-1bc6d1cbe892"),
-        _ => null,
-    };
-
     [Theory]
     [ClassData(typeof(MoneyErpInvoiceClassData))]
     public async Task ImportInvoiceWorks(
@@ -59,7 +43,10 @@ public class MoneyErpImportInvoiceTests
             Guid? currencyId,
             Guid? companyCountryId,
             Guid? vatClassificationId,
-            Guid? invoiceGroupId
+            Guid? invoiceGroupId,
+            Guid? transportId,
+            Guid? paymentId,
+            IReadOnlyDictionary<string, Guid?> accountAssignmentIds
             )> ids = [];
         foreach (var data in invoiceData)
         {
@@ -69,6 +56,9 @@ public class MoneyErpImportInvoiceTests
                 companyCountryFilter = $"{nameof(Country.Kod)}~eq~{data.FirmaStatKod}",
                 varClassificationFilter = $"{nameof(VATClassification.Kod)}~eq~{data.CleneniDphKod}",
                 invoiceGroupFilter = $"{nameof(MerpGroup.Kod)}~eq~{data.GroupKod}",
+                transportFilter = $"{nameof(TransportType.Kod)}~eq~{data.ZpusobDopravyKod}",
+                paymentFilter = $"{nameof(PaymentType.Kod)}~eq~{data.ZpusobPlatbyKod}",
+                accountAssignmentFilter = data.Polozky.AsValueEnumerable().Select(x => x.PredkontaceKod).Distinct().Select(x => $"{nameof(AccountAssignment.Kod)}~eq~{x}").JoinToString('|'),
             };
 
             var graphResponse = await graphqlClient.Query(
@@ -116,6 +106,33 @@ public class MoneyErpImportInvoiceTests
                             c.Nazev,
                         }
                     ),
+                    Transport = x.TransportTypes(
+                        Filter: f.transportFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                    Payment = x.PaymentTypes(
+                        Filter: f.paymentFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                    AccountAssignment = x.AccountAssignments(
+                        Filter: f.accountAssignmentFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
                 },
                 cancellationToken: TestContext.Current.CancellationToken
             );
@@ -124,6 +141,12 @@ public class MoneyErpImportInvoiceTests
             var companyCountryId = graphResponse.Data!.CompanyCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var vatClassificationId = graphResponse.Data!.VATClassification!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var invoiceGroupId = graphResponse.Data!.InvoiceGroup!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var transportId = graphResponse.Data!.Transport!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var paymentId = graphResponse.Data!.Payment!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var accountAssignmentIds = graphResponse.Data!.AccountAssignment!.AsValueEnumerable().ToDictionary(
+                x => x!.Kod!,
+                x => x!.ID.AsGuid()!
+            );
 
             var requestInformation = client.AddCustomQueryParameters(
                 client.V10.Company.ToGetRequestInformation(),
@@ -330,7 +353,10 @@ public class MoneyErpImportInvoiceTests
                 currencyId,
                 companyCountryId,
                 vatClassificationId,
-                invoiceGroupId
+                invoiceGroupId,
+                transportId,
+                paymentId,
+                accountAssignmentIds
             ));
         }
 
@@ -375,9 +401,9 @@ public class MoneyErpImportInvoiceTests
                     //invoice.AdresaKoncovehoPrijemce.Misto,
                     //invoice.AdresaKoncovehoPrijemce.Psc,
                     //invoice.AdresaKoncovehoPrijemce.Stat,
-                    ZpusobDopravyID = invoice.ZpusobDopravyKod == "" ? Guid.Parse("") : null,
-                    ZpusobPlatbyID = invoice.ZpusobPlatbyKod == "" ? Guid.Parse("") : null,
-                    PredkontaceID = GetPredkontaceId(invoice.Polozky.AsValueEnumerable().Select(x => x.PredkontaceKod).Distinct().FirstOrDefault()),
+                    ZpusobDopravyID = ids.transportId,
+                    ZpusobPlatbyID = ids.paymentId,
+                    PredkontaceID = ids.accountAssignmentIds.AsValueEnumerable().FirstOrDefault().Value,
                     Polozky =
                     [
                         .. invoice.Polozky.AsValueEnumerable().Select(x => new IssuedInvoiceItemInputDto
@@ -386,7 +412,7 @@ public class MoneyErpImportInvoiceTests
                             Mnozstvi = (double) x.Mnozstvi,
                             DPHEditovanoRucne = x.DphEditovanoRucne,
                             DruhSazbyDPH = x.DruhSazbyDph,
-                            PredkontaceID = GetPredkontaceId(x.PredkontaceKod),
+                            PredkontaceID = ids.accountAssignmentIds.GetValueOrDefault(x.PredkontaceKod),
                             Jednotka = x.Jednotka,
                             CisloPolozky = x.CisloPolozky,
                             TypObsahu = x.TypObsahu,
