@@ -13,6 +13,6 @@ public partial class CompanyRequestBuilder
         CancellationToken cancellationToken = default
     ) => await RequestAdapter.SendAsync(
         requestInformation,
-        CompanyGetResponse.CreateFromDiscriminatorValue, default, cancellationToken
+        CompanyGetResponse.CreateFromDiscriminatorValue, null, cancellationToken
     ).ConfigureAwait(false);
 }

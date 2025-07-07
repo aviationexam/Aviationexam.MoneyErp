@@ -1,4 +1,6 @@
 using Aviationexam.MoneyErp.Client;
+using Aviationexam.MoneyErp.Common;
+using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.KiotaServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -16,22 +18,21 @@ namespace Aviationexam.MoneyErp.Extensions;
 
 public static class DependencyInjectionExtensions
 {
-    public const string MoneyErpHttpClient = "MoneyErp.HttpClient";
-    public const string MoneyErpHttpTokenClient = "MoneyErp.HttpTokenClient";
-    public const string MoneyErpServiceKey = "MoneyErp";
+    public const string MoneyErpRestApiHttpClient = "MoneyErp.RestApiHttpClient";
 
-    public static IServiceCollection AddMoneyErpApiClient(
-        this IServiceCollection serviceCollection,
-        Action<OptionsBuilder<MoneyErpAuthenticationOptions>> optionsBuilder,
+    public static MoneyErpBuilder AddMoneyErpApiClient(
+        this MoneyErpBuilder builder,
+        Action<OptionsBuilder<MoneyErpRestApiOptions>> optionsBuilder,
         bool shouldRedactHeaderValue = true
     )
     {
+        var serviceCollection = builder.Services;
         serviceCollection.AddKeyedScoped<LoggingHandler>(
-            MoneyErpHttpClient,
+            MoneyErpRestApiHttpClient,
             static (serviceProvider, key) => new LoggingHandler(serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(key!.ToString()!))
         );
 
-        var httpClientBuilder = serviceCollection.AddHttpClient(MoneyErpHttpClient)
+        var httpClientBuilder = serviceCollection.AddHttpClient(MoneyErpRestApiHttpClient)
             .AttachKiotaHandlers()
             .ConfigureHttpClient(static (serviceProvider, httpClient) =>
             {
@@ -39,8 +40,7 @@ public static class DependencyInjectionExtensions
                 httpClient.BaseAddress = options.Value.Endpoint;
             })
             .AddDefaultLogger();
-        var httpTokenClientBuilder = serviceCollection.AddHttpClient(MoneyErpHttpTokenClient)
-            .AddDefaultLogger();
+
 
         serviceCollection.Configure<HttpClientFactoryOptions>(
             httpClientBuilder.Name,
@@ -49,12 +49,8 @@ public static class DependencyInjectionExtensions
 
 #if NET9_0_OR_GREATER
         httpClientBuilder.AddAsKeyed();
-        httpTokenClientBuilder.AddAsKeyed();
 #else
         serviceCollection.AddKeyedTransient<HttpClient>(httpClientBuilder.Name,
-            static (serviceProvider, key) => serviceProvider.GetRequiredService<IHttpClientFactory>()
-                .CreateClient(key!.ToString()!)
-        ).AddKeyedTransient<HttpClient>(httpTokenClientBuilder.Name,
             static (serviceProvider, key) => serviceProvider.GetRequiredService<IHttpClientFactory>()
                 .CreateClient(key!.ToString()!)
         );
@@ -63,29 +59,28 @@ public static class DependencyInjectionExtensions
         if (shouldRedactHeaderValue is false)
         {
             serviceCollection
-                .Configure<HttpClientFactoryOptions>(httpClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false)
-                .Configure<HttpClientFactoryOptions>(httpTokenClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false);
+                .Configure<HttpClientFactoryOptions>(httpClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false);
         }
 
         optionsBuilder(serviceCollection
-            .AddOptions<MoneyErpAuthenticationOptions>()
+            .AddOptions<MoneyErpRestApiOptions>()
         );
 
         serviceCollection.TryAddEnumerable(ServiceDescriptor
-            .Singleton<IPostConfigureOptions<MoneyErpAuthenticationOptions>, MoneyErpAuthenticationPostConfigure>()
+            .Singleton<IPostConfigureOptions<MoneyErpRestApiOptions>, MoneyErpRestApiOptionsPostConfigure>()
         );
         serviceCollection.TryAddEnumerable(ServiceDescriptor
-            .Singleton<IValidateOptions<MoneyErpAuthenticationOptions>, MoneyErpAuthenticationOptionsValidate>()
+            .Singleton<IValidateOptions<MoneyErpRestApiOptions>, MoneyErpRestApiOptionsValidate>()
         );
 
-        serviceCollection.TryAddKeyedTransient<IRequestAdapter, DefaultHttpClientRequestAdapter>(MoneyErpServiceKey);
-        serviceCollection.TryAddKeyedSingleton<IAuthenticationProvider, DefaultAuthenticationProvider>(MoneyErpServiceKey);
-        serviceCollection.TryAddKeyedSingleton<IAccessTokenProvider, DefaultAccessTokenProvider>(MoneyErpServiceKey);
+        serviceCollection.TryAddKeyedTransient<IRequestAdapter, DefaultHttpClientRequestAdapter>(CommonDependencyInjectionExtensions.MoneyErpServiceKey);
+        serviceCollection.TryAddKeyedSingleton<IAuthenticationProvider, DefaultAuthenticationProvider>(CommonDependencyInjectionExtensions.MoneyErpServiceKey);
+        serviceCollection.TryAddKeyedSingleton<IAccessTokenProvider, DefaultAccessTokenProvider>(CommonDependencyInjectionExtensions.MoneyErpServiceKey);
 
         serviceCollection.AddTransient<MoneyErpApiClient>(serviceProvider => new MoneyErpApiClient(
-            serviceProvider.GetRequiredKeyedService<IRequestAdapter>(MoneyErpServiceKey)
+            serviceProvider.GetRequiredKeyedService<IRequestAdapter>(CommonDependencyInjectionExtensions.MoneyErpServiceKey)
         ));
 
-        return serviceCollection;
+        return builder;
     }
 }

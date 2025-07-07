@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Aviationexam.MoneyErp;
+namespace Aviationexam.MoneyErp.Common;
 
 public sealed class MoneyErpAuthenticationOptions
 {
@@ -17,8 +16,6 @@ public sealed class MoneyErpAuthenticationOptions
 
     public string TokenPath { get; } = "/connect/token";
 
-    public string GraphQlPath { get; } = "/graphql";
-
     [Required]
     public Uri Endpoint { get; set; } = null!;
 
@@ -26,11 +23,5 @@ public sealed class MoneyErpAuthenticationOptions
     public Uri TokenEndpoint { get; set; } = null!;
 
     [Required]
-    public Uri GraphQlEndpoint { get; set; } = null!;
-
-    [Required]
     public string TokenScope { get; set; } = "S5Api";
-
-    [Required]
-    public IReadOnlyCollection<string> AllowedHosts { get; set; } = null!;
 }

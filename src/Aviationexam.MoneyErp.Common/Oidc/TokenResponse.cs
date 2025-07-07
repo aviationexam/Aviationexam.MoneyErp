@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Aviationexam.MoneyErp.KiotaServices;
+namespace Aviationexam.MoneyErp.Common.Oidc;
 
 public sealed class TokenResponse
 {

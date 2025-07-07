@@ -1,3 +1,4 @@
+using Aviationexam.MoneyErp.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using System.Net.Http;
@@ -23,14 +24,14 @@ public static class KiotaServiceCollectionExtensions
         {
             builder.Services.Add(new ServiceDescriptor(
                 serviceType: handlerType.Type,
-                serviceKey: DependencyInjectionExtensions.MoneyErpServiceKey,
+                serviceKey: CommonDependencyInjectionExtensions.MoneyErpServiceKey,
                 implementationType: handlerType.Type,
                 lifetime: ServiceLifetime.Transient
             ));
 
             builder.AddHttpMessageHandler(sp => (DelegatingHandler) sp.GetRequiredKeyedService(
                 handlerType,
-                serviceKey: DependencyInjectionExtensions.MoneyErpServiceKey
+                serviceKey: CommonDependencyInjectionExtensions.MoneyErpServiceKey
             ));
         }
 

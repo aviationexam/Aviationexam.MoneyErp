@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using System;
 
-namespace Aviationexam.MoneyErp;
+namespace Aviationexam.MoneyErp.Common;
 
 public sealed class MoneyErpAuthenticationOptionsValidate : IValidateOptions<MoneyErpAuthenticationOptions>
 {

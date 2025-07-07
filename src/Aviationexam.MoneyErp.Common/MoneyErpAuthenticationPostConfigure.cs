@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using System;
 
-namespace Aviationexam.MoneyErp;
+namespace Aviationexam.MoneyErp.Common;
 
 public sealed class MoneyErpAuthenticationPostConfigure : IPostConfigureOptions<MoneyErpAuthenticationOptions>
 {
@@ -17,25 +17,8 @@ public sealed class MoneyErpAuthenticationPostConfigure : IPostConfigureOptions<
         {
             options.Endpoint = new Uri(endpoint.OriginalString, UriKind.Absolute);
 
-            options.AllowedHosts ??= // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-            [
-                options.Endpoint.Authority,
-            ];
-
             // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
             options.TokenEndpoint ??= new Uri(options.Endpoint, options.TokenPath);
-
-            // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-            options.GraphQlEndpoint ??= new Uri(options.Endpoint, options.GraphQlPath);
-        }
-
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (options.AllowedHosts is null)
-        {
-            options.AllowedHosts =
-            [
-                "demo.moneyerp.cz:82",
-            ];
         }
     }
 }
