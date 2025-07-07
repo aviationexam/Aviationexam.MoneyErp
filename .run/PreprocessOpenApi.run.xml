@@ -2,7 +2,7 @@
   <configuration default="false" name="PreprocessOpenApi" type="DotNetProject" factoryName=".NET Project">
     <option name="EXE_PATH" value="$PROJECT_DIR$/Build/Aviationexam.MoneyErp.PreprocessOpenApi/Debug/net9.0/Aviationexam.MoneyErp.PreprocessOpenApi" />
     <option name="PROGRAM_PARAMETERS" value="openapi.original.json openapi.json" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/Aviationexam.MoneyErp" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/Aviationexam.MoneyErp.RestApi" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="ENV_FILE_PATHS" value="" />
