@@ -282,25 +282,6 @@
           "xunit.v3.runner.common": "[2.0.3]"
         }
       },
-      "aviationexam.moneyerp": {
-        "type": "Project",
-        "dependencies": {
-          "Aviationexam.MoneyErp.Common": "[1.0.0, )",
-          "Microsoft.AspNetCore.WebUtilities": "[9.0.6, )",
-          "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",
-          "Microsoft.Extensions.Http": "[9.0.6, )",
-          "Microsoft.Extensions.Options": "[9.0.6, )",
-          "Microsoft.Kiota.Abstractions": "[1.19.0, )",
-          "Microsoft.Kiota.Http.HttpClientLibrary": "[1.19.0, )",
-          "Microsoft.Kiota.Serialization.Form": "[1.19.0, )",
-          "Microsoft.Kiota.Serialization.Json": "[1.19.0, )",
-          "Microsoft.Kiota.Serialization.Multipart": "[1.19.0, )",
-          "Microsoft.Kiota.Serialization.Text": "[1.19.0, )",
-          "System.Text.Json": "[9.0.6, )",
-          "ZLinq": "[1.4.12, )"
-        }
-      },
       "aviationexam.moneyerp.common": {
         "type": "Project",
         "dependencies": {
@@ -321,6 +302,25 @@
           "Microsoft.Extensions.Options": "[9.0.6, )",
           "System.Text.Json": "[9.0.6, )",
           "ZeroQL": "[8.0.0-preview.4, )"
+        }
+      },
+      "aviationexam.moneyerp.restapi": {
+        "type": "Project",
+        "dependencies": {
+          "Aviationexam.MoneyErp.Common": "[1.0.0, )",
+          "Microsoft.AspNetCore.WebUtilities": "[9.0.6, )",
+          "Microsoft.Extensions.Caching.Abstractions": "[9.0.6, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )",
+          "Microsoft.Extensions.Http": "[9.0.6, )",
+          "Microsoft.Extensions.Options": "[9.0.6, )",
+          "Microsoft.Kiota.Abstractions": "[1.19.0, )",
+          "Microsoft.Kiota.Http.HttpClientLibrary": "[1.19.0, )",
+          "Microsoft.Kiota.Serialization.Form": "[1.19.0, )",
+          "Microsoft.Kiota.Serialization.Json": "[1.19.0, )",
+          "Microsoft.Kiota.Serialization.Multipart": "[1.19.0, )",
+          "Microsoft.Kiota.Serialization.Text": "[1.19.0, )",
+          "System.Text.Json": "[9.0.6, )",
+          "ZLinq": "[1.4.12, )"
         }
       },
       "Castle.Core": {
