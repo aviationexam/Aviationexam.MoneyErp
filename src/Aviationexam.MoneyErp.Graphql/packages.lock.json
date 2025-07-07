@@ -70,15 +70,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[7.0.3, )",
-        "resolved": "7.0.3",
-        "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
-      },
-      "ZeroQL.Runtime": {
-        "type": "Direct",
-        "requested": "[7.0.3, )",
-        "resolved": "7.0.3",
-        "contentHash": "byzm9NFFg4KkccXXcdgqkTeNPA7XZezaDwHGGBNzmSDjvKel6Cf7dfdGWs4nztw6T4trdxvfg0ge0xId+p2XoA=="
+        "requested": "[8.0.0-preview.4, )",
+        "resolved": "8.0.0-preview.4",
+        "contentHash": "u7715wKrnststwAtyfNijdCDXWHu3/JHMC20LfrvSxmlTa57/NLTzP+2Yc1bIKehxRLCGPPRqOo4XNCUYejwew=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -233,15 +227,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[7.0.3, )",
-        "resolved": "7.0.3",
-        "contentHash": "FT3HIfJi2S/HGgPxKxFIQPSRZK3ZCHKS4M0cvpFtuJQ2yBLkIAK2gFYcaLMpaKRRQCFm41n+cD7xCgQp+LrFUA=="
-      },
-      "ZeroQL.Runtime": {
-        "type": "Direct",
-        "requested": "[7.0.3, )",
-        "resolved": "7.0.3",
-        "contentHash": "byzm9NFFg4KkccXXcdgqkTeNPA7XZezaDwHGGBNzmSDjvKel6Cf7dfdGWs4nztw6T4trdxvfg0ge0xId+p2XoA=="
+        "requested": "[8.0.0-preview.4, )",
+        "resolved": "8.0.0-preview.4",
+        "contentHash": "u7715wKrnststwAtyfNijdCDXWHu3/JHMC20LfrvSxmlTa57/NLTzP+2Yc1bIKehxRLCGPPRqOo4XNCUYejwew=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
