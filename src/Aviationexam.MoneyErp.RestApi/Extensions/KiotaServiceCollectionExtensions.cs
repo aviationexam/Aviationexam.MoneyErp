@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using System.Net.Http;
 
-namespace Aviationexam.MoneyErp.Extensions;
+namespace Aviationexam.MoneyErp.RestApi.Extensions;
 
 public static class KiotaServiceCollectionExtensions
 {

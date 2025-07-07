@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aviationexam.MoneyErp.KiotaServices;
+namespace Aviationexam.MoneyErp.RestApi.KiotaServices;
 
 public sealed class DefaultAccessTokenProvider(
     [FromKeyedServices(CommonDependencyInjectionExtensions.MoneyErpServiceKey)]

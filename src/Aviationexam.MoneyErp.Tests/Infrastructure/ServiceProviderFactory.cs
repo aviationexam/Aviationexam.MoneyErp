@@ -1,6 +1,6 @@
 using Aviationexam.MoneyErp.Common.Extensions;
-using Aviationexam.MoneyErp.Extensions;
 using Aviationexam.MoneyErp.Graphql.Extensions;
+using Aviationexam.MoneyErp.RestApi.Extensions;
 using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

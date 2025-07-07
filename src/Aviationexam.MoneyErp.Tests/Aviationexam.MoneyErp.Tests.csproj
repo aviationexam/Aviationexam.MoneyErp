@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aviationexam.MoneyErp.Graphql\Aviationexam.MoneyErp.Graphql.csproj" />
-    <ProjectReference Include="..\Aviationexam.MoneyErp\Aviationexam.MoneyErp.csproj" />
+    <ProjectReference Include="..\Aviationexam.MoneyErp.RestApi\Aviationexam.MoneyErp.RestApi.csproj" />
   </ItemGroup>
 
 </Project>

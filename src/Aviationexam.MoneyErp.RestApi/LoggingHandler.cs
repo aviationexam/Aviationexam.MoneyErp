@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aviationexam.MoneyErp;
+namespace Aviationexam.MoneyErp.RestApi;
 
 public class LoggingHandler(
     ILogger logger

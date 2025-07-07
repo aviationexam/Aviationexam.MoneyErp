@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Aviationexam.MoneyErp;
+namespace Aviationexam.MoneyErp.RestApi;
 
 public sealed class MoneyErpRestApiOptions
 {

@@ -69,7 +69,7 @@
     <KiotaExec>$(KiotaExec) --disable-validation-rules KnownAndNotSupportedFormats</KiotaExec>
     <KiotaExec>$(KiotaExec) --output $(MSBuildProjectDirectory)/$(GeneratedCodeTarget)</KiotaExec>
     <KiotaExec>$(KiotaExec) --class-name MoneyErpApiClient</KiotaExec>
-    <KiotaExec>$(KiotaExec) --namespace-name Aviationexam.MoneyErp.$(GeneratedCodeTarget)</KiotaExec>
+    <KiotaExec>$(KiotaExec) --namespace-name Aviationexam.MoneyErp.RestApi.$(GeneratedCodeTarget)</KiotaExec>
   </PropertyGroup>
 
   <Target

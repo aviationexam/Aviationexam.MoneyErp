@@ -1,7 +1,7 @@
-using Aviationexam.MoneyErp.Client;
 using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
-using Aviationexam.MoneyErp.KiotaServices;
+using Aviationexam.MoneyErp.RestApi.Client;
+using Aviationexam.MoneyErp.RestApi.KiotaServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
@@ -14,7 +14,7 @@ using System;
 using System.Net.Http;
 #endif
 
-namespace Aviationexam.MoneyErp.Extensions;
+namespace Aviationexam.MoneyErp.RestApi.Extensions;
 
 public static class DependencyInjectionExtensions
 {

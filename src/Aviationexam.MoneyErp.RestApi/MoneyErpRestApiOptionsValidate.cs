@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace Aviationexam.MoneyErp;
+namespace Aviationexam.MoneyErp.RestApi;
 
 public sealed class MoneyErpRestApiOptionsValidate : IValidateOptions<MoneyErpRestApiOptions>
 {

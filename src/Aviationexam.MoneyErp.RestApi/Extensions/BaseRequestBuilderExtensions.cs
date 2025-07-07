@@ -1,7 +1,7 @@
 using Microsoft.Kiota.Abstractions;
 using System.Runtime.CompilerServices;
 
-namespace Aviationexam.MoneyErp.Extensions;
+namespace Aviationexam.MoneyErp.RestApi.Extensions;
 
 public static class BaseRequestBuilderExtensions
 {

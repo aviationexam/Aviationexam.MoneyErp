@@ -1,12 +1,12 @@
 using Aviationexam.MoneyErp.Common.Extensions;
-using Aviationexam.MoneyErp.Extensions;
+using Aviationexam.MoneyErp.RestApi.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using System.Net.Http;
 
-namespace Aviationexam.MoneyErp.KiotaServices;
+namespace Aviationexam.MoneyErp.RestApi.KiotaServices;
 
 public class DefaultHttpClientRequestAdapter(
     [FromKeyedServices(CommonDependencyInjectionExtensions.MoneyErpServiceKey)]

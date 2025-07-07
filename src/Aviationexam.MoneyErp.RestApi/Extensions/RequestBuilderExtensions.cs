@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using ZLinq;
 
-namespace Aviationexam.MoneyErp.Extensions;
+namespace Aviationexam.MoneyErp.RestApi.Extensions;
 
 public static class RequestBuilderExtensions
 {

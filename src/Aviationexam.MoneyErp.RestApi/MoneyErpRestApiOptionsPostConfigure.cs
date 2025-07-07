@@ -1,7 +1,7 @@
 using Aviationexam.MoneyErp.Common;
 using Microsoft.Extensions.Options;
 
-namespace Aviationexam.MoneyErp;
+namespace Aviationexam.MoneyErp.RestApi;
 
 public sealed class MoneyErpRestApiOptionsPostConfigure(
     IOptions<MoneyErpAuthenticationOptions> authenticationOptions

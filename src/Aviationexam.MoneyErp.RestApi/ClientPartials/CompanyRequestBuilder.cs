@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 // ReSharper disable once CheckNamespace
 
-namespace Aviationexam.MoneyErp.Client.V10.Company;
+namespace Aviationexam.MoneyErp.RestApi.Client.V10.Company;
 
 public partial class CompanyRequestBuilder
 {

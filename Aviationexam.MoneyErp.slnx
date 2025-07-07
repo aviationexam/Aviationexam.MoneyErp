@@ -28,6 +28,6 @@
   <Project Path="src\Aviationexam.MoneyErp.Common\Aviationexam.MoneyErp.Common.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.MoneyErp.Graphql\Aviationexam.MoneyErp.Graphql.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj" Type="Classic C#" />
+  <Project Path="src\Aviationexam.MoneyErp.RestApi\Aviationexam.MoneyErp.RestApi.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.MoneyErp.Tests\Aviationexam.MoneyErp.Tests.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.MoneyErp\Aviationexam.MoneyErp.csproj" Type="Classic C#" />
 </Solution>
