@@ -11,7 +11,7 @@ public class MoneyErpGraphQueryErrorConverter : JsonConverter<GraphQueryError>
 {
     public override GraphQueryError Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        if (reader.TokenType is not JsonTokenType.String)
+        if (reader.TokenType is JsonTokenType.String)
         {
             return new GraphQueryError
             {
