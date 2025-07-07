@@ -1,6 +1,6 @@
 using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Graphql.Client;
-using Aviationexam.MoneyErp.Graphql.ZeroQL;
+using Aviationexam.MoneyErp.Graphql.ZeroQLServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;

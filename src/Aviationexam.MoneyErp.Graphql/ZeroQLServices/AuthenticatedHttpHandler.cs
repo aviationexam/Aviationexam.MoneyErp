@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ZeroQL;
 
-namespace Aviationexam.MoneyErp.Graphql.ZeroQL;
+namespace Aviationexam.MoneyErp.Graphql.ZeroQLServices;
 
 public class AuthenticatedHttpHandler(
     HttpClient client,
