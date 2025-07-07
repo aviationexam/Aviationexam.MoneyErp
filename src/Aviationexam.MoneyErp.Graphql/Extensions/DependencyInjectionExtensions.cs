@@ -1,6 +1,7 @@
 using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Graphql.Client;
+using Aviationexam.MoneyErp.Graphql.JsonConverters;
 using Aviationexam.MoneyErp.Graphql.ZeroQLServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using ZeroQL.Json;
 using ZeroQL.Pipelines;
 
 namespace Aviationexam.MoneyErp.Graphql.Extensions;
@@ -23,6 +25,9 @@ public static class DependencyInjectionExtensions
     )
     {
         var serviceCollection = builder.Services;
+
+        ZeroQLJsonOptions.Configure(x=>x.Converters.Add(new MoneyErpGraphQueryErrorConverter()));
+
         serviceCollection.AddKeyedScoped<LoggingHandler>(
             MoneyErpGraphqlHttpClient,
             static (serviceProvider, key) => new LoggingHandler(
