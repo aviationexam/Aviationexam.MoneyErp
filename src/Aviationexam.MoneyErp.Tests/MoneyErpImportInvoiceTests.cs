@@ -1,4 +1,5 @@
 using Aviationexam.MoneyErp.Graphql.Client;
+using Aviationexam.MoneyErp.Graphql.Extensions;
 using Aviationexam.MoneyErp.RestApi.Client;
 using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Company;
 using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.IssuedInvoice;
@@ -28,33 +29,6 @@ public class MoneyErpImportInvoiceTests
         _ => null,
     };
 
-    private static Guid? GetCurrencyCode(
-        string code
-    ) => code switch
-    {
-        "CZK" => Guid.Parse("00f9adb2-d300-42c3-9240-ae1320b019cc"),
-        "EUR" => Guid.Parse("e9daab77-0517-4f36-ac41-9b798182a7ae"),
-        _ => null,
-    };
-
-    private static Guid? GetVatGrouping(
-        string code
-    ) => code switch
-    {
-        "19Ř01,02" => Guid.Parse("9de3ad17-6b5f-4b16-91f7-8adedb45d78c"),
-        "19Ř20" => Guid.Parse("75b45b4f-4d84-4e8e-8397-0018dcf74ded"),
-        _ => null,
-    };
-
-    private static Guid? GetGroupId(
-        string code
-    ) => code switch
-    {
-        "DE" => Guid.Parse("43fc48a6-c90f-4024-8998-e24efb2d4f39"),
-        "CZ" => Guid.Parse("4ec4c75b-7c26-447f-ad94-ff1ecdabaeb9"),
-        _ => null,
-    };
-
     private static Guid? GetPredkontaceId(
         string? code
     ) => code switch
@@ -76,30 +50,96 @@ public class MoneyErpImportInvoiceTests
         var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
         var version = await graphqlClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
-        var b = await graphqlClient.Query(x => x.Companies(selector: c => c.ID), cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(version.Data);
         Assert.NotEmpty(version.Data);
 
-        ICollection<(Guid? firmaId, int value)> ids = [];
+        ICollection<(
+            Guid? companyGuid,
+            Guid? currencyId,
+            Guid? companyCountryId,
+            Guid? vatClassificationId,
+            Guid? invoiceGroupId
+            )> ids = [];
         foreach (var data in invoiceData)
         {
-            var stateId = GetStateFromCode(data.FirmaStatKod);
+            var filters = new
+            {
+                currencyFilter = $"{nameof(Currency.Kod)}~eq~{data.MenaKod}",
+                companyCountryFilter = $"{nameof(Country.Kod)}~eq~{data.FirmaStatKod}",
+                varClassificationFilter = $"{nameof(VATClassification.Kod)}~eq~{data.CleneniDphKod}",
+                invoiceGroupFilter = $"{nameof(MerpGroup.Kod)}~eq~{data.GroupKod}",
+            };
 
-            //FirmaKod
-            //FirmaPlatceDph
-            //FirmaDic
-            //FirmaNazev
-            //FirmaUlice
-            //FirmaMisto
-            //FirmaKodPsc
-            //FirmaNazevStatu
-            //FirmaStatKod
-            //FirmaStatNazevEn
+            var graphResponse = await graphqlClient.Query(
+                filters,
+                static (f, x) => new
+                {
+                    Currency = x.Currencies(
+                        Filter: f.currencyFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                    CompanyCountry = x.Countries(
+                        Filter: f.companyCountryFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                    VATClassification = x.VATClassifications(
+                        Filter: f.varClassificationFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                    InvoiceGroup = x.MerpGroups(
+                        Filter: f.invoiceGroupFilter,
+                        ObjectName: "FakturaVydana",
+                        // ObjednavkaPrijata, ObjednavkaVydana, FakturaPrijata, FakturaVydana, Zasoba, PolozkaCeniku, Artikl, DodaciListVydany, DodaciListPrijaty, Firma, PokladniDoklad, BankovniVypis, ProdejkaVydana, ProdejkaPrijata, SkladovyDoklad
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                },
+                cancellationToken: TestContext.Current.CancellationToken
+            );
+
+            var currencyId = graphResponse.Data!.Currency!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var companyCountryId = graphResponse.Data!.CompanyCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var vatClassificationId = graphResponse.Data!.VATClassification!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var invoiceGroupId = graphResponse.Data!.InvoiceGroup!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+
             var requestInformation = client.AddCustomQueryParameters(
                 client.V10.Company.ToGetRequestInformation(),
                 queryParameterBuilder =>
                 {
+                    //FirmaKod
+                    //FirmaPlatceDph
+                    //FirmaDic
+                    //FirmaNazev
+                    //FirmaUlice
+                    //FirmaMisto
+                    //FirmaKodPsc
+                    //FirmaNazevStatu
+                    //FirmaStatKod
+                    //FirmaStatNazevEn
+
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.LogicOperator", nameof(LogicOperator.AND)));
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[0].PropertyName", nameof(CompanyOutputDto.FaktNazev)));
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[0].Operation", "Equal"));
@@ -118,7 +158,7 @@ public class MoneyErpImportInvoiceTests
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].ExpectedValue", data.FirmaPlatceDph ? "true" : "false"));
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].PropertyName", "FaktStat_ID"));
                     queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].ExpectedValue", stateId.ToString()));
+                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].ExpectedValue", companyCountryId.ToString()));
                     if (!string.IsNullOrEmpty(data.FirmaDic))
                     {
                         queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[6].PropertyName", nameof(CompanyOutputDto.DIC)));
@@ -152,31 +192,19 @@ public class MoneyErpImportInvoiceTests
                             FaktMisto = data.FirmaMisto,
                             FaktPsc = data.FirmaKodPsc,
                             FaktStat = data.FirmaNazevStatu,
-                            FaktStatID = data.FirmaStatKod switch
-                            {
-                                "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
-                                _ => null,
-                            },
+                            FaktStatID = companyCountryId,
                             ObchNazev = data.FirmaNazev,
                             ObchUlice = data.FirmaUlice,
                             ObchMisto = data.FirmaMisto,
                             ObchPsc = data.FirmaKodPsc,
                             ObchStat = data.FirmaNazevStatu,
-                            ObchStatID = data.FirmaStatKod switch
-                            {
-                                "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
-                                _ => null,
-                            },
+                            ObchStatID = companyCountryId,
                             ProvNazev = data.FirmaNazev,
                             ProvUlice = data.FirmaUlice,
                             ProvMisto = data.FirmaMisto,
                             ProvPsc = data.FirmaKodPsc,
                             ProvStat = data.FirmaNazevStatu,
-                            ProvStatID = data.FirmaStatKod switch
-                            {
-                                "DE" => Guid.Parse("41350f0f-514a-4c22-8366-5c25d6254aa4"),
-                                _ => null,
-                            },
+                            ProvStatID = companyCountryId,
                             Kod = data.FirmaKod,
                             Nazev = data.FirmaNazev,
                             PlatceDPH = data.FirmaPlatceDph,
@@ -299,7 +327,10 @@ public class MoneyErpImportInvoiceTests
 
             ids.Add((
                 companyGuid,
-                0
+                currencyId,
+                companyCountryId,
+                vatClassificationId,
+                invoiceGroupId
             ));
         }
 
@@ -324,10 +355,10 @@ public class MoneyErpImportInvoiceTests
                     CelkovaCastkaCM = (double) invoice.CelkovaCastkaCm,
                     UcetniKurzKurz = (double) invoice.Kurz,
                     //invoice.KurzMnozstvi,
-                    MenaID = GetCurrencyCode(invoice.MenaKod),
-                    CleneniDPHID = GetVatGrouping(invoice.CleneniDphKod),
-                    GroupID = GetGroupId(invoice.GroupKod),
-                    FirmaID = ids.firmaId,
+                    MenaID = ids.currencyId,
+                    CleneniDPHID = ids.vatClassificationId,
+                    GroupID = ids.invoiceGroupId,
+                    FirmaID = ids.companyGuid,
                     AdresaPrijemceFakturyKontaktniOsobaID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
 
                     //invoice.AdresaPrijemceFaktury.Email,
@@ -959,7 +990,7 @@ public class MoneyErpImportInvoiceTests
         string CleneniDphKod,
 
         // NEW — <Group Kod="…"/>
-        string GroupKod, // <<< added
+        string GroupKod,
 
         // Supplier (Adresa/Firma)
         string FirmaKod,
@@ -974,8 +1005,8 @@ public class MoneyErpImportInvoiceTests
         string FirmaStatNazevEn,
 
         // NEW – recipient addresses
-        InvoiceAddressData AdresaPrijemceFaktury, // <<< added
-        InvoiceAddressData AdresaKoncovehoPrijemce, // <<< added
+        InvoiceAddressData AdresaPrijemceFaktury,
+        InvoiceAddressData AdresaKoncovehoPrijemce,
 
         // Transport & payment
         string ZpusobDopravyKod,
