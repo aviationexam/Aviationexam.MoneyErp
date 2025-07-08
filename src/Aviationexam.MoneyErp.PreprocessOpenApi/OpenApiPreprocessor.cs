@@ -95,10 +95,12 @@ public class OpenApiPreprocessor(
                             currentPath.Count == 4
                             && currentPath.ToArray() is
                             [
+#pragma warning disable format
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } methodName },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                             ]
                         )
                         {
@@ -139,11 +141,13 @@ public class OpenApiPreprocessor(
                                 && currentPath.Count == 5
                                 && currentPath.ToArray() is
                                 [
+#pragma warning disable format
                                     { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                                 ]
                             )
                             {
@@ -156,6 +160,7 @@ public class OpenApiPreprocessor(
                                 && currentPath.Count == 8
                                 && currentPath.ToArray() is
                                 [
+#pragma warning disable format
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: Content },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
@@ -164,6 +169,7 @@ public class OpenApiPreprocessor(
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                                 ]
                             )
                             {
@@ -181,8 +187,10 @@ public class OpenApiPreprocessor(
                             && currentPath.Count == 2
                             && currentPath.ToArray() is
                             [
+#pragma warning disable format
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Info },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                             ]
                         )
                         {
@@ -194,12 +202,14 @@ public class OpenApiPreprocessor(
                             && currentPath.Count == 6
                             && currentPath.ToArray() is
                             [
+#pragma warning disable format
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
                                 { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                             ]
                         )
                         {
@@ -211,12 +221,14 @@ public class OpenApiPreprocessor(
                             && currentPath.Count == 6
                             && currentPath.ToArray() is
                             [
+#pragma warning disable format
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
                                 { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                             ]
                         )
                         {
@@ -228,6 +240,7 @@ public class OpenApiPreprocessor(
                             && currentPath.Count == 7
                             && currentPath.ToArray() is
                             [
+#pragma warning disable format
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schema },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
                                 { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
@@ -246,6 +259,7 @@ public class OpenApiPreprocessor(
                             && currentPath.Count == 7
                             && currentPath.ToArray() is
                             [
+#pragma warning disable format
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schema },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
                                 { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
@@ -253,6 +267,7 @@ public class OpenApiPreprocessor(
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                             ]
                         )
                         {
@@ -266,6 +281,7 @@ public class OpenApiPreprocessor(
                                 && currentPath.Count == 9
                                 && currentPath.ToArray() is
                                 [
+#pragma warning disable format
                                     SchemaTreeItem { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schema } schemaTreeItem,
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: Content },
@@ -275,6 +291,7 @@ public class OpenApiPreprocessor(
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                                 ]
                             )
                             {
@@ -286,6 +303,7 @@ public class OpenApiPreprocessor(
                                 currentPath.Count == 10
                                 && currentPath.ToArray() is
                                 [
+#pragma warning disable format
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: Items },
                                     SchemaTreeItem { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schema, IsArray: true } schemaTreeItem,
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
@@ -296,6 +314,7 @@ public class OpenApiPreprocessor(
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                                     { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                                 ]
                             )
                             {
@@ -363,9 +382,11 @@ public class OpenApiPreprocessor(
                         && currentPath.Count == 3
                         && currentPath.ToArray() is
                         [
+#pragma warning disable format
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                         ]
                     )
                     {
@@ -378,11 +399,13 @@ public class OpenApiPreprocessor(
                         currentPath.Count == 5
                         && currentPath.ToArray() is
                         [
+#pragma warning disable format
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Properties },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } componentName },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                         ]
                     )
                     {
@@ -434,6 +457,7 @@ public class OpenApiPreprocessor(
                         && currentPath.Count == 8
                         && currentPath.ToArray() is
                         [
+#pragma warning disable format
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Content },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
@@ -442,6 +466,7 @@ public class OpenApiPreprocessor(
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                         ]
                         && collectedMetadata.IsPaginatedResponse(pathName, methodName, out var itemsSchema)
                     )
@@ -567,8 +592,10 @@ public class OpenApiPreprocessor(
                     ) => currentPath.Count == 2
                          && currentPath.ToArray() is
                          [
+#pragma warning disable format
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                          ]
                          && collectedMetadata.IsPathIgnored(reader.ValueSpan);
 
@@ -577,9 +604,11 @@ public class OpenApiPreprocessor(
                     ) => currentPath.Count == 3
                          && currentPath.ToArray() is
                          [
+#pragma warning disable format
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                              { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                          ]
                          && collectedMetadata.IsPathMethodIgnored(pathName, reader.ValueSpan);
 
@@ -616,8 +645,10 @@ public class OpenApiPreprocessor(
                         && currentPath.Count == 2
                         && currentPath.ToArray() is
                         [
+#pragma warning disable format
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
                         ]
                     )
                     {
@@ -857,11 +888,13 @@ public class OpenApiPreprocessor(
             currentPath.Count == 5
             && currentPath.ToArray() is
             [
+#pragma warning disable format
                 { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
             ])
         {
             currentPath.Push(new ParameterTreeItem(reader.TokenType, lastProperty.IsEmpty ? null : Encoding.UTF8.GetString(lastProperty)));
@@ -871,6 +904,7 @@ public class OpenApiPreprocessor(
             && currentPath.Count == 8
             && currentPath.ToArray() is
             [
+#pragma warning disable format
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Content },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
@@ -879,6 +913,7 @@ public class OpenApiPreprocessor(
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
                 { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
             ]
         )
         {

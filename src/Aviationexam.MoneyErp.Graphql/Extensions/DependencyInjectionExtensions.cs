@@ -26,7 +26,7 @@ public static class DependencyInjectionExtensions
     {
         var serviceCollection = builder.Services;
 
-        ZeroQLJsonOptions.Configure(x=>x.Converters.Add(new MoneyErpGraphQueryErrorConverter()));
+        ZeroQLJsonOptions.Configure(x => x.Converters.Add(new MoneyErpGraphQueryErrorConverter()));
 
         serviceCollection.AddKeyedScoped<LoggingHandler>(
             MoneyErpGraphqlHttpClient,
