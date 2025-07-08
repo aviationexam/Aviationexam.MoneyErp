@@ -9,7 +9,6 @@ using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using ZeroQL.Json;
 using ZeroQL.Pipelines;
 
 namespace Aviationexam.MoneyErp.Graphql.Extensions;
@@ -25,8 +24,6 @@ public static class DependencyInjectionExtensions
     )
     {
         var serviceCollection = builder.Services;
-
-        ZeroQLJsonOptions.Configure(x => x.Converters.Add(new MoneyErpGraphQueryErrorConverter()));
 
         serviceCollection.AddKeyedScoped<LoggingHandler>(
             MoneyErpGraphqlHttpClient,
