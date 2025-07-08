@@ -4,8 +4,6 @@ using Aviationexam.MoneyErp.RestApi.Client;
 using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Company;
 using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.IssuedInvoice;
 using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Shop;
-using Aviationexam.MoneyErp.RestApi.Client.Models.Shared.Enums;
-using Aviationexam.MoneyErp.RestApi.Extensions;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -143,209 +141,92 @@ public class MoneyErpImportInvoiceTests
             var invoiceGroupId = graphResponse.Data!.InvoiceGroup!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var transportId = graphResponse.Data!.Transport!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var paymentId = graphResponse.Data!.Payment!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
-            var accountAssignmentIds = graphResponse.Data!.AccountAssignment!.AsValueEnumerable().ToDictionary(
-                x => x!.Kod!,
-                x => x!.ID.AsGuid()!
-            );
+            var accountAssignmentIds = graphResponse.Data!.AccountAssignment!.AsValueEnumerable()
+                .ToDictionary(
+                    x => x!.Kod!,
+                    x => x!.ID.AsGuid()!
+                );
 
-            var requestInformation = client.AddCustomQueryParameters(
-                client.V10.Company.ToGetRequestInformation(),
-                queryParameterBuilder =>
+            var secondaryFilters = new
+            {
+                companyFilter = string.Join('#',
+                    $"{nameof(Company.FaktNazev)}~eq~{data.FirmaNazev}",
+                    $"{nameof(Company.FaktUlice)}~eq~{data.FirmaUlice}",
+                    $"{nameof(Company.FaktMisto)}~eq~{data.FirmaMisto}",
+                    $"{nameof(Company.FaktPsc)}~eq~{data.FirmaKodPsc}",
+                    $"{nameof(Company.PlatceDPH)}~eq~{(data.FirmaPlatceDph ? "true" : "false")}",
+                    $"{nameof(Company.FaktStat_ID)}~eq~{companyCountryId}",
+                    $"{nameof(Company.DIC)}~eq~{data.FirmaDic}"
+                ),
+            };
+            var secondaryGraphResponse = await graphqlClient.Query(
+                secondaryFilters,
+                static (f, x) => new
                 {
-                    //FirmaKod
-                    //FirmaPlatceDph
-                    //FirmaDic
-                    //FirmaNazev
-                    //FirmaUlice
-                    //FirmaMisto
-                    //FirmaKodPsc
-                    //FirmaNazevStatu
-                    //FirmaStatKod
-                    //FirmaStatNazevEn
-
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.LogicOperator", nameof(LogicOperator.AND)));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[0].PropertyName", nameof(CompanyOutputDto.FaktNazev)));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[0].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[0].ExpectedValue", data.FirmaNazev));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[1].PropertyName", nameof(CompanyOutputDto.FaktUlice)));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[1].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[1].ExpectedValue", data.FirmaUlice));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[2].PropertyName", nameof(CompanyOutputDto.FaktMisto)));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[2].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[2].ExpectedValue", data.FirmaMisto));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[3].PropertyName", nameof(CompanyOutputDto.FaktPsc)));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[3].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[3].ExpectedValue", data.FirmaKodPsc));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].PropertyName", nameof(CompanyOutputDto.PlatceDPH)));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[4].ExpectedValue", data.FirmaPlatceDph ? "true" : "false"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].PropertyName", "FaktStat_ID"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].Operation", "Equal"));
-                    queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[5].ExpectedValue", companyCountryId.ToString()));
-                    if (!string.IsNullOrEmpty(data.FirmaDic))
-                    {
-                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[6].PropertyName", nameof(CompanyOutputDto.DIC)));
-                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[6].Operation", "Equal"));
-                        queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[6].ExpectedValue", data.FirmaDic));
-                    }
-                }
+                    Company = x.Companies(
+                        Filter: f.companyFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                            c.Create_Date,
+                        }
+                    ),
+                },
+                cancellationToken: TestContext.Current.CancellationToken
             );
 
-            var company = await client.V10.Company.GetAsync(
-                requestInformation, TestContext.Current.CancellationToken
-            );
-            var companyGuid = company?.Data?.AsValueEnumerable()
-                .Where(x => x.Deleted is false)
-                .Where(x => string.IsNullOrEmpty(data.FirmaDic) ? string.IsNullOrEmpty(x.DIC) : x.DIC == data.FirmaDic)
-                .OrderBy(x => x.CreateDate)
-                .FirstOrDefault()?
-                .ID;
+            var companyGuid = secondaryGraphResponse.Data?.Company?.AsValueEnumerable()
+                .Where(x => x!.Deleted is false)
+                .OrderBy(x => x!.Create_Date)
+                .FirstOrDefault()
+                ?.ID.AsGuid();
 
             if (companyGuid is null)
             {
-                var companyGuids = await client.V10.Company.PostAsync(
-                    [
-                        new CompanyInputDto
+                var mutationArguments = new
+                {
+                    companyInput = new CompanyInput
+                    {
+                        Kod = data.FirmaKod,
+                        Nazev = data.FirmaNazev,
+                        DIC = data.FirmaDic,
+                        FaktNazev = data.FirmaNazev,
+                        FaktUlice = data.FirmaUlice,
+                        FaktMisto = data.FirmaMisto,
+                        FaktPsc = data.FirmaKodPsc,
+                        FaktStat_ID = companyCountryId,
+                        ObchNazev = data.FirmaNazev,
+                        ObchUlice = data.FirmaUlice,
+                        ObchMisto = data.FirmaMisto,
+                        ObchPsc = data.FirmaKodPsc,
+                        ObchStat_ID = companyCountryId,
+                        ProvNazev = data.FirmaNazev,
+                        ProvUlice = data.FirmaUlice,
+                        ProvMisto = data.FirmaMisto,
+                        ProvPsc = data.FirmaKodPsc,
+                        ProvStat_ID = companyCountryId,
+                        PlatceDPH = data.FirmaPlatceDph,
+                    },
+                };
+                var mutationResponse = await graphqlClient.Mutation(
+                    mutationArguments,
+                    static (f, x) => new
+                    {
+                        CompanyGuid = x.CreateCompany(f.companyInput, selector: c => new
                         {
-                            ID = null,
-                            ICO = null,
-                            DIC = data.FirmaDic,
-                            FaktNazev = data.FirmaNazev,
-                            FaktUlice = data.FirmaUlice,
-                            FaktMisto = data.FirmaMisto,
-                            FaktPsc = data.FirmaKodPsc,
-                            FaktStat = data.FirmaNazevStatu,
-                            FaktStatID = companyCountryId,
-                            ObchNazev = data.FirmaNazev,
-                            ObchUlice = data.FirmaUlice,
-                            ObchMisto = data.FirmaMisto,
-                            ObchPsc = data.FirmaKodPsc,
-                            ObchStat = data.FirmaNazevStatu,
-                            ObchStatID = companyCountryId,
-                            ProvNazev = data.FirmaNazev,
-                            ProvUlice = data.FirmaUlice,
-                            ProvMisto = data.FirmaMisto,
-                            ProvPsc = data.FirmaKodPsc,
-                            ProvStat = data.FirmaNazevStatu,
-                            ProvStatID = companyCountryId,
-                            Kod = data.FirmaKod,
-                            Nazev = data.FirmaNazev,
-                            PlatceDPH = data.FirmaPlatceDph,
-                            Attachments = null,
-                            CinnostUkoncena = null,
-                            CiselnaRadaID = null,
-                            CisloS3 = null,
-                            CisloZRady = null,
-                            DatovaSchrankaID = null,
-                            DatovaSchrankaNazev = null,
-                            DatovaSchrankaSpojeniID = null,
-                            DatumKontolyDIC = null,
-                            DatumKontrolyDleIC = null,
-                            DatumPosledniKontrolyPlatceDPH = null,
-                            DatumPosty = null,
-                            DatumUkonceniCinnosti = null,
-                            EkoKomKlient = null,
-                            Email = null,
-                            EmailSpojeniID = null,
-                            FaxCislo = null,
-                            FaxKlapka = null,
-                            FaxMistniCislo = null,
-                            FaxPredvolba = null,
-                            FaxPredvolbaStat = null,
-                            FaxSpojeniID = null,
-                            FaxStatID = null,
-                            FyzickaOsoba = null,
-                            GpsLat = null,
-                            GpsLong = null,
-                            GroupID = null,
-                            HlavniOsobaID = null,
-                            HlavniUcetID = null,
-                            HodnotaKreditu = null,
-                            HodnotaSlevy = null,
-                            ICDPH = null,
-                            KodDanovehoUradu = null,
-                            KrajID = null,
-                            LogoID = null,
-                            MojeFirmabankovniSpojeniID = null,
-                            NadrazenaFirmaID = null,
-                            ObchodniPodminkyDistributorLihu = null,
-                            ObchodniPodminkyDistributorLihuRegistracniCislo = null,
-                            OdlisnaAdresaProvozovny = null,
-                            OdlisnaFakturacniAdresa = null,
-                            PosilatPostu = null,
-                            PosledniCisloOsoby = null,
-                            PosledniStavZHistorieRegistruId = null,
-                            PouzivatKredit = null,
-                            Poznamka = null,
-                            PrenestNazev = null,
-                            PrevzitBankovniSpojeni = null,
-                            PrevzitObchodniPodminky = null,
-                            PrevzitObchodniUdaje = null,
-                            PrimarniUcetPohledavkyID = null,
-                            PrimarniUcetPoskytnutaZalohaID = null,
-                            PrimarniUcetPrijataZalohaID = null,
-                            PrimarniUcetZavazkyID = null,
-                            RegionID = null,
-                            SpecifickySymbol = null,
-                            SplatnostPohledavek = null,
-                            SplatnostZavazku = null,
-                            Spojeni = null,
-                            StavPlatceDPHComputed = null,
-                            StavPlatceDPHVracenyWSStav = null,
-                            Tel1Cislo = null,
-                            Tel1Klapka = null,
-                            Tel1MistniCislo = null,
-                            Tel1Predvolba = null,
-                            Tel1PredvolbaStat = null,
-                            Tel1StatID = null,
-                            Tel1Typ = null,
-                            Tel2Cislo = null,
-                            Tel2Klapka = null,
-                            Tel2MistniCislo = null,
-                            Tel2Predvolba = null,
-                            Tel2PredvolbaStat = null,
-                            Tel2StatID = null,
-                            Tel2Typ = null,
-                            Tel3Cislo = null,
-                            Tel3Klapka = null,
-                            Tel3MistniCislo = null,
-                            Tel3Predvolba = null,
-                            Tel3PredvolbaStat = null,
-                            Tel3StatID = null,
-                            Tel3Typ = null,
-                            Tel4Cislo = null,
-                            Tel4Klapka = null,
-                            Tel4MistniCislo = null,
-                            Tel4Predvolba = null,
-                            Tel4PredvolbaStat = null,
-                            Tel4StatID = null,
-                            Tel4Typ = null,
-                            TelefonSpojeni1ID = null,
-                            TelefonSpojeni2ID = null,
-                            TelefonSpojeni3ID = null,
-                            TelefonSpojeni4ID = null,
-                            UctyNactenyZRegistruDPH = null,
-                            UvadetNaDokladech = null,
-                            VariabilniSymbol = null,
-                            VcetnePodrizenych = null,
-                            VlastniSleva = null,
-                            VlastniSplatnostPohledavek = null,
-                            VlastniSplatnostZavazku = null,
-                            Www = null,
-                            WwwSpojeniID = null,
-                            Zprava = null,
-                            ZpusobDopravyID = null,
-                            ZpusobPlatbyID = null,
-                            ZpusobVyberuCeny = null,
-                        },
-                    ],
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                            c.Create_Date,
+                        }),
+                    },
                     cancellationToken: TestContext.Current.CancellationToken
                 );
-
-                if (companyGuids?.Status is 1)
-                {
-                    companyGuid = companyGuids.Data?.AsValueEnumerable().Single();
-                }
+                companyGuid = mutationResponse.Data?.CompanyGuid?.ID.AsGuid();
             }
 
             ids.Add((
@@ -361,82 +242,85 @@ public class MoneyErpImportInvoiceTests
         }
 
         var response = await client.V10.IssuedInvoice.PostAsync([
-            .. invoiceData.AsValueEnumerable().Zip(ids).Select(static item =>
-            {
-                var invoice = item.First;
-                var ids = item.Second;
-
-                return new IssuedInvoiceInputDto
+            .. invoiceData.AsValueEnumerable()
+                .Zip(ids)
+                .Select(static item =>
                 {
-                    CisloDokladu = invoice.CisloDokladu,
-                    OdkazNaDoklad = invoice.OdkazNaDoklad,
-                    VariabilniSymbol = invoice.VariabilniSymbol,
-                    DatumVystaveni = invoice.DatumVystaveni,
-                    DatumUcetnihoPripadu = invoice.DatumUcetnihoPripadu,
-                    DatumPlneni = invoice.DatumPlneni,
-                    DatumSplatnosti = invoice.DatumSplatnosti,
-                    Vystavil = invoice.Vystavil,
-                    Nazev = invoice.Nazev,
-                    DIC = invoice.Dic,
-                    CelkovaCastkaCM = (double) invoice.CelkovaCastkaCm,
-                    UcetniKurzKurz = (double) invoice.Kurz,
-                    //invoice.KurzMnozstvi,
-                    MenaID = ids.currencyId,
-                    CleneniDPHID = ids.vatClassificationId,
-                    GroupID = ids.invoiceGroupId,
-                    FirmaID = ids.companyGuid,
-                    AdresaPrijemceFakturyKontaktniOsobaID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
+                    var invoice = item.First;
+                    var ids = item.Second;
 
-                    //invoice.AdresaPrijemceFaktury.Email,
-                    //invoice.AdresaPrijemceFaktury.Telefon,
-                    //invoice.AdresaPrijemceFaktury.Ulice,
-                    //invoice.AdresaPrijemceFaktury.Misto,
-                    //invoice.AdresaPrijemceFaktury.Psc,
-                    //invoice.AdresaPrijemceFaktury.Stat,
-                    //invoice.AdresaPrijemceFaktury.Nazev,
-                    AdresaKoncovehoPrijemceEmail = invoice.AdresaKoncovehoPrijemce.Email,
-                    AdresaKoncovehoPrijemceTelefon = invoice.AdresaKoncovehoPrijemce.Telefon,
-                    AdresaKoncovehoPrijemceKontaktniOsobaID = invoice.AdresaKoncovehoPrijemce.Nazev == "" ? Guid.Parse("") : null,
-                    //invoice.AdresaKoncovehoPrijemce.Ulice,
-                    //invoice.AdresaKoncovehoPrijemce.Misto,
-                    //invoice.AdresaKoncovehoPrijemce.Psc,
-                    //invoice.AdresaKoncovehoPrijemce.Stat,
-                    ZpusobDopravyID = ids.transportId,
-                    ZpusobPlatbyID = ids.paymentId,
-                    PredkontaceID = ids.accountAssignmentIds.AsValueEnumerable().FirstOrDefault().Value,
-                    Polozky =
-                    [
-                        .. invoice.Polozky.AsValueEnumerable().Select(x => new IssuedInvoiceItemInputDto
-                        {
-                            Nazev = x.Nazev,
-                            Mnozstvi = (double) x.Mnozstvi,
-                            DPHEditovanoRucne = x.DphEditovanoRucne,
-                            DruhSazbyDPH = x.DruhSazbyDph,
-                            PredkontaceID = ids.accountAssignmentIds.GetValueOrDefault(x.PredkontaceKod),
-                            Jednotka = x.Jednotka,
-                            CisloPolozky = x.CisloPolozky,
-                            TypObsahu = x.TypObsahu,
-                            CleneniDPHID = x.CleneniDphKod == "" ? Guid.Parse("") : null,
-                            TypCeny = x.TypCeny,
-                            ObsahPolozky = new ContentOfItemWithArticleInputDto
-                            {
-                                ArtiklID = x.ArtiklPlu == "" ? Guid.Parse("") : null,
-                                SkladID = x.SkladKod == "" ? Guid.Parse("") : null,
-                            },
-                            CelkovaCena = (double) x.CelkovaCena,
-                            CelkovaCenaCM = (double) x.CelkovaCenaCm,
-                            DphCelkem = (double) x.DphCelkem,
-                            DphZaklad = (double) x.DphZaklad,
-                            DphDan = (double) x.DphDan,
-                            DphCelkemCM = (double) x.DphCelkemCm,
-                            DphZakladCM = (double) x.DphZakladCm,
-                            DphDanCM = (double) x.DphDanCm,
-                            DphSazba = (double) x.DphSazba,
-                        }),
-                    ],
-                    Poznamka = invoice.Poznamka,
-                };
-            }),
+                    return new IssuedInvoiceInputDto
+                    {
+                        CisloDokladu = invoice.CisloDokladu,
+                        OdkazNaDoklad = invoice.OdkazNaDoklad,
+                        VariabilniSymbol = invoice.VariabilniSymbol,
+                        DatumVystaveni = invoice.DatumVystaveni,
+                        DatumUcetnihoPripadu = invoice.DatumUcetnihoPripadu,
+                        DatumPlneni = invoice.DatumPlneni,
+                        DatumSplatnosti = invoice.DatumSplatnosti,
+                        Vystavil = invoice.Vystavil,
+                        Nazev = invoice.Nazev,
+                        DIC = invoice.Dic,
+                        CelkovaCastkaCM = (double) invoice.CelkovaCastkaCm,
+                        UcetniKurzKurz = (double) invoice.Kurz,
+                        //invoice.KurzMnozstvi,
+                        MenaID = ids.currencyId,
+                        CleneniDPHID = ids.vatClassificationId,
+                        GroupID = ids.invoiceGroupId,
+                        FirmaID = ids.companyGuid,
+                        AdresaPrijemceFakturyKontaktniOsobaID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
+
+                        //invoice.AdresaPrijemceFaktury.Email,
+                        //invoice.AdresaPrijemceFaktury.Telefon,
+                        //invoice.AdresaPrijemceFaktury.Ulice,
+                        //invoice.AdresaPrijemceFaktury.Misto,
+                        //invoice.AdresaPrijemceFaktury.Psc,
+                        //invoice.AdresaPrijemceFaktury.Stat,
+                        //invoice.AdresaPrijemceFaktury.Nazev,
+                        AdresaKoncovehoPrijemceEmail = invoice.AdresaKoncovehoPrijemce.Email,
+                        AdresaKoncovehoPrijemceTelefon = invoice.AdresaKoncovehoPrijemce.Telefon,
+                        AdresaKoncovehoPrijemceKontaktniOsobaID = invoice.AdresaKoncovehoPrijemce.Nazev == "" ? Guid.Parse("") : null,
+                        //invoice.AdresaKoncovehoPrijemce.Ulice,
+                        //invoice.AdresaKoncovehoPrijemce.Misto,
+                        //invoice.AdresaKoncovehoPrijemce.Psc,
+                        //invoice.AdresaKoncovehoPrijemce.Stat,
+                        ZpusobDopravyID = ids.transportId,
+                        ZpusobPlatbyID = ids.paymentId,
+                        PredkontaceID = ids.accountAssignmentIds.AsValueEnumerable().FirstOrDefault().Value,
+                        Polozky =
+                        [
+                            .. invoice.Polozky.AsValueEnumerable()
+                                .Select(x => new IssuedInvoiceItemInputDto
+                                {
+                                    Nazev = x.Nazev,
+                                    Mnozstvi = (double) x.Mnozstvi,
+                                    DPHEditovanoRucne = x.DphEditovanoRucne,
+                                    DruhSazbyDPH = x.DruhSazbyDph,
+                                    PredkontaceID = ids.accountAssignmentIds.GetValueOrDefault(x.PredkontaceKod),
+                                    Jednotka = x.Jednotka,
+                                    CisloPolozky = x.CisloPolozky,
+                                    TypObsahu = x.TypObsahu,
+                                    CleneniDPHID = x.CleneniDphKod == "" ? Guid.Parse("") : null,
+                                    TypCeny = x.TypCeny,
+                                    ObsahPolozky = new ContentOfItemWithArticleInputDto
+                                    {
+                                        ArtiklID = x.ArtiklPlu == "" ? Guid.Parse("") : null,
+                                        SkladID = x.SkladKod == "" ? Guid.Parse("") : null,
+                                    },
+                                    CelkovaCena = (double) x.CelkovaCena,
+                                    CelkovaCenaCM = (double) x.CelkovaCenaCm,
+                                    DphCelkem = (double) x.DphCelkem,
+                                    DphZaklad = (double) x.DphZaklad,
+                                    DphDan = (double) x.DphDan,
+                                    DphCelkemCM = (double) x.DphCelkemCm,
+                                    DphZakladCM = (double) x.DphZakladCm,
+                                    DphDanCM = (double) x.DphDanCm,
+                                    DphSazba = (double) x.DphSazba,
+                                }),
+                        ],
+                        Poznamka = invoice.Poznamka,
+                    };
+                }),
         ], cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(response);
@@ -1096,30 +980,32 @@ public class MoneyErpImportInvoiceTests
             ZpusobDopravyNazev,
             ZpusobPlatbyKod,
             ZpusobPlatbyNazev,
-            new JsonArray(Polozky.AsValueEnumerable().Select(x => (JsonNode) new JsonObject
-            {
-                [nameof(x.Nazev)] = x.Nazev,
-                [nameof(x.Mnozstvi)] = x.Mnozstvi,
-                [nameof(x.DphEditovanoRucne)] = x.DphEditovanoRucne,
-                [nameof(x.DruhSazbyDph)] = x.DruhSazbyDph,
-                [nameof(x.PredkontaceKod)] = x.PredkontaceKod,
-                [nameof(x.Jednotka)] = x.Jednotka,
-                [nameof(x.CisloPolozky)] = x.CisloPolozky,
-                [nameof(x.TypObsahu)] = x.TypObsahu,
-                [nameof(x.CleneniDphKod)] = x.CleneniDphKod,
-                [nameof(x.TypCeny)] = x.TypCeny,
-                [nameof(x.ArtiklPlu)] = x.ArtiklPlu,
-                [nameof(x.SkladKod)] = x.SkladKod,
-                [nameof(x.CelkovaCena)] = x.CelkovaCena,
-                [nameof(x.CelkovaCenaCm)] = x.CelkovaCenaCm,
-                [nameof(x.DphCelkem)] = x.DphCelkem,
-                [nameof(x.DphZaklad)] = x.DphZaklad,
-                [nameof(x.DphDan)] = x.DphDan,
-                [nameof(x.DphCelkemCm)] = x.DphCelkemCm,
-                [nameof(x.DphZakladCm)] = x.DphZakladCm,
-                [nameof(x.DphDanCm)] = x.DphDanCm,
-                [nameof(x.DphSazba)] = x.DphSazba,
-            }).ToArray()),
+            new JsonArray(Polozky.AsValueEnumerable()
+                .Select(x => (JsonNode) new JsonObject
+                {
+                    [nameof(x.Nazev)] = x.Nazev,
+                    [nameof(x.Mnozstvi)] = x.Mnozstvi,
+                    [nameof(x.DphEditovanoRucne)] = x.DphEditovanoRucne,
+                    [nameof(x.DruhSazbyDph)] = x.DruhSazbyDph,
+                    [nameof(x.PredkontaceKod)] = x.PredkontaceKod,
+                    [nameof(x.Jednotka)] = x.Jednotka,
+                    [nameof(x.CisloPolozky)] = x.CisloPolozky,
+                    [nameof(x.TypObsahu)] = x.TypObsahu,
+                    [nameof(x.CleneniDphKod)] = x.CleneniDphKod,
+                    [nameof(x.TypCeny)] = x.TypCeny,
+                    [nameof(x.ArtiklPlu)] = x.ArtiklPlu,
+                    [nameof(x.SkladKod)] = x.SkladKod,
+                    [nameof(x.CelkovaCena)] = x.CelkovaCena,
+                    [nameof(x.CelkovaCenaCm)] = x.CelkovaCenaCm,
+                    [nameof(x.DphCelkem)] = x.DphCelkem,
+                    [nameof(x.DphZaklad)] = x.DphZaklad,
+                    [nameof(x.DphDan)] = x.DphDan,
+                    [nameof(x.DphCelkemCm)] = x.DphCelkemCm,
+                    [nameof(x.DphZakladCm)] = x.DphZakladCm,
+                    [nameof(x.DphDanCm)] = x.DphDanCm,
+                    [nameof(x.DphSazba)] = x.DphSazba,
+                })
+                .ToArray()),
             Poznamka
         ).ToString();
 
@@ -1179,29 +1065,33 @@ public class MoneyErpImportInvoiceTests
                 ZpusobDopravyNazev: arr[29]?.GetValue<string>() ?? throw new FormatException("ZpusobDopravyNazev missing."),
                 ZpusobPlatbyKod: arr[30]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyKod missing."),
                 ZpusobPlatbyNazev: arr[31]?.GetValue<string>() ?? throw new FormatException("ZpusobPlatbyNazev missing."),
-                Polozky: arr[32]?.AsArray().AsValueEnumerable().Select(static x => new InvoiceItemData(
-                    Nazev: x![nameof(InvoiceItemData.Nazev)]?.GetValue<string>() ?? throw new FormatException("Nazev missing."),
-                    Mnozstvi: x[nameof(InvoiceItemData.Mnozstvi)]?.GetValue<decimal>() ?? throw new FormatException("Mnozstvi missing."),
-                    DphEditovanoRucne: x[nameof(InvoiceItemData.DphEditovanoRucne)]?.GetValue<bool>() ?? throw new FormatException("DphEditovanoRucne missing."),
-                    DruhSazbyDph: x[nameof(InvoiceItemData.DruhSazbyDph)]?.GetValue<int>() ?? throw new FormatException("DruhSazbyDph missing."),
-                    PredkontaceKod: x[nameof(InvoiceItemData.PredkontaceKod)]?.GetValue<string>() ?? throw new FormatException("PredkontaceKod missing."),
-                    Jednotka: x[nameof(InvoiceItemData.Jednotka)]?.GetValue<string>() ?? throw new FormatException("Jednotka missing."),
-                    CisloPolozky: x[nameof(InvoiceItemData.CisloPolozky)]?.GetValue<int>() ?? throw new FormatException("CisloPolozky missing."),
-                    TypObsahu: x[nameof(InvoiceItemData.TypObsahu)]?.GetValue<int>() ?? throw new FormatException("TypObsahu missing."),
-                    CleneniDphKod: x[nameof(InvoiceItemData.CleneniDphKod)]?.GetValue<string>() ?? throw new FormatException("CleneniDphKod missing."),
-                    TypCeny: x[nameof(InvoiceItemData.TypCeny)]?.GetValue<int>() ?? throw new FormatException("TypCeny missing."),
-                    ArtiklPlu: x[nameof(InvoiceItemData.ArtiklPlu)]?.GetValue<string>() ?? throw new FormatException("ArtiklPlu missing."),
-                    SkladKod: x[nameof(InvoiceItemData.SkladKod)]?.GetValue<string>() ?? throw new FormatException("SkladKod missing."),
-                    CelkovaCena: x[nameof(InvoiceItemData.CelkovaCena)]?.GetValue<decimal>() ?? throw new FormatException("CelkovaCena missing."),
-                    CelkovaCenaCm: x[nameof(InvoiceItemData.CelkovaCenaCm)]?.GetValue<decimal>() ?? throw new FormatException("CelkovaCenaCm missing."),
-                    DphCelkem: x[nameof(InvoiceItemData.DphCelkem)]?.GetValue<decimal>() ?? throw new FormatException("DphCelkem missing."),
-                    DphZaklad: x[nameof(InvoiceItemData.DphZaklad)]?.GetValue<decimal>() ?? throw new FormatException("DphZaklad missing."),
-                    DphDan: x[nameof(InvoiceItemData.DphDan)]?.GetValue<decimal>() ?? throw new FormatException("DphDan missing."),
-                    DphCelkemCm: x[nameof(InvoiceItemData.DphCelkemCm)]?.GetValue<decimal>() ?? throw new FormatException("DphCelkemCm missing."),
-                    DphZakladCm: x[nameof(InvoiceItemData.DphZakladCm)]?.GetValue<decimal>() ?? throw new FormatException("DphZakladCm missing."),
-                    DphDanCm: x[nameof(InvoiceItemData.DphDanCm)]?.GetValue<decimal>() ?? throw new FormatException("DphDanCm missing."),
-                    DphSazba: x[nameof(InvoiceItemData.DphSazba)]?.GetValue<decimal>() ?? throw new FormatException("DphSazba missing.")
-                )).ToArray() ?? throw new FormatException("Polozky missing."),
+                Polozky: arr[32]
+                    ?.AsArray()
+                    .AsValueEnumerable()
+                    .Select(static x => new InvoiceItemData(
+                        Nazev: x![nameof(InvoiceItemData.Nazev)]?.GetValue<string>() ?? throw new FormatException("Nazev missing."),
+                        Mnozstvi: x[nameof(InvoiceItemData.Mnozstvi)]?.GetValue<decimal>() ?? throw new FormatException("Mnozstvi missing."),
+                        DphEditovanoRucne: x[nameof(InvoiceItemData.DphEditovanoRucne)]?.GetValue<bool>() ?? throw new FormatException("DphEditovanoRucne missing."),
+                        DruhSazbyDph: x[nameof(InvoiceItemData.DruhSazbyDph)]?.GetValue<int>() ?? throw new FormatException("DruhSazbyDph missing."),
+                        PredkontaceKod: x[nameof(InvoiceItemData.PredkontaceKod)]?.GetValue<string>() ?? throw new FormatException("PredkontaceKod missing."),
+                        Jednotka: x[nameof(InvoiceItemData.Jednotka)]?.GetValue<string>() ?? throw new FormatException("Jednotka missing."),
+                        CisloPolozky: x[nameof(InvoiceItemData.CisloPolozky)]?.GetValue<int>() ?? throw new FormatException("CisloPolozky missing."),
+                        TypObsahu: x[nameof(InvoiceItemData.TypObsahu)]?.GetValue<int>() ?? throw new FormatException("TypObsahu missing."),
+                        CleneniDphKod: x[nameof(InvoiceItemData.CleneniDphKod)]?.GetValue<string>() ?? throw new FormatException("CleneniDphKod missing."),
+                        TypCeny: x[nameof(InvoiceItemData.TypCeny)]?.GetValue<int>() ?? throw new FormatException("TypCeny missing."),
+                        ArtiklPlu: x[nameof(InvoiceItemData.ArtiklPlu)]?.GetValue<string>() ?? throw new FormatException("ArtiklPlu missing."),
+                        SkladKod: x[nameof(InvoiceItemData.SkladKod)]?.GetValue<string>() ?? throw new FormatException("SkladKod missing."),
+                        CelkovaCena: x[nameof(InvoiceItemData.CelkovaCena)]?.GetValue<decimal>() ?? throw new FormatException("CelkovaCena missing."),
+                        CelkovaCenaCm: x[nameof(InvoiceItemData.CelkovaCenaCm)]?.GetValue<decimal>() ?? throw new FormatException("CelkovaCenaCm missing."),
+                        DphCelkem: x[nameof(InvoiceItemData.DphCelkem)]?.GetValue<decimal>() ?? throw new FormatException("DphCelkem missing."),
+                        DphZaklad: x[nameof(InvoiceItemData.DphZaklad)]?.GetValue<decimal>() ?? throw new FormatException("DphZaklad missing."),
+                        DphDan: x[nameof(InvoiceItemData.DphDan)]?.GetValue<decimal>() ?? throw new FormatException("DphDan missing."),
+                        DphCelkemCm: x[nameof(InvoiceItemData.DphCelkemCm)]?.GetValue<decimal>() ?? throw new FormatException("DphCelkemCm missing."),
+                        DphZakladCm: x[nameof(InvoiceItemData.DphZakladCm)]?.GetValue<decimal>() ?? throw new FormatException("DphZakladCm missing."),
+                        DphDanCm: x[nameof(InvoiceItemData.DphDanCm)]?.GetValue<decimal>() ?? throw new FormatException("DphDanCm missing."),
+                        DphSazba: x[nameof(InvoiceItemData.DphSazba)]?.GetValue<decimal>() ?? throw new FormatException("DphSazba missing.")
+                    ))
+                    .ToArray() ?? throw new FormatException("Polozky missing."),
                 Poznamka: arr[33]?.GetValue<string?>()
             );
         }
