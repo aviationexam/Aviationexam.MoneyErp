@@ -22,7 +22,7 @@ namespace Aviationexam.MoneyErp.Tests;
 public class MoneyErpImportInvoiceTests
 {
     [Theory]
-    [ClassData(typeof(MoneyErpInvoiceClassData))]
+    [ClassData(typeof(MoneyErpInvoiceClassData), Explicit = true)]
     public async Task ImportInvoiceWorks(
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData,
         InvoiceData[] invoiceData
