@@ -1,17 +1,15 @@
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
-using Aviationexam.MoneyErp.RestApi.Client;
-using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Company;
-using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.IssuedInvoice;
-using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Shop;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
+using ZeroQL;
 using ZLinq;
 using Guid = System.Guid;
 
@@ -20,7 +18,7 @@ namespace Aviationexam.MoneyErp.Tests;
 public class MoneyErpImportInvoiceTests
 {
     [Theory]
-    [ClassData(typeof(MoneyErpInvoiceClassData), Explicit = true)]
+    [ClassData(typeof(MoneyErpInvoiceClassData))]
     public async Task ImportInvoiceWorks(
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData,
         InvoiceData[] invoiceData
@@ -29,7 +27,6 @@ public class MoneyErpImportInvoiceTests
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
 
         var version = await graphqlClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
 
@@ -134,6 +131,8 @@ public class MoneyErpImportInvoiceTests
                 },
                 cancellationToken: TestContext.Current.CancellationToken
             );
+            Assert.NotNull(graphResponse.Errors);
+            Assert.Empty(graphResponse.Errors);
 
             var currencyId = graphResponse.Data!.Currency!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var companyCountryId = graphResponse.Data!.CompanyCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
@@ -177,6 +176,8 @@ public class MoneyErpImportInvoiceTests
                 },
                 cancellationToken: TestContext.Current.CancellationToken
             );
+            Assert.NotNull(secondaryGraphResponse.Errors);
+            Assert.Empty(secondaryGraphResponse.Errors);
 
             var companyGuid = secondaryGraphResponse.Data?.Company?.AsValueEnumerable()
                 .Where(x => x!.Deleted is false)
@@ -186,36 +187,33 @@ public class MoneyErpImportInvoiceTests
 
             if (companyGuid is null)
             {
-                var mutationArguments = new
+                var companyInput = new CompanyInput
                 {
-                    companyInput = new CompanyInput
-                    {
-                        Kod = data.FirmaKod,
-                        Nazev = data.FirmaNazev,
-                        DIC = data.FirmaDic,
-                        FaktNazev = data.FirmaNazev,
-                        FaktUlice = data.FirmaUlice,
-                        FaktMisto = data.FirmaMisto,
-                        FaktPsc = data.FirmaKodPsc,
-                        FaktStat_ID = companyCountryId,
-                        ObchNazev = data.FirmaNazev,
-                        ObchUlice = data.FirmaUlice,
-                        ObchMisto = data.FirmaMisto,
-                        ObchPsc = data.FirmaKodPsc,
-                        ObchStat_ID = companyCountryId,
-                        ProvNazev = data.FirmaNazev,
-                        ProvUlice = data.FirmaUlice,
-                        ProvMisto = data.FirmaMisto,
-                        ProvPsc = data.FirmaKodPsc,
-                        ProvStat_ID = companyCountryId,
-                        PlatceDPH = data.FirmaPlatceDph,
-                    },
+                    Kod = data.FirmaKod,
+                    Nazev = data.FirmaNazev,
+                    DIC = data.FirmaDic,
+                    FaktNazev = data.FirmaNazev,
+                    FaktUlice = data.FirmaUlice,
+                    FaktMisto = data.FirmaMisto,
+                    FaktPsc = data.FirmaKodPsc,
+                    FaktStat_ID = companyCountryId,
+                    ObchNazev = data.FirmaNazev,
+                    ObchUlice = data.FirmaUlice,
+                    ObchMisto = data.FirmaMisto,
+                    ObchPsc = data.FirmaKodPsc,
+                    ObchStat_ID = companyCountryId,
+                    ProvNazev = data.FirmaNazev,
+                    ProvUlice = data.FirmaUlice,
+                    ProvMisto = data.FirmaMisto,
+                    ProvPsc = data.FirmaKodPsc,
+                    ProvStat_ID = companyCountryId,
+                    PlatceDPH = data.FirmaPlatceDph,
                 };
-                var mutationResponse = await graphqlClient.Mutation(
-                    mutationArguments,
+                var companyResponse = await graphqlClient.Mutation(
+                    companyInput,
                     static (f, x) => new
                     {
-                        CompanyGuid = x.CreateCompany(f.companyInput, selector: c => new
+                        CompanyGuid = x.CreateCompany(f, selector: c => new
                         {
                             c.ID,
                             c.Deleted,
@@ -226,7 +224,9 @@ public class MoneyErpImportInvoiceTests
                     },
                     cancellationToken: TestContext.Current.CancellationToken
                 );
-                companyGuid = mutationResponse.Data?.CompanyGuid?.ID.AsGuid();
+                Assert.NotNull(companyResponse.Errors);
+                Assert.Empty(companyResponse.Errors);
+                companyGuid = companyResponse.Data?.CompanyGuid?.ID.AsGuid();
             }
 
             ids.Add((
@@ -241,92 +241,100 @@ public class MoneyErpImportInvoiceTests
             ));
         }
 
-        var response = await client.V10.IssuedInvoice.PostAsync([
-            .. invoiceData.AsValueEnumerable()
-                .Zip(ids)
-                .Select(static item =>
+        foreach (var (invoice, resolvedIds) in invoiceData.Zip(ids))
+        {
+            var importInvoice = new
+            {
+                companyInput = new IssuedInvoiceInput
                 {
-                    var invoice = item.First;
-                    var ids = item.Second;
+                    CisloDokladu = invoice.CisloDokladu,
+                    OdkazNaDoklad = invoice.OdkazNaDoklad,
+                    VariabilniSymbol = invoice.VariabilniSymbol,
+                    DatumVystaveni = invoice.DatumVystaveni,
+                    DatumUcetnihoPripadu = invoice.DatumUcetnihoPripadu,
+                    DatumPlneni = invoice.DatumPlneni,
+                    DatumSplatnosti = invoice.DatumSplatnosti,
+                    Vystavil = invoice.Vystavil,
+                    Nazev = invoice.Nazev,
+                    DIC = invoice.Dic,
+                    CelkovaCastkaCM = invoice.CelkovaCastkaCm,
+                    UcetniKurzKurz = invoice.Kurz,
+                    //invoice.KurzMnozstvi,
+                    Mena_ID = resolvedIds.currencyId,
+                    CleneniDPH_ID = resolvedIds.vatClassificationId,
+                    Group_ID = resolvedIds.invoiceGroupId,
+                    Firma_ID = resolvedIds.companyGuid,
+                    AdresaKoncovehoPrijemceKontaktniOsoba_ID = invoice.AdresaPrijemceFaktury.Nazev == "" ? (ID?) Guid.Parse("") : (ID?)null,
 
-                    return new IssuedInvoiceInputDto
-                    {
-                        CisloDokladu = invoice.CisloDokladu,
-                        OdkazNaDoklad = invoice.OdkazNaDoklad,
-                        VariabilniSymbol = invoice.VariabilniSymbol,
-                        DatumVystaveni = invoice.DatumVystaveni,
-                        DatumUcetnihoPripadu = invoice.DatumUcetnihoPripadu,
-                        DatumPlneni = invoice.DatumPlneni,
-                        DatumSplatnosti = invoice.DatumSplatnosti,
-                        Vystavil = invoice.Vystavil,
-                        Nazev = invoice.Nazev,
-                        DIC = invoice.Dic,
-                        CelkovaCastkaCM = (double) invoice.CelkovaCastkaCm,
-                        UcetniKurzKurz = (double) invoice.Kurz,
-                        //invoice.KurzMnozstvi,
-                        MenaID = ids.currencyId,
-                        CleneniDPHID = ids.vatClassificationId,
-                        GroupID = ids.invoiceGroupId,
-                        FirmaID = ids.companyGuid,
-                        AdresaPrijemceFakturyKontaktniOsobaID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
-
-                        //invoice.AdresaPrijemceFaktury.Email,
-                        //invoice.AdresaPrijemceFaktury.Telefon,
-                        //invoice.AdresaPrijemceFaktury.Ulice,
-                        //invoice.AdresaPrijemceFaktury.Misto,
-                        //invoice.AdresaPrijemceFaktury.Psc,
-                        //invoice.AdresaPrijemceFaktury.Stat,
-                        //invoice.AdresaPrijemceFaktury.Nazev,
-                        AdresaKoncovehoPrijemceEmail = invoice.AdresaKoncovehoPrijemce.Email,
-                        AdresaKoncovehoPrijemceTelefon = invoice.AdresaKoncovehoPrijemce.Telefon,
-                        AdresaKoncovehoPrijemceKontaktniOsobaID = invoice.AdresaKoncovehoPrijemce.Nazev == "" ? Guid.Parse("") : null,
-                        //invoice.AdresaKoncovehoPrijemce.Ulice,
-                        //invoice.AdresaKoncovehoPrijemce.Misto,
-                        //invoice.AdresaKoncovehoPrijemce.Psc,
-                        //invoice.AdresaKoncovehoPrijemce.Stat,
-                        ZpusobDopravyID = ids.transportId,
-                        ZpusobPlatbyID = ids.paymentId,
-                        PredkontaceID = ids.accountAssignmentIds.AsValueEnumerable().FirstOrDefault().Value,
-                        Polozky =
-                        [
-                            .. invoice.Polozky.AsValueEnumerable()
-                                .Select(x => new IssuedInvoiceItemInputDto
+                    //invoice.AdresaPrijemceFaktury.Email,
+                    //invoice.AdresaPrijemceFaktury.Telefon,
+                    //invoice.AdresaPrijemceFaktury.Ulice,
+                    //invoice.AdresaPrijemceFaktury.Misto,
+                    //invoice.AdresaPrijemceFaktury.Psc,
+                    //invoice.AdresaPrijemceFaktury.Stat,
+                    //invoice.AdresaPrijemceFaktury.Nazev,
+                    AdresaKoncovehoPrijemceEmail = invoice.AdresaKoncovehoPrijemce.Email,
+                    AdresaKoncovehoPrijemceTelefon = invoice.AdresaKoncovehoPrijemce.Telefon,
+                    AdresaKoncovehoPrijemceKontaktniOsoba_ID = invoice.AdresaKoncovehoPrijemce.Nazev == "" ? (ID?) Guid.Parse("") : (ID?)null,
+                    //invoice.AdresaKoncovehoPrijemce.Ulice,
+                    //invoice.AdresaKoncovehoPrijemce.Misto,
+                    //invoice.AdresaKoncovehoPrijemce.Psc,
+                    //invoice.AdresaKoncovehoPrijemce.Stat,
+                    ZpusobDopravy_ID = resolvedIds.transportId,
+                    ZpusobPlatby_ID = resolvedIds.paymentId,
+                    Predkontace_ID = resolvedIds.accountAssignmentIds.AsValueEnumerable().FirstOrDefault().Value,
+                    Polozky =
+                    [
+                        .. invoice.Polozky.AsValueEnumerable()
+                            .Select(x => new IssuedInvoiceItemInput
+                            {
+                                Nazev = x.Nazev,
+                                Mnozstvi = x.Mnozstvi,
+                                DPHEditovanoRucne = x.DphEditovanoRucne,
+                                DruhSazbyDPH = x.DruhSazbyDph,
+                                Predkontace_ID = resolvedIds.accountAssignmentIds.GetValueOrDefault(x.PredkontaceKod),
+                                Jednotka = x.Jednotka,
+                                CisloPolozky = x.CisloPolozky,
+                                TypObsahu = x.TypObsahu,
+                                CleneniDPH_ID = x.CleneniDphKod == "" ? Guid.Parse("") : null,
+                                TypCeny = x.TypCeny,
+                                ObsahPolozky = new ContentOfItemWithArticleInput
                                 {
-                                    Nazev = x.Nazev,
-                                    Mnozstvi = (double) x.Mnozstvi,
-                                    DPHEditovanoRucne = x.DphEditovanoRucne,
-                                    DruhSazbyDPH = x.DruhSazbyDph,
-                                    PredkontaceID = ids.accountAssignmentIds.GetValueOrDefault(x.PredkontaceKod),
-                                    Jednotka = x.Jednotka,
-                                    CisloPolozky = x.CisloPolozky,
-                                    TypObsahu = x.TypObsahu,
-                                    CleneniDPHID = x.CleneniDphKod == "" ? Guid.Parse("") : null,
-                                    TypCeny = x.TypCeny,
-                                    ObsahPolozky = new ContentOfItemWithArticleInputDto
-                                    {
-                                        ArtiklID = x.ArtiklPlu == "" ? Guid.Parse("") : null,
-                                        SkladID = x.SkladKod == "" ? Guid.Parse("") : null,
-                                    },
-                                    CelkovaCena = (double) x.CelkovaCena,
-                                    CelkovaCenaCM = (double) x.CelkovaCenaCm,
-                                    DphCelkem = (double) x.DphCelkem,
-                                    DphZaklad = (double) x.DphZaklad,
-                                    DphDan = (double) x.DphDan,
-                                    DphCelkemCM = (double) x.DphCelkemCm,
-                                    DphZakladCM = (double) x.DphZakladCm,
-                                    DphDanCM = (double) x.DphDanCm,
-                                    DphSazba = (double) x.DphSazba,
-                                }),
-                        ],
-                        Poznamka = invoice.Poznamka,
-                    };
-                }),
-        ], cancellationToken: TestContext.Current.CancellationToken);
+                                    Artikl_ID = x.ArtiklPlu == "" ? Guid.Parse("") : null,
+                                    Sklad_ID = x.SkladKod == "" ? Guid.Parse("") : null,
+                                },
+                                CelkovaCena = x.CelkovaCena,
+                                CelkovaCenaCM = x.CelkovaCenaCm,
+                                DphCelkem = x.DphCelkem,
+                                DphZaklad = x.DphZaklad,
+                                DphDan = x.DphDan,
+                                DphCelkemCM = x.DphCelkemCm,
+                                DphZakladCM = x.DphZakladCm,
+                                DphDanCM = x.DphDanCm,
+                                DphSazba = x.DphSazba,
+                            }),
+                    ],
+                    Poznamka = invoice.Poznamka,
+                },
+            };
+            var mutationResponse = await graphqlClient.Mutation(
+                importInvoice,
+                static (f, x) => new
+                {
+                    CompanyGuid = x.CreateIssuedInvoice(f.companyInput, selector: c => new
+                    {
+                        c.ID,
+                        c.Deleted,
+                        c.Nazev,
+                        c.Create_Date,
+                    }),
+                },
+                cancellationToken: TestContext.Current.CancellationToken
+            );
 
-        Assert.NotNull(response);
-        Assert.Empty(response.AdditionalData);
-        Assert.NotNull(response.Data);
-        Assert.NotEmpty(response.Data);
+            Assert.NotNull(mutationResponse.Errors);
+            Assert.Empty(mutationResponse.Errors);
+        }
     }
 
     private sealed class MoneyErpInvoiceClassData() : TheoryData<MoneyErpAuthenticationsClassData.AuthenticationData?, InvoiceData[]>(
