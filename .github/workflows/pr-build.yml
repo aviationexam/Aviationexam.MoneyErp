@@ -26,8 +26,7 @@ jobs:
           fetch-depth: 0  # This will fetch the full history
       - name: Get schema.graphql
         run: |
-          # --status success
-          RUN_ID=$(gh run list --workflow build.yml --limit 1 --json databaseId -q ".[0].databaseId")
+          RUN_ID=$(gh run list --workflow build.yml --status success --limit 1 --json databaseId -q ".[0].databaseId")
           gh run download $RUN_ID -n schema.graphql -D src/Aviationexam.MoneyErp.Graphql
           ls -la src/Aviationexam.MoneyErp.Graphql/schema.graphql
       - name: Tool restore
