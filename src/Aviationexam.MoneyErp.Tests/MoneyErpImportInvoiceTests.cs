@@ -264,7 +264,7 @@ public class MoneyErpImportInvoiceTests
                     CleneniDPH_ID = resolvedIds.vatClassificationId,
                     Group_ID = resolvedIds.invoiceGroupId,
                     Firma_ID = resolvedIds.companyGuid,
-                    //AdresaKoncovehoPrijemceKontaktniOsoba_ID = invoice.AdresaPrijemceFaktury.Nazev == "" ? (ID?) Guid.Parse("") : (ID?)null,
+                    AdresaPrijemceFakturyKontaktniOsoba_ID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
 
                     //invoice.AdresaPrijemceFaktury.Email,
                     //invoice.AdresaPrijemceFaktury.Telefon,
@@ -275,7 +275,7 @@ public class MoneyErpImportInvoiceTests
                     //invoice.AdresaPrijemceFaktury.Nazev,
                     AdresaKoncovehoPrijemceEmail = invoice.AdresaKoncovehoPrijemce.Email,
                     AdresaKoncovehoPrijemceTelefon = invoice.AdresaKoncovehoPrijemce.Telefon,
-                    //AdresaKoncovehoPrijemceKontaktniOsoba_ID = invoice.AdresaKoncovehoPrijemce.Nazev == "" ? (ID?) Guid.Parse("") : (ID?)null,
+                    AdresaKoncovehoPrijemceKontaktniOsoba_ID = invoice.AdresaKoncovehoPrijemce.Nazev == "" ? Guid.Parse("") : null,
                     //invoice.AdresaKoncovehoPrijemce.Ulice,
                     //invoice.AdresaKoncovehoPrijemce.Misto,
                     //invoice.AdresaKoncovehoPrijemce.Psc,
