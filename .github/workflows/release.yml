@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
+            8.0.x
             9.0.x
       - uses: actions/checkout@v4
         with:
@@ -29,9 +30,25 @@ jobs:
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}"
           echo "FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}"
           echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
+      - name: Get access token
+        id: get_token
+        uses: ./.github/actions/get-access-token
+        with:
+          token_server_url: ${{ secrets.MONEYERP_ENDPOINT }}
+          client_id: ${{ secrets.MONEYERP_CLIENT_ID }}
+          client_secret: ${{ secrets.MONEYERP_CLIENT_SECRET }}
+      - name: Fetch GrapQL schema
+        uses: ./.github/actions/fetch-graphql-schema
+        with:
+          endpoint: ${{ secrets.MONEYERP_ENDPOINT }}
+          access_token: ${{ steps.get_token.outputs.access_token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: schema-${{ steps.gitversion.outputs.FullSemVer }}.graphql
+          path: src/Aviationexam.MoneyErp.Graphql/schema.graphql
       - name: Tool restore
         run: dotnet tool restore
-      - name: Restore with .Net
+      - name: Restore
         run: dotnet restore --nologo
       - uses: actions/upload-artifact@v4
         with:
@@ -43,7 +60,7 @@ jobs:
         run: |
           dotnet pack src/Aviationexam.MoneyErp.Common/Aviationexam.MoneyErp.Common.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
           dotnet pack src/Aviationexam.MoneyErp.RestApi/Aviationexam.MoneyErp.RestApi.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
-          dotnet pack src/Aviationexam.MoneyErp.GraphQl/Aviationexam.MoneyErp.GraphQl.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
+          dotnet pack src/Aviationexam.MoneyErp.Graphql/Aviationexam.MoneyErp.Graphql.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
       - uses: actions/upload-artifact@v4
         with:
           name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}
