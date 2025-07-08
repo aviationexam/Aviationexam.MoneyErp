@@ -28,7 +28,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Http" VersionOverride="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" VersionOverride="8.0.2" />
-    <PackageReference Include="System.Text.Json" VersionOverride="8.0.5" />
+    <PackageReference Include="System.Text.Json" VersionOverride="8.0.6" />
   </ItemGroup>
 
 </Project>
