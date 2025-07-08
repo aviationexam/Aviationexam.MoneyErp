@@ -365,252 +365,231 @@ public class OpenApiPreprocessor(
             switch (reader.TokenType)
             {
                 case JsonTokenType.PropertyName:
-                    lastProperty = reader.ValueSpan;
-
-                    if (
-                        IsIgnorePath(ref reader, collectedMetadata, currentPath)
-                        || IsIgnorePathMethod(ref reader, collectedMetadata, currentPath)
-                    )
                     {
-                        reader.Skip();
+                        lastProperty = reader.ValueSpan;
 
-                        break;
-                    }
-
-                    if (
-                        lastProperty.SequenceEqual("Shared.Enums.LogicOperator"u8)
-                        && currentPath.Count == 3
-                        && currentPath.ToArray() is
-                        [
-#pragma warning disable format
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-#pragma warning restore format
-                        ]
-                    )
-                    {
-                        reader.Skip();
-
-                        break;
-                    }
-
-                    if (
-                        currentPath.Count == 5
-                        && currentPath.ToArray() is
-                        [
-#pragma warning disable format
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Properties },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } componentName },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-#pragma warning restore format
-                        ]
-                    )
-                    {
-                        var propertyNameAsString = Encoding.UTF8.GetString(lastProperty);
-
-                        propertyNameAsString = (componentName, propertyNameAsString) switch
+                        if (
+                            IsIgnorePath(ref reader, collectedMetadata, currentPath)
+                            || IsIgnorePathMethod(ref reader, collectedMetadata, currentPath)
+                        )
                         {
-                            (_, "id") => "ID",
-                            (_, "ic") => "IC",
-                            (_, "ico") => "ICO",
-                            (_, "dic") => "DIC",
-                            (_, "icdph") => "ICDPH",
-                            (_, "idDatum") => "IDDatum",
-                            (_, "idDopravaTuzemsko") => "IDDopravaTuzemsko",
-                            (_, "idDopravaZahranici") => "IDDopravaZahranici",
-                            (_, "idKrajPuvodu_ID") => "IDKrajPuvodu_ID",
-                            (_, "idOvlivnujeIntrastat") => "IDOvlivnujeIntrastat",
-                            (_, "idPovahaTransakce_ID") => "IDPovahaTransakce_ID",
-                            (_, "ipHmotnost") => "IPHmotnost",
-                            (_, "ipMnozstvi") => "IPMnozstvi",
-                            (_, "ipOvlivnujeIntrastat") => "IPOvlivnujeIntrastat",
-                            (_, "ipCisloZasilky") => "IPCisloZasilky",
-                            (_, "dphEditovanoRucne") => "DPHEditovanoRucne",
-                            ("ApiCore.Services.Company.CompanyOutputDto", "www") => "WWW",
-                            ("ApiCore.Services.Article.ArticleOutputDto", "plu") => "PLU",
-                            ("ApiCore.Services.Article.ArticleOutputDto", "pluCislo") => "PLUCislo",
-                            ("ApiCore.Services.Article.ArticleOutputDto", "retela") => "RETELA",
-                            _ => propertyNameAsString,
-                        };
+                            reader.Skip();
 
-                        if (char.IsLower(propertyNameAsString[0]))
-                        {
-                            var propertyName = propertyNameAsString.ToCharArray().AsSpan();
-                            propertyName[0] = char.ToUpperInvariant(propertyName[0]);
-
-                            propertyNameAsString = propertyName.ToString();
+                            break;
                         }
 
-                        writer.WritePropertyName(propertyNameAsString);
-                    }
-                    else
-                    {
-                        writer.WritePropertyName(reader.ValueSpan);
-                    }
-
-                {
-                    if (
-                        lastProperty.SequenceEqual(SchemaU8)
-                        && currentPath.Count == 8
-                        && currentPath.ToArray() is
-                        [
+                        if (
+                            lastProperty.SequenceEqual("Shared.Enums.LogicOperator"u8)
+                            && currentPath.Count == 3
+                            && currentPath.ToArray() is
+                            [
 #pragma warning disable format
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Content },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Responses },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } methodName },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
 #pragma warning restore format
-                        ]
-                        && collectedMetadata.IsPaginatedResponse(pathName, methodName, out var itemsSchema)
-                    )
-                    {
-                        writer.WriteStartObject();
-
-                        writer.WritePropertyName(Type);
-                        writer.WriteStringValue("object"u8);
-
-                        writer.WritePropertyName("required"u8);
+                            ]
+                        )
                         {
-                            writer.WriteStartArray();
+                            reader.Skip();
 
-                            writer.WriteStringValue("RowCount"u8);
-                            writer.WriteStringValue("PageCount"u8);
-                            writer.WriteStringValue("Message"u8);
-                            writer.WriteStringValue("StackTrace"u8);
-                            writer.WriteStringValue("Status"u8);
-                            writer.WriteStringValue("Data"u8);
-
-                            writer.WriteEndArray();
+                            break;
                         }
-                        writer.WritePropertyName("properties"u8);
-                        {
-                            writer.WriteStartObject();
-                            WriteProperty(writer, "RowCount"u8, "integer"u8, "int32"u8);
-                            WriteProperty(writer, "PageCount"u8, "integer"u8, "int32"u8);
-                            WriteProperty(writer, "Message"u8, "string"u8, []);
-                            WriteProperty(writer, "StackTrace"u8, "string"u8, []);
 
-                            writer.WritePropertyName("Status"u8);
+                        if (
+                            currentPath.Count == 5
+                            && currentPath.ToArray() is
+                            [
+#pragma warning disable format
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: Properties },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } componentName },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: Schemas },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: Components },
+                                { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
+                            ]
+                        )
+                        {
+                            var propertyNameAsString = Encoding.UTF8.GetString(lastProperty);
+
+                            propertyNameAsString = (componentName, propertyNameAsString) switch
                             {
-                                writer.WriteStartObject();
+                                (_, "id") => "ID",
+                                (_, "ic") => "IC",
+                                (_, "ico") => "ICO",
+                                (_, "dic") => "DIC",
+                                (_, "icdph") => "ICDPH",
+                                (_, "idDatum") => "IDDatum",
+                                (_, "idDopravaTuzemsko") => "IDDopravaTuzemsko",
+                                (_, "idDopravaZahranici") => "IDDopravaZahranici",
+                                (_, "idKrajPuvodu_ID") => "IDKrajPuvodu_ID",
+                                (_, "idOvlivnujeIntrastat") => "IDOvlivnujeIntrastat",
+                                (_, "idPovahaTransakce_ID") => "IDPovahaTransakce_ID",
+                                (_, "ipHmotnost") => "IPHmotnost",
+                                (_, "ipMnozstvi") => "IPMnozstvi",
+                                (_, "ipOvlivnujeIntrastat") => "IPOvlivnujeIntrastat",
+                                (_, "ipCisloZasilky") => "IPCisloZasilky",
+                                (_, "dphEditovanoRucne") => "DPHEditovanoRucne",
+                                ("ApiCore.Services.Company.CompanyOutputDto", "www") => "WWW",
+                                ("ApiCore.Services.Article.ArticleOutputDto", "plu") => "PLU",
+                                ("ApiCore.Services.Article.ArticleOutputDto", "pluCislo") => "PLUCislo",
+                                ("ApiCore.Services.Article.ArticleOutputDto", "retela") => "RETELA",
+                                _ => propertyNameAsString,
+                            };
 
-                                writer.WritePropertyName(Ref);
-                                writer.WriteStringValue([.. "#/components/schemas/"u8, .. PaginationStatus]);
-                                writer.WriteEndObject();
+                            if (char.IsLower(propertyNameAsString[0]))
+                            {
+                                var propertyName = propertyNameAsString.ToCharArray().AsSpan();
+                                propertyName[0] = char.ToUpperInvariant(propertyName[0]);
+
+                                propertyNameAsString = propertyName.ToString();
                             }
 
-                            writer.WritePropertyName("Data"u8);
+                            writer.WritePropertyName(propertyNameAsString);
+                        }
+                        else
+                        {
+                            writer.WritePropertyName(reader.ValueSpan);
+                        }
+
+                        {
+                            if (
+                                lastProperty.SequenceEqual(SchemaU8)
+                                && currentPath.Count == 8
+                                && currentPath.ToArray() is
+                                [
+#pragma warning disable format
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: Content },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: Responses },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } methodName },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
+                                ]
+                                && collectedMetadata.IsPaginatedResponse(pathName, methodName, out var itemsSchema)
+                            )
                             {
                                 writer.WriteStartObject();
 
                                 writer.WritePropertyName(Type);
-                                writer.WriteStringValue(Array);
+                                writer.WriteStringValue("object"u8);
 
-                                writer.WritePropertyName(ItemsU8);
+                                writer.WritePropertyName("required"u8);
+                                {
+                                    writer.WriteStartArray();
+
+                                    writer.WriteStringValue("RowCount"u8);
+                                    writer.WriteStringValue("PageCount"u8);
+                                    writer.WriteStringValue("Message"u8);
+                                    writer.WriteStringValue("StackTrace"u8);
+                                    writer.WriteStringValue("Status"u8);
+                                    writer.WriteStringValue("Data"u8);
+
+                                    writer.WriteEndArray();
+                                }
+                                writer.WritePropertyName("properties"u8);
                                 {
                                     writer.WriteStartObject();
+                                    WriteProperty(writer, "RowCount"u8, "integer"u8, "int32"u8);
+                                    WriteProperty(writer, "PageCount"u8, "integer"u8, "int32"u8);
+                                    WriteProperty(writer, "Message"u8, "string"u8, []);
+                                    WriteProperty(writer, "StackTrace"u8, "string"u8, []);
 
-                                    if (itemsSchema is RefSchema { Ref: var itemsRef })
+                                    writer.WritePropertyName("Status"u8);
                                     {
+                                        writer.WriteStartObject();
+
                                         writer.WritePropertyName(Ref);
-                                        writer.WriteStringValue(itemsRef);
+                                        writer.WriteStringValue([.. "#/components/schemas/"u8, .. PaginationStatus]);
+                                        writer.WriteEndObject();
                                     }
 
-                                    if (itemsSchema is InlineSchema { Type: var itemsType, Format: var itemsFormat })
+                                    writer.WritePropertyName("Data"u8);
                                     {
-                                        writer.WritePropertyName(Type);
-                                        writer.WriteStringValue(itemsType);
+                                        writer.WriteStartObject();
 
-                                        if (itemsFormat is not null)
+                                        writer.WritePropertyName(Type);
+                                        writer.WriteStringValue(Array);
+
+                                        writer.WritePropertyName(ItemsU8);
                                         {
-                                            writer.WritePropertyName(Format);
-                                            writer.WriteStringValue(itemsFormat);
+                                            writer.WriteStartObject();
+
+                                            if (itemsSchema is RefSchema { Ref: var itemsRef })
+                                            {
+                                                writer.WritePropertyName(Ref);
+                                                writer.WriteStringValue(itemsRef);
+                                            }
+
+                                            if (itemsSchema is InlineSchema { Type: var itemsType, Format: var itemsFormat })
+                                            {
+                                                writer.WritePropertyName(Type);
+                                                writer.WriteStringValue(itemsType);
+
+                                                if (itemsFormat is not null)
+                                                {
+                                                    writer.WritePropertyName(Format);
+                                                    writer.WriteStringValue(itemsFormat);
+                                                }
+                                            }
+
+                                            writer.WriteEndObject();
                                         }
+
+                                        writer.WriteEndObject();
                                     }
 
                                     writer.WriteEndObject();
                                 }
 
                                 writer.WriteEndObject();
+
+                                reader.Skip();
                             }
-
-                            writer.WriteEndObject();
                         }
 
-                        writer.WriteEndObject();
-
-                        reader.Skip();
-                    }
-                }
-
-                {
-                    if (
-                        lastProperty.SequenceEqual(SchemaU8)
-                        && currentPath.Count == 6
-                        && currentPath.ToArray() is
-                        [
-                            ParameterTreeItem { JsonTokenType: JsonTokenType.StartObject, PropertyName: null, In: Path, Name: { } parameterName },
-                            { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
-                            { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-                        ]
-                        && collectedMetadata.ModifyPathParameterType(
-                            pathName,
-                            parameterName,
-                            out var parameterType
-                        )
-                    )
-                    {
-                        writer.WriteStartObject();
-
-                        writer.WritePropertyName(Type);
-                        writer.WriteStringValue(parameterType.Value.Type);
-
-                        if (parameterType.Value.Format is not null)
                         {
-                            writer.WritePropertyName(Format);
-                            writer.WriteStringValue(parameterType.Value.Format);
+                            if (
+                                lastProperty.SequenceEqual(SchemaU8)
+                                && currentPath.Count == 6
+                                && currentPath.ToArray() is
+                                [
+#pragma warning disable format
+                                    ParameterTreeItem { JsonTokenType: JsonTokenType.StartObject, PropertyName: null, In: Path, Name: { } parameterName },
+                                    { JsonTokenType: JsonTokenType.StartArray, PropertyName: Parameters },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: not null },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+                                    { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
+                                ]
+                                && collectedMetadata.ModifyPathParameterType(
+                                    pathName,
+                                    parameterName,
+                                    out var parameterType
+                                )
+                            )
+                            {
+                                writer.WriteStartObject();
+
+                                writer.WritePropertyName(Type);
+                                writer.WriteStringValue(parameterType.Value.Type);
+
+                                if (parameterType.Value.Format is not null)
+                                {
+                                    writer.WritePropertyName(Format);
+                                    writer.WriteStringValue(parameterType.Value.Format);
+                                }
+
+                                writer.WriteEndObject();
+
+                                writer.WritePropertyName("x-original-schema"u8);
+                            }
                         }
-
-                        writer.WriteEndObject();
-
-                        writer.WritePropertyName("x-original-schema"u8);
                     }
-                }
-
-                    static bool IsIgnorePath(
-                        ref Utf8JsonReader reader, CollectedMetadata collectedMetadata, Stack<TreeItem> currentPath
-                    ) => currentPath.Count == 2
-                         && currentPath.ToArray() is
-                         [
-#pragma warning disable format
-                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
-                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-#pragma warning restore format
-                         ]
-                         && collectedMetadata.IsPathIgnored(reader.ValueSpan);
-
-                    static bool IsIgnorePathMethod(
-                        ref Utf8JsonReader reader, CollectedMetadata collectedMetadata, Stack<TreeItem> currentPath
-                    ) => currentPath.Count == 3
-                         && currentPath.ToArray() is
-                         [
-#pragma warning disable format
-                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
-                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
-                             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
-#pragma warning restore format
-                         ]
-                         && collectedMetadata.IsPathMethodIgnored(pathName, reader.ValueSpan);
 
                     break;
 
@@ -879,6 +858,32 @@ public class OpenApiPreprocessor(
 
         writer.WriteEndObject();
     }
+
+    private static bool IsIgnorePath(
+        ref Utf8JsonReader reader, CollectedMetadata collectedMetadata, Stack<TreeItem> currentPath
+    ) => currentPath.Count == 2
+         && currentPath.ToArray() is
+         [
+#pragma warning disable format
+             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
+         ]
+         && collectedMetadata.IsPathIgnored(reader.ValueSpan);
+
+    private static bool IsIgnorePathMethod(
+        ref Utf8JsonReader reader, CollectedMetadata collectedMetadata, Stack<TreeItem> currentPath
+    ) => currentPath.Count == 3
+         && currentPath.ToArray() is
+         [
+#pragma warning disable format
+             { JsonTokenType: JsonTokenType.StartObject, PropertyName: { } pathName },
+             { JsonTokenType: JsonTokenType.StartObject, PropertyName: Paths },
+             { JsonTokenType: JsonTokenType.StartObject, PropertyName: null },
+#pragma warning restore format
+         ]
+         && collectedMetadata.IsPathMethodIgnored(pathName, reader.ValueSpan);
+
 
     private static void PushCurrentObjectItem(
         ref Utf8JsonReader reader, Stack<TreeItem> currentPath, ReadOnlySpan<byte> lastProperty
