@@ -1,7 +1,6 @@
 using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Graphql.Client;
-using Aviationexam.MoneyErp.Graphql.JsonConverters;
 using Aviationexam.MoneyErp.Graphql.ZeroQLServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
