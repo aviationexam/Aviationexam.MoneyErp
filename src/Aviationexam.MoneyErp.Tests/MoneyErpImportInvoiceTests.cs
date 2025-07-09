@@ -1,5 +1,8 @@
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
+using Aviationexam.MoneyErp.RestApi.Client;
+using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Person;
+using Aviationexam.MoneyErp.RestApi.Extensions;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -25,6 +28,7 @@ public class MoneyErpImportInvoiceTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
+        var restApiClient = serviceProvider.GetRequiredService<MoneyErpApiClient>();
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
 
         var version = await graphqlClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
@@ -48,11 +52,38 @@ public class MoneyErpImportInvoiceTests
             {
                 currencyFilter = $"{nameof(Currency.Kod)}~eq~{data.MenaKod}",
                 companyCountryFilter = $"{nameof(Country.Kod)}~eq~{data.FirmaStatKod}",
+                invoiceReceiverAddressCountryFilter = $"{nameof(Country.Kod)}~eq~{data.AdresaPrijemceFaktury.Stat}",
+                receiverAddressCountryFilter = $"{nameof(Country.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Stat}",
                 varClassificationFilter = $"{nameof(VATClassification.Kod)}~eq~{data.CleneniDphKod}",
                 invoiceGroupFilter = $"{nameof(MerpGroup.Kod)}~eq~{data.GroupKod}",
                 transportFilter = $"{nameof(TransportType.Kod)}~eq~{data.ZpusobDopravyKod}",
                 paymentFilter = $"{nameof(PaymentType.Kod)}~eq~{data.ZpusobPlatbyKod}",
                 accountAssignmentFilter = data.Polozky.AsValueEnumerable().Select(x => x.PredkontaceKod).Distinct().Select(x => $"{nameof(AccountAssignment.Kod)}~eq~{x}").JoinToString('|'),
+                connectionsTypesFilter = string.Join('|',
+                    $"{nameof(ConnectionsType.Kod)}~eq~E-mail",
+                    $"{nameof(ConnectionsType.Kod)}~eq~Mob",
+                    $"{nameof(ConnectionsType.Kod)}~eq~Tel"
+                ),
+                //invoiceReceiverEmailFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaPrijemceFaktury.Email}",
+                //receiverEmailFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaKoncovehoPrijemce.Email}",
+                //invoiceReceiverPhoneFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaPrijemceFaktury.Telefon}",
+                //receiverPhoneFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaKoncovehoPrijemce.Telefon}",
+                //invoiceReceiverAddressFilter = string.Join('#',
+                //    $"{nameof(Adresar_Firma.Kod)}~eq~{data.AdresaPrijemceFaktury.Email}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Telefon}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Ulice}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Misto}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Psc}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Nazev}"
+                //),
+                //receiverAddressFilter = string.Join('#',
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Email}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Telefon}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Ulice}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Misto}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Psc}",
+                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Nazev}"
+                //),
             };
 
             var graphResponse = await graphqlClient.Query(
@@ -71,6 +102,26 @@ public class MoneyErpImportInvoiceTests
                     ),
                     CompanyCountry = x.Countries(
                         Filter: f.companyCountryFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                    InvoiceReceiverAddressCountry = x.Countries(
+                        Filter: f.invoiceReceiverAddressCountryFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
+                    ReceiverAddressCountry = x.Countries(
+                        Filter: f.receiverAddressCountryFilter,
                         selector: c => new
                         {
                             c.ID,
@@ -127,19 +178,34 @@ public class MoneyErpImportInvoiceTests
                             c.Nazev,
                         }
                     ),
+                    ConnectionsTypes = x.ConnectionsTypes(
+                        Filter: f.connectionsTypesFilter,
+                        selector: c => new
+                        {
+                            c.ID,
+                            c.Kod,
+                            c.Nazev,
+                        }
+                    ),
                 },
                 cancellationToken: TestContext.Current.CancellationToken
             );
-            Assert.NotNull(graphResponse.Errors);
-            Assert.Empty(graphResponse.Errors);
+            Assert.Empty(graphResponse.Errors ?? []);
 
             var currencyId = graphResponse.Data!.Currency!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var companyCountryId = graphResponse.Data!.CompanyCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var invoiceReceiverAddressCountryId = graphResponse.Data!.InvoiceReceiverAddressCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var receiverAddressCountryId = graphResponse.Data!.ReceiverAddressCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var vatClassificationId = graphResponse.Data!.VATClassification!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var invoiceGroupId = graphResponse.Data!.InvoiceGroup!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var transportId = graphResponse.Data!.Transport!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var paymentId = graphResponse.Data!.Payment!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var accountAssignmentIds = graphResponse.Data!.AccountAssignment!.AsValueEnumerable()
+                .ToDictionary(
+                    x => x!.Kod!,
+                    x => x!.ID.AsGuid()!
+                );
+            var connectionsTypes = graphResponse.Data!.ConnectionsTypes!.AsValueEnumerable()
                 .ToDictionary(
                     x => x!.Kod!,
                     x => x!.ID.AsGuid()!
@@ -175,8 +241,7 @@ public class MoneyErpImportInvoiceTests
                 },
                 cancellationToken: TestContext.Current.CancellationToken
             );
-            Assert.NotNull(secondaryGraphResponse.Errors);
-            Assert.Empty(secondaryGraphResponse.Errors);
+            Assert.Empty(secondaryGraphResponse.Errors ?? []);
 
             var companyGuid = secondaryGraphResponse.Data?.Company?.AsValueEnumerable()
                 .Where(x => x!.Deleted is false)
@@ -223,9 +288,130 @@ public class MoneyErpImportInvoiceTests
                     },
                     cancellationToken: TestContext.Current.CancellationToken
                 );
-                Assert.NotNull(companyResponse.Errors);
-                Assert.Empty(companyResponse.Errors);
+                Assert.Empty(companyResponse.Errors ?? []);
                 companyGuid = companyResponse.Data?.CompanyGuid?.ID.AsGuid();
+            }
+
+            Guid? invoiceReceiverPhoneId = null;
+            Guid? invoiceReceiverEmailId = null;
+            if (connectionsTypes.TryGetValue("Tel", out var connectionTypeTelId) && connectionTypeTelId.HasValue)
+            {
+                if (data.AdresaPrijemceFaktury.Telefon is { } invoiceReceiverPhone)
+                {
+                    invoiceReceiverPhoneId = await restApiClient.GetOrCreateConnectionAsync(connectionTypeTelId.Value, invoiceReceiverPhone, TestContext.Current.CancellationToken);
+                }
+            }
+
+            if (connectionsTypes.TryGetValue("E-mail", out var connectionTypeEmailId) && connectionTypeEmailId.HasValue)
+            {
+                if (data.AdresaPrijemceFaktury.Email is { } invoiceReceiverEmail)
+                {
+                    invoiceReceiverEmailId = await restApiClient.GetOrCreateConnectionAsync(connectionTypeEmailId.Value, invoiceReceiverEmail, TestContext.Current.CancellationToken);
+                }
+            }
+
+            var personRequestInformation = restApiClient.AddCustomQueryParameters(
+                restApiClient.V10.Person.ToGetRequestInformation(),
+                x => { }
+            );
+
+            var persons = await restApiClient.V10.Person.GetAsync(personRequestInformation, cancellationToken: TestContext.Current.CancellationToken);
+            Assert.NotNull(persons);
+            Assert.Empty(persons.AdditionalData);
+            Assert.NotNull(persons.Data);
+            Assert.All(persons.Data, x => Assert.Empty(x.AdditionalData));
+            var personId = persons.Data.AsValueEnumerable().FirstOrDefault()?.ID;
+
+            if (personId is null)
+            {
+                var createPersonResponse = await restApiClient.V10.Person.PostAsync([
+                    new PersonInputDto
+                    {
+                        Nazev = data.AdresaPrijemceFaktury.Nazev,
+                        Email = data.AdresaPrijemceFaktury.Email,
+                        Tel1Cislo = data.AdresaPrijemceFaktury.Telefon,
+                        TelefonSpojeni1ID = invoiceReceiverPhoneId,
+                        EmailSpojeniID = invoiceReceiverEmailId,
+                        AdresaNazev = data.AdresaPrijemceFaktury.Nazev,
+                        AdresaMisto = data.AdresaPrijemceFaktury.Misto,
+                        AdresaUlice = data.AdresaPrijemceFaktury.Ulice,
+                        AdresaPsc = data.AdresaPrijemceFaktury.Psc,
+                        AdresaPscID = null,
+                        AdresaStat = null,
+                        AdresaStatID = invoiceReceiverAddressCountryId,
+                        Attachments = null,
+                        CisloOsoby = null,
+                        CisloS3 = null,
+                        CreateDate = null,
+                        CreateID = null,
+                        DatumPosty = null,
+                        Deleted = null,
+                        FaxCislo = null,
+                        FaxKlapka = null,
+                        FaxMistniCislo = null,
+                        FaxPredvolba = null,
+                        FaxPredvolbaStat = null,
+                        FaxSpojeniID = null,
+                        FaxStatID = null,
+                        Funkce = null,
+                        GroupID = null,
+                        Hidden = null,
+                        ID = null,
+                        IsNew = null,
+                        Jmeno = null,
+                        Kod = null,
+                        KrestniJmeno = null,
+                        Locked = null,
+                        ModifyDate = null,
+                        ModifyID = null,
+                        Osloveni = null,
+                        ParentID = null,
+                        Pohlavi = null,
+                        PosilatPostu = null,
+                        Poznamka = null,
+                        Prijmeni = null,
+                        RootID = null,
+                        Spojeni = null,
+                        Tel1Klapka = null,
+                        Tel1MistniCislo = null,
+                        Tel1Predvolba = null,
+                        Tel1PredvolbaStat = null,
+                        Tel1StatID = null,
+                        Tel1Typ = null,
+                        Tel2Cislo = null,
+                        Tel2Klapka = null,
+                        Tel2MistniCislo = null,
+                        Tel2Predvolba = null,
+                        Tel2PredvolbaStat = null,
+                        Tel2StatID = null,
+                        Tel2Typ = null,
+                        Tel3Cislo = null,
+                        Tel3Klapka = null,
+                        Tel3MistniCislo = null,
+                        Tel3Predvolba = null,
+                        Tel3PredvolbaStat = null,
+                        Tel3StatID = null,
+                        Tel3Typ = null,
+                        Tel4Cislo = null,
+                        Tel4Klapka = null,
+                        Tel4MistniCislo = null,
+                        Tel4Predvolba = null,
+                        Tel4PredvolbaStat = null,
+                        Tel4StatID = null,
+                        Tel4Typ = null,
+                        TelefonSpojeni2ID = null,
+                        TelefonSpojeni3ID = null,
+                        TelefonSpojeni4ID = null,
+                        TitulPred = null,
+                        TitulZa = null,
+                    },
+                ], cancellationToken: TestContext.Current.CancellationToken);
+
+                Assert.NotNull(createPersonResponse);
+                Assert.Empty(createPersonResponse.AdditionalData);
+                Assert.NotNull(createPersonResponse.Data);
+
+                personId = createPersonResponse.Data.AsValueEnumerable().FirstOrDefault();
             }
 
             ids.Add((
@@ -263,6 +449,7 @@ public class MoneyErpImportInvoiceTests
                     CleneniDPH_ID = resolvedIds.vatClassificationId,
                     Group_ID = resolvedIds.invoiceGroupId,
                     Firma_ID = resolvedIds.companyGuid,
+
                     AdresaPrijemceFakturyKontaktniOsoba_ID = invoice.AdresaPrijemceFaktury.Nazev == "" ? Guid.Parse("") : null,
 
                     //invoice.AdresaPrijemceFaktury.Email,
@@ -331,8 +518,7 @@ public class MoneyErpImportInvoiceTests
                 cancellationToken: TestContext.Current.CancellationToken
             );
 
-            Assert.NotNull(mutationResponse.Errors);
-            Assert.Empty(mutationResponse.Errors);
+            Assert.Empty(mutationResponse.Errors ?? []);
         }
     }
 
