@@ -1,6 +1,6 @@
-using Aviationexam.MoneyErp.RestApi.Client;
-using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Connection;
-using Aviationexam.MoneyErp.RestApi.Client.Models.Shared.Enums;
+using Aviationexam.MoneyErp.RestApi.ClientV1;
+using Aviationexam.MoneyErp.RestApi.ClientV1.Models.ApiCore.Services.Connection;
+using Aviationexam.MoneyErp.RestApi.ClientV1.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -11,8 +11,14 @@ namespace Aviationexam.MoneyErp.RestApi.Extensions;
 
 public static class ConnectionRequestBuilderExtensions
 {
-    public static async Task<Guid?> GetOrCreateConnectionAsync(
-        this MoneyErpApiClient requestBuilder,
+    public sealed record Connection(
+        Guid Id,
+        Guid? PersonId,
+        Guid? CompanyId
+    );
+
+    public static async Task<IReadOnlyCollection<Connection>> GetConnectionAsync(
+        this MoneyErpApiV1Client requestBuilder,
         Guid connectionType,
         string value,
         CancellationToken cancellationToken
@@ -34,25 +40,35 @@ public static class ConnectionRequestBuilderExtensions
             });
 
         var connections = await requestBuilder.V10.Connection.GetAsync(connectionRequestInformation, cancellationToken: cancellationToken);
-        var connectionId = connections?.Data?.AsValueEnumerable().FirstOrDefault()?.ID;
 
-        if (connectionId is null)
-        {
-            var response = await requestBuilder.V10.Connection.PostAsync(
-                [
-                    new ConnectionInputDto
-                    {
-                        FirmaID = null,
-                        SpojeniCislo = value,
-                        TypSpojeniID = connectionType,
-                    },
-                ],
-                cancellationToken: cancellationToken
-            );
+        return connections?.Data?.AsValueEnumerable()
+            .Select(x => new Connection(
+                x.ID!.Value,
+                null,
+                x.FirmaID
+            ))
+            .ToList() ?? [];
+    }
 
-            connectionId = response?.Data?.AsValueEnumerable().FirstOrDefault();
-        }
+    public static async Task<Guid?> CreateConnectionAsync(
+        this MoneyErpApiV1Client requestBuilder,
+        Guid connectionType,
+        string value,
+        CancellationToken cancellationToken
+    )
+    {
+        var response = await requestBuilder.V10.Connection.PostAsync(
+            [
+                new ConnectionInputDto
+                {
+                    FirmaID = null,
+                    SpojeniCislo = value,
+                    TypSpojeniID = connectionType,
+                },
+            ],
+            cancellationToken: cancellationToken
+        );
 
-        return connectionId;
+        return response?.Data?.AsValueEnumerable().FirstOrDefault();
     }
 }

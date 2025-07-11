@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 // ReSharper disable once CheckNamespace
-namespace Aviationexam.MoneyErp.RestApi.Client.V10.Person;
+namespace Aviationexam.MoneyErp.RestApi.ClientV1.V10.Person;
 
 public partial class PersonRequestBuilder
 {

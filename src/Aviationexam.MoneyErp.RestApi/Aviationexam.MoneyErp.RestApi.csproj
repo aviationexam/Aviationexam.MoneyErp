@@ -14,10 +14,14 @@
   <Import Project="..\WarningConfiguration.targets" />
 
   <PropertyGroup>
-    <GeneratedCodeTarget>Client</GeneratedCodeTarget>
-    <MoneyErpOpenApiSpecificationUrl>https://demo.moneyerp.cz:82/v1.0/docs/swagger.json</MoneyErpOpenApiSpecificationUrl>
-    <MoneyErpOriginalOpenApiSpecificationFile>openapi.original.json</MoneyErpOriginalOpenApiSpecificationFile>
-    <MoneyErpOpenApiSpecificationFile>openapi.json</MoneyErpOpenApiSpecificationFile>
+    <GeneratedCodeV1Target>ClientV1</GeneratedCodeV1Target>
+    <GeneratedCodeV2Target>ClientV2</GeneratedCodeV2Target>
+    <MoneyErpOpenApiV1SpecificationUrl>https://demo.moneyerp.cz:82/v1.0/docs/swagger.json</MoneyErpOpenApiV1SpecificationUrl>
+    <MoneyErpOpenApiV2SpecificationUrl>https://demo.moneyerp.cz:82/v2.0/docs/swagger.json</MoneyErpOpenApiV2SpecificationUrl>
+    <MoneyErpOriginalOpenApiV1SpecificationFile>openapi.v1.original.json</MoneyErpOriginalOpenApiV1SpecificationFile>
+    <MoneyErpOriginalOpenApiV2SpecificationFile>openapi.v2.original.json</MoneyErpOriginalOpenApiV2SpecificationFile>
+    <MoneyErpOpenApiV1SpecificationFile>openapi.v1.json</MoneyErpOpenApiV1SpecificationFile>
+    <MoneyErpOpenApiV2SpecificationFile>openapi.v2.json</MoneyErpOpenApiV2SpecificationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -57,7 +61,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="$(MoneyErpOriginalOpenApiSpecificationFile)" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="$(MoneyErpOpenApiV1SpecificationFile)" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="$(MoneyErpOpenApiV2SpecificationFile)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -66,43 +71,81 @@
     <KiotaCommand>$(KIOTA_BIN)</KiotaCommand>
     <KiotaCommand Condition=" '$(KiotaCommand)' == '' ">dotnet kiota</KiotaCommand>
 
-    <KiotaExec>$(KiotaCommand) generate</KiotaExec>
-    <KiotaExec>$(KiotaExec) --openapi $(MSBuildProjectDirectory)/$(MoneyErpOpenApiSpecificationFile)</KiotaExec>
-    <KiotaExec>$(KiotaExec) --language csharp</KiotaExec>
-    <KiotaExec>$(KiotaExec) --exclude-backward-compatible</KiotaExec>
-    <KiotaExec>$(KiotaExec) --disable-validation-rules KnownAndNotSupportedFormats</KiotaExec>
-    <KiotaExec>$(KiotaExec) --output $(MSBuildProjectDirectory)/$(GeneratedCodeTarget)</KiotaExec>
-    <KiotaExec>$(KiotaExec) --class-name MoneyErpApiClient</KiotaExec>
-    <KiotaExec>$(KiotaExec) --namespace-name Aviationexam.MoneyErp.RestApi.$(GeneratedCodeTarget)</KiotaExec>
+    <KiotaV1Exec>$(KiotaCommand) generate</KiotaV1Exec>
+    <KiotaV1Exec>$(KiotaV1Exec) --openapi $(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)</KiotaV1Exec>
+    <KiotaV1Exec>$(KiotaV1Exec) --language csharp</KiotaV1Exec>
+    <KiotaV1Exec>$(KiotaV1Exec) --exclude-backward-compatible</KiotaV1Exec>
+    <KiotaV1Exec>$(KiotaV1Exec) --disable-validation-rules KnownAndNotSupportedFormats</KiotaV1Exec>
+    <KiotaV1Exec>$(KiotaV1Exec) --output $(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)</KiotaV1Exec>
+    <KiotaV1Exec>$(KiotaV1Exec) --class-name MoneyErpApiV1Client</KiotaV1Exec>
+    <KiotaV1Exec>$(KiotaV1Exec) --namespace-name Aviationexam.MoneyErp.RestApi.$(GeneratedCodeV1Target)</KiotaV1Exec>
+
+
+    <KiotaV2Exec>$(KiotaCommand) generate</KiotaV2Exec>
+    <KiotaV2Exec>$(KiotaV2Exec) --openapi $(MSBuildProjectDirectory)/$(MoneyErpOpenApiV2SpecificationFile)</KiotaV2Exec>
+    <KiotaV2Exec>$(KiotaV2Exec) --language csharp</KiotaV2Exec>
+    <KiotaV2Exec>$(KiotaV2Exec) --exclude-backward-compatible</KiotaV2Exec>
+    <KiotaV2Exec>$(KiotaV2Exec) --disable-validation-rules KnownAndNotSupportedFormats</KiotaV2Exec>
+    <KiotaV2Exec>$(KiotaV2Exec) --output $(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)</KiotaV2Exec>
+    <KiotaV2Exec>$(KiotaV2Exec) --class-name MoneyErpApiV2Client</KiotaV2Exec>
+    <KiotaV2Exec>$(KiotaV2Exec) --namespace-name Aviationexam.MoneyErp.RestApi.$(GeneratedCodeV2Target)</KiotaV2Exec>
   </PropertyGroup>
 
   <Target
-    Name="DownloadMoneyErpOpenApiSpecification"
+    Name="DownloadMoneyErpOpenApiV1Specification"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
-    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiSpecificationFile)')"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)')"
   >
-    <Message Importance="High" Text="Downloading $(MoneyErpOpenApiSpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiSpecificationFile)" />
+    <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV1SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
 
-    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpOpenApiSpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiSpecificationFile)" />
-  </Target>
-
-  <Target Name="PreprocessOpenApiSpecification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiSpecification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiSpecificationFile)')">
-    <Message Importance="High" Text="Preprocess $(MoneyErpOriginalOpenApiSpecificationFile) to the $(MoneyErpOpenApiSpecificationFile)" />
-    <Message Importance="High" Text="dotnet run --project $(ProjectDir)\..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiSpecificationFile) $(MoneyErpOpenApiSpecificationFile)" />
-
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet run --project $(ProjectDir)..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiSpecificationFile) $(MoneyErpOpenApiSpecificationFile)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
   </Target>
 
   <Target
-    Name="GenerateClient"
+    Name="DownloadMoneyErpOpenApiV2Specification"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
-    AfterTargets="PreprocessOpenApiSpecification"
-    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)')"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)')"
   >
-    <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeTarget) using $(KiotaCommand)" />
-    <Message Importance="High" Text="Command: $(KiotaExec)" />
+    <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV2SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
 
-    <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="KIOTA_TUTORIAL_ENABLED=false" Command="$(KiotaExec)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpOpenApiV2SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
+  </Target>
+
+  <Target Name="PreprocessOpenApiV1Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV1Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)')">
+    <Message Importance="High" Text="Preprocess $(MoneyErpOriginalOpenApiV1SpecificationFile) to the $(MoneyErpOpenApiV1SpecificationFile)" />
+    <Message Importance="High" Text="dotnet run --project $(ProjectDir)\..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiV1SpecificationFile) $(MoneyErpOpenApiV1SpecificationFile)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet run --project $(ProjectDir)..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiV1SpecificationFile) $(MoneyErpOpenApiV1SpecificationFile)" />
+  </Target>
+
+  <Target Name="PreprocessOpenApiV2Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV2Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV2SpecificationFile)')">
+    <Message Importance="High" Text="Preprocess $(MoneyErpOriginalOpenApiV2SpecificationFile) to the $(MoneyErpOpenApiV2SpecificationFile)" />
+    <Message Importance="High" Text="dotnet run --project $(ProjectDir)\..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiV2SpecificationFile) $(MoneyErpOpenApiV2SpecificationFile)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet run --project $(ProjectDir)..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiV2SpecificationFile) $(MoneyErpOpenApiV2SpecificationFile)" />
+  </Target>
+
+  <Target
+    Name="GenerateV1Client"
+    BeforeTargets="Restore;_GenerateRestoreProjectSpec"
+    AfterTargets="PreprocessOpenApiV1Specification"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)')"
+  >
+    <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeV1Target) using $(KiotaCommand)" />
+    <Message Importance="High" Text="Command: $(KiotaV1Exec)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="KIOTA_TUTORIAL_ENABLED=false" Command="$(KiotaV1Exec)" />
+  </Target>
+  <Target
+    Name="GenerateV2Client"
+    BeforeTargets="Restore;_GenerateRestoreProjectSpec"
+    AfterTargets="PreprocessOpenApiV2Specification"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)')"
+  >
+    <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeV2Target) using $(KiotaCommand)" />
+    <Message Importance="High" Text="Command: $(KiotaV2Exec)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="KIOTA_TUTORIAL_ENABLED=false" Command="$(KiotaV2Exec)" />
   </Target>
 
 </Project>
