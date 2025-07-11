@@ -4,7 +4,7 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
-    <ProjectName>MoneyErp</ProjectName>
+    <ProjectName>MoneyErp.RestApi</ProjectName>
   </PropertyGroup>
 
   <PropertyGroup Label="AoT">
@@ -57,7 +57,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="$(MoneyErpOpenApiSpecificationFile)" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="$(MoneyErpOriginalOpenApiSpecificationFile)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <PropertyGroup>

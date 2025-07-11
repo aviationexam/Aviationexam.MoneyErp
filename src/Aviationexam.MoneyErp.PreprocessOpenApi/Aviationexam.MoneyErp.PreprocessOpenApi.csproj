@@ -5,7 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <LangVersion>13.0</LangVersion>
     <Nullable>enable</Nullable>
-    <ProjectName>Aviationexam.MoneyErp.PreprocessOpenApi</ProjectName>
+    <ProjectName>MoneyErp.PreprocessOpenApi</ProjectName>
   </PropertyGroup>
 
   <ItemGroup>
