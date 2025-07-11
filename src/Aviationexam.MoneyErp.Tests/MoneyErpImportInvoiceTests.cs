@@ -1,7 +1,7 @@
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
-using Aviationexam.MoneyErp.RestApi.Client;
-using Aviationexam.MoneyErp.RestApi.Client.Models.ApiCore.Services.Person;
+using Aviationexam.MoneyErp.RestApi.ClientV1;
+using Aviationexam.MoneyErp.RestApi.ClientV1.Models.ApiCore.Services.Person;
 using Aviationexam.MoneyErp.RestApi.Extensions;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +28,7 @@ public class MoneyErpImportInvoiceTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
-        var restApiClient = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var restApiClient = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
 
         var version = await graphqlClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);

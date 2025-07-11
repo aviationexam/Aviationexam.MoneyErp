@@ -1,6 +1,7 @@
 using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
-using Aviationexam.MoneyErp.RestApi.Client;
+using Aviationexam.MoneyErp.RestApi.ClientV1;
+using Aviationexam.MoneyErp.RestApi.ClientV2;
 using Aviationexam.MoneyErp.RestApi.KiotaServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -79,7 +80,10 @@ public static class DependencyInjectionExtensions
         serviceCollection.TryAddKeyedSingleton<IAuthenticationProvider, DefaultAuthenticationProvider>(CommonDependencyInjectionExtensions.MoneyErpServiceKey);
         serviceCollection.TryAddKeyedSingleton<IAccessTokenProvider, DefaultAccessTokenProvider>(CommonDependencyInjectionExtensions.MoneyErpServiceKey);
 
-        serviceCollection.AddTransient<MoneyErpApiClient>(serviceProvider => new MoneyErpApiClient(
+        serviceCollection.AddTransient<MoneyErpApiV1Client>(serviceProvider => new MoneyErpApiV1Client(
+            serviceProvider.GetRequiredKeyedService<IRequestAdapter>(CommonDependencyInjectionExtensions.MoneyErpServiceKey)
+        ));
+        serviceCollection.AddTransient<MoneyErpApiV2Client>(serviceProvider => new MoneyErpApiV2Client(
             serviceProvider.GetRequiredKeyedService<IRequestAdapter>(CommonDependencyInjectionExtensions.MoneyErpServiceKey)
         ));
 

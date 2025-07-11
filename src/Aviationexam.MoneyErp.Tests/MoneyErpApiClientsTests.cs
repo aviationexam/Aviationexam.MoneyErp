@@ -1,4 +1,4 @@
-using Aviationexam.MoneyErp.RestApi.Client;
+using Aviationexam.MoneyErp.RestApi.ClientV1;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Article.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -36,7 +36,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.BankStatement.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -56,7 +56,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Centre.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -76,7 +76,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Company.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -96,7 +96,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Connection.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -116,7 +116,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.IssuedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -136,7 +136,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.IssuedOrder.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -156,7 +156,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.JobOrder.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -176,7 +176,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Operation.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -196,7 +196,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Person.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -216,7 +216,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.PrepaymentInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -236,7 +236,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.PrepaymentIssuedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -256,7 +256,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.ReceivedInvoice.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -276,7 +276,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.ReceivedOrder.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -296,7 +296,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Staff.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -316,7 +316,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.TypeOfActivity.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
@@ -336,7 +336,7 @@ public class MoneyErpApiClientsTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
 
-        var client = serviceProvider.GetRequiredService<MoneyErpApiClient>();
+        var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
         var responses = await client.V10.Activity.GetAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(responses);
