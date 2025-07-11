@@ -1,6 +1,6 @@
-using Aviationexam.MoneyErp.RestApi.ClientV1;
-using Aviationexam.MoneyErp.RestApi.ClientV1.Models.ApiCore.Services.Connection;
-using Aviationexam.MoneyErp.RestApi.ClientV1.Models.Shared.Enums;
+using Aviationexam.MoneyErp.RestApi.ClientV2.Models.ApiCore.Services.Connection;
+using Aviationexam.MoneyErp.RestApi.ClientV2.Models.Shared.Enums;
+using Aviationexam.MoneyErp.RestApi.ClientV2;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,14 +18,14 @@ public static class ConnectionRequestBuilderExtensions
     );
 
     public static async Task<IReadOnlyCollection<Connection>> GetConnectionAsync(
-        this MoneyErpApiV1Client requestBuilder,
+        this MoneyErpApiV2Client requestBuilder,
         Guid connectionType,
         string value,
         CancellationToken cancellationToken
     )
     {
         var connectionRequestInformation = requestBuilder.AddCustomQueryParameters(
-            requestBuilder.V10.Connection.ToGetRequestInformation(),
+            requestBuilder.V20.Connection.ToGetRequestInformation(),
             queryParameterBuilder =>
             {
                 queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.LogicOperator", nameof(LogicOperator.AND)));
@@ -39,7 +39,7 @@ public static class ConnectionRequestBuilderExtensions
                 queryParameterBuilder.Add(KeyValuePair.Create<string, string?>("filter.Filters[1].ExpectedValue", value));
             });
 
-        var connections = await requestBuilder.V10.Connection.GetAsync(connectionRequestInformation, cancellationToken: cancellationToken);
+        var connections = await requestBuilder.V20.Connection.GetAsync(connectionRequestInformation, cancellationToken: cancellationToken);
 
         return connections?.Data?.AsValueEnumerable()
             .Select(x => new Connection(
@@ -51,13 +51,13 @@ public static class ConnectionRequestBuilderExtensions
     }
 
     public static async Task<Guid?> CreateConnectionAsync(
-        this MoneyErpApiV1Client requestBuilder,
+        this MoneyErpApiV2Client requestBuilder,
         Guid connectionType,
         string value,
         CancellationToken cancellationToken
     )
     {
-        var response = await requestBuilder.V10.Connection.PostAsync(
+        var response = await requestBuilder.V20.Connection.PostAsync(
             [
                 new ConnectionInputDto
                 {
