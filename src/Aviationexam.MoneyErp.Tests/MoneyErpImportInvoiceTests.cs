@@ -1,7 +1,7 @@
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
-using Aviationexam.MoneyErp.RestApi.ClientV1;
-using Aviationexam.MoneyErp.RestApi.ClientV1.Models.ApiCore.Services.Person;
+using Aviationexam.MoneyErp.RestApi.ClientV2;
+using Aviationexam.MoneyErp.RestApi.ClientV2.Models.ApiCore.Services.Person;
 using Aviationexam.MoneyErp.RestApi.Extensions;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +28,7 @@ public class MoneyErpImportInvoiceTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
-        var restApiClient = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
+        var restApiClient = serviceProvider.GetRequiredService<MoneyErpApiV2Client>();
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
 
         var version = await graphqlClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
@@ -292,13 +292,13 @@ public class MoneyErpImportInvoiceTests
                 companyGuid = companyResponse.Data?.CompanyGuid?.ID.AsGuid();
             }
 
-            Guid? invoiceReceiverPhoneId = null;
-            Guid? invoiceReceiverEmailId = null;
+            IReadOnlyCollection<ConnectionRequestBuilderExtensions.Connection> invoiceReceiverPhones = [];
+            IReadOnlyCollection<ConnectionRequestBuilderExtensions.Connection> invoiceReceiverEmails = [];
             if (connectionsTypes.TryGetValue("Tel", out var connectionTypeTelId) && connectionTypeTelId.HasValue)
             {
                 if (data.AdresaPrijemceFaktury.Telefon is { } invoiceReceiverPhone)
                 {
-                    invoiceReceiverPhoneId = await restApiClient.GetOrCreateConnectionAsync(connectionTypeTelId.Value, invoiceReceiverPhone, TestContext.Current.CancellationToken);
+                    invoiceReceiverPhones = await restApiClient.GetConnectionAsync(connectionTypeTelId.Value, invoiceReceiverPhone, TestContext.Current.CancellationToken);
                 }
             }
 
@@ -306,112 +306,97 @@ public class MoneyErpImportInvoiceTests
             {
                 if (data.AdresaPrijemceFaktury.Email is { } invoiceReceiverEmail)
                 {
-                    invoiceReceiverEmailId = await restApiClient.GetOrCreateConnectionAsync(connectionTypeEmailId.Value, invoiceReceiverEmail, TestContext.Current.CancellationToken);
+                    invoiceReceiverEmails = await restApiClient.GetConnectionAsync(connectionTypeEmailId.Value, invoiceReceiverEmail, TestContext.Current.CancellationToken);
                 }
             }
 
             var personRequestInformation = restApiClient.AddCustomQueryParameters(
-                restApiClient.V10.Person.ToGetRequestInformation(),
+                restApiClient.V20.Person.ToGetRequestInformation(),
                 x => { }
             );
 
-            var persons = await restApiClient.V10.Person.GetAsync(personRequestInformation, cancellationToken: TestContext.Current.CancellationToken);
+            var persons = await restApiClient.V20.Person.GetAsync(personRequestInformation, cancellationToken: TestContext.Current.CancellationToken);
             Assert.NotNull(persons);
             Assert.Empty(persons.AdditionalData);
             Assert.NotNull(persons.Data);
             Assert.All(persons.Data, x => Assert.Empty(x.AdditionalData));
-            var personId = persons.Data.AsValueEnumerable().FirstOrDefault()?.ID;
+            var invoiceReceiverPersonId = persons.Data.AsValueEnumerable().FirstOrDefault()?.ID;
 
-            if (personId is null)
+            if (invoiceReceiverPersonId is null)
             {
-                var createPersonResponse = await restApiClient.V10.Person.PostAsync([
-                    new PersonInputDto
-                    {
-                        Nazev = data.AdresaPrijemceFaktury.Nazev,
-                        Email = data.AdresaPrijemceFaktury.Email,
-                        Tel1Cislo = data.AdresaPrijemceFaktury.Telefon,
-                        TelefonSpojeni1ID = invoiceReceiverPhoneId,
-                        EmailSpojeniID = invoiceReceiverEmailId,
-                        AdresaNazev = data.AdresaPrijemceFaktury.Nazev,
-                        AdresaMisto = data.AdresaPrijemceFaktury.Misto,
-                        AdresaUlice = data.AdresaPrijemceFaktury.Ulice,
-                        AdresaPsc = data.AdresaPrijemceFaktury.Psc,
-                        AdresaPscID = null,
-                        AdresaStat = null,
-                        AdresaStatID = invoiceReceiverAddressCountryId,
-                        Attachments = null,
-                        CisloOsoby = null,
-                        CisloS3 = null,
-                        CreateDate = null,
-                        CreateID = null,
-                        DatumPosty = null,
-                        Deleted = null,
-                        FaxCislo = null,
-                        FaxKlapka = null,
-                        FaxMistniCislo = null,
-                        FaxPredvolba = null,
-                        FaxPredvolbaStat = null,
-                        FaxSpojeniID = null,
-                        FaxStatID = null,
-                        Funkce = null,
-                        GroupID = null,
-                        Hidden = null,
-                        ID = null,
-                        IsNew = null,
-                        Jmeno = null,
-                        Kod = null,
-                        KrestniJmeno = null,
-                        Locked = null,
-                        ModifyDate = null,
-                        ModifyID = null,
-                        Osloveni = null,
-                        ParentID = null,
-                        Pohlavi = null,
-                        PosilatPostu = null,
-                        Poznamka = null,
-                        Prijmeni = null,
-                        RootID = null,
-                        Spojeni = null,
-                        Tel1Klapka = null,
-                        Tel1MistniCislo = null,
-                        Tel1Predvolba = null,
-                        Tel1PredvolbaStat = null,
-                        Tel1StatID = null,
-                        Tel1Typ = null,
-                        Tel2Cislo = null,
-                        Tel2Klapka = null,
-                        Tel2MistniCislo = null,
-                        Tel2Predvolba = null,
-                        Tel2PredvolbaStat = null,
-                        Tel2StatID = null,
-                        Tel2Typ = null,
-                        Tel3Cislo = null,
-                        Tel3Klapka = null,
-                        Tel3MistniCislo = null,
-                        Tel3Predvolba = null,
-                        Tel3PredvolbaStat = null,
-                        Tel3StatID = null,
-                        Tel3Typ = null,
-                        Tel4Cislo = null,
-                        Tel4Klapka = null,
-                        Tel4MistniCislo = null,
-                        Tel4Predvolba = null,
-                        Tel4PredvolbaStat = null,
-                        Tel4StatID = null,
-                        Tel4Typ = null,
-                        TelefonSpojeni2ID = null,
-                        TelefonSpojeni3ID = null,
-                        TelefonSpojeni4ID = null,
-                        TitulPred = null,
-                        TitulZa = null,
-                    },
+                var personInputDto = new PersonInputDto
+                {
+                    Nazev = data.AdresaPrijemceFaktury.Nazev,
+                    Email = data.AdresaPrijemceFaktury.Email,
+                    Tel2Cislo = data.AdresaPrijemceFaktury.Telefon,
+                    //TelefonSpojeni1ID = invoiceReceiverPhoneId,
+                    //EmailSpojeniID = invoiceReceiverEmailId,
+                    AdresaNazev = data.AdresaPrijemceFaktury.Nazev,
+                    AdresaMisto = data.AdresaPrijemceFaktury.Misto,
+                    AdresaUlice = data.AdresaPrijemceFaktury.Ulice,
+                    AdresaPsc = data.AdresaPrijemceFaktury.Psc,
+                    AdresaPscID = null,
+                    AdresaStat = null,
+                    AdresaStatID = invoiceReceiverAddressCountryId,
+                    Attachments = null,
+                    CisloOsoby = null,
+                    CisloS3 = null,
+                    CreateDate = null,
+                    CreateID = null,
+                    DatumPosty = null,
+                    Deleted = null,
+                    FaxCislo = null,
+                    FaxKlapka = null,
+                    FaxMistniCislo = null,
+                    FaxPredvolba = null,
+                    FaxPredvolbaStat = null,
+                    FaxSpojeniID = null,
+                    FaxStatID = null,
+                    Funkce = null,
+                    GroupID = null,
+                    Hidden = null,
+                    ID = null,
+                    IsNew = null,
+                    Jmeno = null,
+                    Kod = null,
+                    KrestniJmeno = null,
+                    Locked = null,
+                    ModifyDate = null,
+                    ModifyID = null,
+                    Osloveni = null,
+                    ParentID = null,
+                    Pohlavi = null,
+                    PosilatPostu = null,
+                    Poznamka = null,
+                    Prijmeni = null,
+                    RootID = null,
+                    Spojeni = null,
+                    TitulPred = null,
+                    TitulZa = null,
+                };
+                var createPersonResponse = await restApiClient.V20.Person.PostAsync([
+                    personInputDto,
                 ], cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.NotNull(createPersonResponse);
                 Assert.Empty(createPersonResponse.AdditionalData);
                 Assert.NotNull(createPersonResponse.Data);
 
-                personId = createPersonResponse.Data.AsValueEnumerable().FirstOrDefault();
+                personInputDto.ID = invoiceReceiverPersonId = createPersonResponse.Data.AsValueEnumerable().FirstOrDefault();
+
+                if (data.AdresaPrijemceFaktury.Telefon is { } invoiceReceiverPhone && connectionTypeTelId.HasValue)
+                {
+                    personInputDto.TelefonSpojeni2ID = await restApiClient.CreateConnectionAsync(connectionTypeTelId.Value, invoiceReceiverPhone, TestContext.Current.CancellationToken);
+                }
+
+                if (data.AdresaPrijemceFaktury.Email is { } invoiceReceiverEmail && connectionTypeEmailId.HasValue)
+                {
+                    personInputDto.EmailSpojeniID = await restApiClient.CreateConnectionAsync(connectionTypeEmailId.Value, invoiceReceiverEmail, TestContext.Current.CancellationToken);
+                }
+
+                await restApiClient.V20.Person.PutAsync([
+                    personInputDto,
+                ], cancellationToken: TestContext.Current.CancellationToken);
             }
 
             ids.Add((
