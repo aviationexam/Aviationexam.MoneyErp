@@ -414,8 +414,8 @@ public class MoneyErpImportInvoiceTests
                                 TypCeny = x.TypCeny,
                                 ObsahPolozky = new ContentOfItemWithArticleInput
                                 {
-                                    Artikl_ID = x.ArtiklPlu == "" ? Guid.Parse("") : null,
-                                    Sklad_ID = x.SkladKod == "" ? Guid.Parse("") : null,
+                                    Artikl_ID = resolvedIds.articles.GetValueOrDefault(x.ArtiklPlu),
+                                    Sklad_ID = resolvedIds.warehouses.GetValueOrDefault(x.SkladKod),
                                 },
                                 CelkovaCena = x.CelkovaCena,
                                 CelkovaCenaCM = x.CelkovaCenaCm,
