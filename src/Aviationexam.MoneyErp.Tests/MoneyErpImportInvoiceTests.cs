@@ -118,7 +118,6 @@ public class MoneyErpImportInvoiceTests
                     AccountAssignments = x.AccountAssignments(Filter: f.accountAssignmentsFilter, selector: c => new { c.ID, c.Kod, c.Nazev }),
                     VATClassifications = x.VATClassifications(Filter: f.varClassificationsFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
                     Articles = x.Articles(Filter: f.artiklPluFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.PLU, c.Nazev }),
-                    ArticlesAll = x.Articles(selector: c => new { c.ID, c.Deleted, c.Kod, c.PLU, c.Nazev }),
                     Warehouses = x.Warehouses(Filter: f.warehouseFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
                     ConnectionsTypes = x.ConnectionsTypes(Filter: f.connectionsTypesFilter, selector: c => new { c.ID, c.Kod, c.Nazev }),
                 },
@@ -435,7 +434,7 @@ public class MoneyErpImportInvoiceTests
                 importInvoice,
                 static (f, x) => new
                 {
-                    CompanyGuid = x.CreateIssuedInvoice(f.companyInput, selector: c => new
+                    CreatedInvoiceGuid = x.CreateIssuedInvoice(f.companyInput, selector: c => new
                     {
                         c.ID,
                         c.Deleted,
@@ -524,7 +523,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "PLU00167",
+                                    ArtiklPlu: "ART00001",
                                     SkladKod: "01",
                                     CelkovaCena: 1715.68m,
                                     CelkovaCenaCm: 69m,
@@ -601,7 +600,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř26",
                                     TypCeny: 0,
-                                    ArtiklPlu: "PLU00167",
+                                    ArtiklPlu: "ART00001",
                                     SkladKod: "01",
                                     CelkovaCena: 721.08m,
                                     CelkovaCenaCm: 29m,
