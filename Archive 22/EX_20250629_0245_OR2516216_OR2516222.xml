@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<S5Data>
+  <FakturaVydanaList>
+    <FakturaVydana>
+      <CisloDokladu>IN2504259</CisloDokladu>
+      <Group Kod="DE" />
+      <OdkazNaDoklad>OR2516216</OdkazNaDoklad>
+      <VariabilniSymbol>0002516216</VariabilniSymbol>
+      <DatumVystaveni>2025-07-01T17:12:18</DatumVystaveni>
+      <DatumUcetnihoPripadu>2025-07-01T17:12:18</DatumUcetnihoPripadu>
+      <DatumPlneni>2025-07-01T17:12:18</DatumPlneni>
+      <DatumSplatnosti>2025-07-01T17:12:18</DatumSplatnosti>
+      <Vystavil>Aviationexam</Vystavil>
+      <Nazev>eShop import</Nazev>
+      <DIC>
+      </DIC>
+      <CelkovaCastkaCM>69</CelkovaCastkaCM>
+      <UcetniKurz>
+        <Kurz>24.865</Kurz>
+        <Mnozstvi>1</Mnozstvi>
+      </UcetniKurz>
+      <Mena>
+        <Kod>EUR</Kod>
+      </Mena>
+      <CleneniDPH>
+        <Kod>19Ř24OSS_S</Kod>
+      </CleneniDPH>
+      <Adresa>
+        <Firma>
+          <Kod>UID786464</Kod>
+          <PlatceDPH>False</PlatceDPH>
+          <DIC>
+          </DIC>
+          <Adresy>
+            <ObchodniAdresa>
+              <Nazev>John Doe</Nazev>
+              <Ulice>Street 1</Ulice>
+              <Misto>Roding Strahlfeld</Misto>
+              <KodPsc>93426</KodPsc>
+              <NazevStatu>Germany</NazevStatu>
+              <Stat>
+                <Kod>DE</Kod>
+                <NazevEN>Germany</NazevEN>
+              </Stat>
+            </ObchodniAdresa>
+          </Adresy>
+        </Firma>
+      </Adresa>
+      <AdresaPrijemceFaktury>
+        <Email>x@x.com</Email>
+        <Telefon>0049123456789</Telefon>
+        <Ulice>Street 1</Ulice>
+        <Misto>Roding Strahlfeld</Misto>
+        <PSC>93426</PSC>
+        <Stat>Germany</Stat>
+        <Nazev>John Doe</Nazev>
+      </AdresaPrijemceFaktury>
+      <AdresaKoncovehoPrijemce>
+        <Email>x@x.com</Email>
+        <Telefon>004917611762621</Telefon>
+        <Ulice>Street 1</Ulice>
+        <Misto>Roding Strahlfeld</Misto>
+        <PSC>93426</PSC>
+        <Stat>Germany</Stat>
+        <Nazev>John Doe</Nazev>
+      </AdresaKoncovehoPrijemce>
+      <Polozky>
+        <PolozkaFakturyVydane>
+          <Nazev>PPL Fragenkatalog (DAeC) 12 Monate</Nazev>
+          <Mnozstvi>1</Mnozstvi>
+          <DPHEditovanoRucne>True</DPHEditovanoRucne>
+          <DruhSazbyDPH>1</DruhSazbyDPH>
+          <Predkontace>
+            <Kod>FV002</Kod>
+          </Predkontace>
+          <Jednotka>pcs</Jednotka>
+          <CisloPolozky>1</CisloPolozky>
+          <TypObsahu>1</TypObsahu>
+          <CleneniDPH>
+            <Kod>19Ř24OSS_S</Kod>
+          </CleneniDPH>
+          <TypCeny>1</TypCeny>
+          <ObsahPolozky>
+            <Artikl>
+              <PLU>PLU00167</PLU>
+            </Artikl>
+            <Sklad>
+              <Kod>01</Kod>
+            </Sklad>
+          </ObsahPolozky>
+          <CelkovaCena>1715.68</CelkovaCena>
+          <CelkovaCenaCM>69</CelkovaCenaCM>
+          <DPH>
+            <Celkem>1715.68</Celkem>
+            <Zaklad>1441.67</Zaklad>
+            <Dan>274.01</Dan>
+            <CelkemCM>69</CelkemCM>
+            <ZakladCM>57.98</ZakladCM>
+            <DanCM>11.02</DanCM>
+            <Sazba>19</Sazba>
+          </DPH>
+        </PolozkaFakturyVydane>
+      </Polozky>
+      <ZpusobDopravy>
+        <Kod>D</Kod>
+        <Nazev>Download</Nazev>
+      </ZpusobDopravy>
+      <ZpusobPlatby>
+        <Kod>PE</Kod>
+        <Nazev>Online by Card</Nazev>
+      </ZpusobPlatby>
+    </FakturaVydana>
+    <FakturaVydana>
+      <CisloDokladu>IN2504261</CisloDokladu>
+      <Group Kod="CZ" />
+      <OdkazNaDoklad>OR2516222</OdkazNaDoklad>
+      <VariabilniSymbol>0002516222</VariabilniSymbol>
+      <DatumVystaveni>2025-07-01T22:01:16</DatumVystaveni>
+      <DatumUcetnihoPripadu>2025-07-01T22:01:16</DatumUcetnihoPripadu>
+      <DatumPlneni>2025-07-01T22:01:16</DatumPlneni>
+      <DatumSplatnosti>2025-07-01T22:01:16</DatumSplatnosti>
+      <Vystavil>Aviationexam</Vystavil>
+      <Nazev>eShop import</Nazev>
+      <DIC>
+      </DIC>
+      <CelkovaCastkaCM>29</CelkovaCastkaCM>
+      <UcetniKurz>
+        <Kurz>24.865</Kurz>
+        <Mnozstvi>1</Mnozstvi>
+      </UcetniKurz>
+      <Mena>
+        <Kod>EUR</Kod>
+      </Mena>
+      <CleneniDPH>
+        <Kod>19Ř26</Kod>
+      </CleneniDPH>
+      <Adresa>
+        <Firma>
+          <Kod>UID819953</Kod>
+          <PlatceDPH>False</PlatceDPH>
+          <DIC>
+          </DIC>
+          <Adresy>
+            <ObchodniAdresa>
+              <Nazev>John Doe</Nazev>
+              <Ulice>Street 1</Ulice>
+              <Misto>Arbaz</Misto>
+              <KodPsc>1974</KodPsc>
+              <NazevStatu>Switzerland</NazevStatu>
+              <Stat>
+                <Kod>CH</Kod>
+                <NazevEN>Switzerland</NazevEN>
+              </Stat>
+            </ObchodniAdresa>
+          </Adresy>
+        </Firma>
+      </Adresa>
+      <AdresaPrijemceFaktury>
+        <Email>x@x.com</Email>
+        <Telefon>0793123456</Telefon>
+        <Ulice>Street 1</Ulice>
+        <Misto>Arbaz</Misto>
+        <PSC>1974</PSC>
+        <Stat>Switzerland</Stat>
+        <Nazev>John Doe</Nazev>
+      </AdresaPrijemceFaktury>
+      <AdresaKoncovehoPrijemce>
+        <Email>x@x.com</Email>
+        <Telefon>0793123456</Telefon>
+        <Ulice>Street 1</Ulice>
+        <Misto>Arbaz</Misto>
+        <PSC>1974</PSC>
+        <Stat>Switzerland</Stat>
+        <Nazev>John Doe</Nazev>
+      </AdresaKoncovehoPrijemce>
+      <Polozky>
+        <PolozkaFakturyVydane>
+          <Nazev>EASA -1 month subscription</Nazev>
+          <Mnozstvi>1</Mnozstvi>
+          <DPHEditovanoRucne>True</DPHEditovanoRucne>
+          <DruhSazbyDPH>2</DruhSazbyDPH>
+          <Predkontace>
+            <Kod>FV002</Kod>
+          </Predkontace>
+          <Jednotka>pcs</Jednotka>
+          <CisloPolozky>1</CisloPolozky>
+          <TypObsahu>1</TypObsahu>
+          <CleneniDPH>
+            <Kod>19Ř26</Kod>
+          </CleneniDPH>
+          <TypCeny>0</TypCeny>
+          <ObsahPolozky>
+            <Artikl>
+              <PLU>PLU00167</PLU>
+            </Artikl>
+            <Sklad>
+              <Kod>01</Kod>
+            </Sklad>
+          </ObsahPolozky>
+          <CelkovaCena>721.08</CelkovaCena>
+          <CelkovaCenaCM>29</CelkovaCenaCM>
+          <DPH>
+            <Celkem>721.08</Celkem>
+            <Zaklad>721.08</Zaklad>
+            <Dan>0</Dan>
+            <CelkemCM>29</CelkemCM>
+            <ZakladCM>29</ZakladCM>
+            <DanCM>0</DanCM>
+            <Sazba>0</Sazba>
+          </DPH>
+        </PolozkaFakturyVydane>
+      </Polozky>
+      <ZpusobDopravy>
+        <Kod>D</Kod>
+        <Nazev>Download</Nazev>
+      </ZpusobDopravy>
+      <ZpusobPlatby>
+        <Kod>PE</Kod>
+        <Nazev>Online by Card</Nazev>
+      </ZpusobPlatby>
+    </FakturaVydana>
+  </FakturaVydanaList>
+</S5Data>

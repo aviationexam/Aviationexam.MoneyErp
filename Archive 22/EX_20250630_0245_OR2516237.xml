@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<S5Data>
+  <FakturaVydanaList>
+    <FakturaVydana>
+      <CisloDokladu>IN2504269</CisloDokladu>
+      <Group Kod="CZ" />
+      <OdkazNaDoklad>OR2516237</OdkazNaDoklad>
+      <VariabilniSymbol>0002516237</VariabilniSymbol>
+      <DatumVystaveni>2025-07-01T17:39:10</DatumVystaveni>
+      <DatumUcetnihoPripadu>2025-07-01T17:39:10</DatumUcetnihoPripadu>
+      <DatumPlneni>2025-07-01T17:39:10</DatumPlneni>
+      <DatumSplatnosti>2025-07-01T17:39:10</DatumSplatnosti>
+      <Vystavil>Aviationexam</Vystavil>
+      <Nazev>eShop import</Nazev>
+      <DIC>HU26524162</DIC>
+      <Poznamka>c207975c-4ae5-488e-ac6b-b9acb87d1a62</Poznamka>
+      <CelkovaCastkaCM>3363.36</CelkovaCastkaCM>
+      <UcetniKurz>
+        <Kurz>24.865</Kurz>
+        <Mnozstvi>1</Mnozstvi>
+      </UcetniKurz>
+      <Mena>
+        <Kod>EUR</Kod>
+      </Mena>
+      <CleneniDPH>
+        <Kod>19Ř21</Kod>
+      </CleneniDPH>
+      <Adresa>
+        <Firma>
+          <Kod>LMS28119</Kod>
+          <PlatceDPH>True</PlatceDPH>
+          <DIC>HU26524162</DIC>
+          <Adresy>
+            <ObchodniAdresa>
+              <Nazev>Easy</Nazev>
+              <Ulice>Street 1</Ulice>
+              <Misto>Csomad</Misto>
+              <KodPsc>2161</KodPsc>
+              <NazevStatu>Hungary</NazevStatu>
+              <Stat>
+                <Kod>HU</Kod>
+                <NazevEN>Hungary</NazevEN>
+              </Stat>
+            </ObchodniAdresa>
+          </Adresy>
+        </Firma>
+      </Adresa>
+      <AdresaPrijemceFaktury>
+        <Email>x@x.com</Email>
+        <Ulice>Street 1</Ulice>
+        <Misto>Csomad</Misto>
+        <PSC>2161</PSC>
+        <Stat>Hungary</Stat>
+        <Nazev>Easy</Nazev>
+      </AdresaPrijemceFaktury>
+      <AdresaKoncovehoPrijemce>
+        <Email>x@ex.com</Email>
+        <Ulice>Street 1</Ulice>
+        <Misto>Csomad</Misto>
+        <PSC>2161</PSC>
+        <Stat>Hungary</Stat>
+        <Nazev>Easy</Nazev>
+      </AdresaKoncovehoPrijemce>
+      <Polozky>
+        <PolozkaFakturyVydane>
+          <Nazev>LMS Tariff fee-EASA-EN-3 months</Nazev>
+          <Mnozstvi>156</Mnozstvi>
+          <DPHEditovanoRucne>True</DPHEditovanoRucne>
+          <DruhSazbyDPH>2</DruhSazbyDPH>
+          <Predkontace>
+            <Kod>FV002</Kod>
+          </Predkontace>
+          <Jednotka>pcs</Jednotka>
+          <CisloPolozky>1</CisloPolozky>
+          <TypObsahu>1</TypObsahu>
+          <CleneniDPH>
+            <Kod>19Ř21</Kod>
+          </CleneniDPH>
+          <TypCeny>0</TypCeny>
+          <ObsahPolozky>
+            <Artikl>
+              <PLU>ART00001</PLU>
+            </Artikl>
+            <Sklad>
+              <Kod>01</Kod>
+            </Sklad>
+          </ObsahPolozky>
+          <CelkovaCena>83629.95</CelkovaCena>
+          <CelkovaCenaCM>3363.36</CelkovaCenaCM>
+          <DPH>
+            <Celkem>83629.95</Celkem>
+            <Zaklad>83629.95</Zaklad>
+            <Dan>0</Dan>
+            <CelkemCM>3363.36</CelkemCM>
+            <ZakladCM>3363.36</ZakladCM>
+            <DanCM>0</DanCM>
+            <Sazba>0</Sazba>
+          </DPH>
+        </PolozkaFakturyVydane>
+      </Polozky>
+      <ZpusobDopravy>
+        <Kod>D</Kod>
+        <Nazev>Download</Nazev>
+      </ZpusobDopravy>
+      <ZpusobPlatby>
+        <Kod>PE</Kod>
+        <Nazev>Online by Card</Nazev>
+      </ZpusobPlatby>
+    </FakturaVydana>
+  </FakturaVydanaList>
+</S5Data>
