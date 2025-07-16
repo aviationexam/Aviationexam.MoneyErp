@@ -20,7 +20,7 @@ namespace Aviationexam.MoneyErp.Tests;
 public class MoneyErpImportInvoiceTests
 {
     [Theory]
-    [ClassData(typeof(MoneyErpInvoiceClassData), Explicit = true)]
+    [ClassData(typeof(MoneyErpInvoiceClassData))]
     public async Task ImportInvoiceWorks(
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData,
         InvoiceData[] invoiceData
@@ -158,6 +158,14 @@ public class MoneyErpImportInvoiceTests
                     x => x!.Kod!,
                     x => x!.ID.AsGuid()!.Value
                 );
+
+            Assert.All(data.Polozky, x =>
+            {
+                Assert.Contains(x.PredkontaceKod, accountAssignmentIds);
+                Assert.Contains(x.CleneniDphKod, vatClassificationIds);
+                Assert.Contains(x.ArtiklPlu, articles);
+                Assert.Contains(x.SkladKod, warehouses);
+            });
 
             var secondaryFilters = new
             {
@@ -523,7 +531,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 1715.68m,
                                     CelkovaCenaCm: 69m,
@@ -600,7 +608,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř26",
                                     TypCeny: 0,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 721.08m,
                                     CelkovaCenaCm: 29m,
@@ -687,7 +695,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř21",
                                     TypCeny: 0,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 83629.95m,
                                     CelkovaCenaCm: 3363.36m,
@@ -774,7 +782,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 820.54m,
                                     CelkovaCenaCm: 33m,
@@ -797,7 +805,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 820.54m,
                                     CelkovaCenaCm: 33m,
@@ -820,7 +828,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 969.73m,
                                     CelkovaCenaCm: 39m,
@@ -843,7 +851,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 969.73m,
                                     CelkovaCenaCm: 39m,
@@ -866,7 +874,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 969.73m,
                                     CelkovaCenaCm: 39m,
@@ -889,7 +897,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 969.73m,
                                     CelkovaCenaCm: 39m,
@@ -912,7 +920,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 820.54m,
                                     CelkovaCenaCm: 33m,
@@ -935,7 +943,7 @@ public class MoneyErpImportInvoiceTests
                                     TypObsahu: 1,
                                     CleneniDphKod: "19Ř24OSS_S",
                                     TypCeny: 1,
-                                    ArtiklPlu: "ART00001",
+                                    ArtiklPlu: "PLU00001",
                                     SkladKod: "01",
                                     CelkovaCena: 820.54m,
                                     CelkovaCenaCm: 33m,
