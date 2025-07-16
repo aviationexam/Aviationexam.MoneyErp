@@ -1,8 +1,5 @@
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
-using Aviationexam.MoneyErp.RestApi.ClientV2;
-using Aviationexam.MoneyErp.RestApi.ClientV2.Models.ApiCore.Services.Person;
-using Aviationexam.MoneyErp.RestApi.Extensions;
 using Aviationexam.MoneyErp.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -385,7 +382,7 @@ public class MoneyErpImportInvoiceTests
                 company = new
                 {
                     ID = companyResponse.Data?.CompanyGuid?.ID.AsGuid(),
-                    SeznamSpojeni = companyResponse.Data?.CompanyGuid?.SeznamSpojeni,
+                    companyResponse.Data?.CompanyGuid?.SeznamSpojeni,
                 };
                 companyInput.companyInput.ID = company.ID;
                 foreach (var connectionInput in companyInput.companyInput.SeznamSpojeni)
@@ -405,7 +402,7 @@ public class MoneyErpImportInvoiceTests
                     {
                         contact = company.SeznamSpojeni?.AsValueEnumerable()
                             .Where(x =>
-                                x!.TypSpojeni_ID == connectionInput!.TypSpojeni_ID
+                                x!.TypSpojeni_ID == connectionInput.TypSpojeni_ID
                                 && x.Stat_ID == connectionInput.Stat_ID
                             )
                             .FirstOrDefault();
@@ -467,7 +464,7 @@ public class MoneyErpImportInvoiceTests
                 company = new
                 {
                     ID = companyResponse.Data?.CompanyGuid?.ID.AsGuid(),
-                    SeznamSpojeni = companyResponse.Data?.CompanyGuid?.SeznamSpojeni,
+                    companyResponse.Data?.CompanyGuid?.SeznamSpojeni,
                 };
             }
 
