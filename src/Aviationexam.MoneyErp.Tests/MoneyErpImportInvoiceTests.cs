@@ -20,7 +20,7 @@ namespace Aviationexam.MoneyErp.Tests;
 public class MoneyErpImportInvoiceTests
 {
     [Theory]
-    [ClassData(typeof(MoneyErpInvoiceClassData))]
+    [ClassData(typeof(MoneyErpInvoiceClassData), Explicit = true)]
     public async Task ImportInvoiceWorks(
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData,
         InvoiceData[] invoiceData
@@ -28,7 +28,6 @@ public class MoneyErpImportInvoiceTests
     {
         await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
 
-        var restApiClient = serviceProvider.GetRequiredService<MoneyErpApiV2Client>();
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
 
         var version = await graphqlClient.Query(x => x.Version, cancellationToken: TestContext.Current.CancellationToken);
@@ -37,14 +36,16 @@ public class MoneyErpImportInvoiceTests
         Assert.NotEmpty(version.Data);
 
         ICollection<(
+            IReadOnlyDictionary<string, Guid> numericalSeries,
             Guid? companyGuid,
+            Guid? companyInvoiceReceiverGuid,
+            Guid? companyTerminalReceiverGuid,
             Guid? currencyId,
-            Guid? companyCountryId,
+            IReadOnlyDictionary<string, Guid> countryIds,
             Guid? vatClassificationId,
             Guid? invoiceGroupId,
             Guid? transportId,
             Guid? paymentId,
-            Guid? invoiceReceiverPersonId,
             IReadOnlyDictionary<string, Guid> accountAssignmentIds,
             IReadOnlyDictionary<string, Guid> vatClassificationIds,
             IReadOnlyDictionary<string, Guid> articles,
@@ -54,10 +55,22 @@ public class MoneyErpImportInvoiceTests
         {
             var filters = new
             {
+                numericalSeriesFilter = string.Join('|',
+                    $"{nameof(NumericalSerie.Kod)}~eq~{data.CisloDokladuNumericSerieKod}",
+                    $"{nameof(NumericalSerie.Kod)}~eq~{data.FirmaKodNumericSerieKod}"
+                ),
                 currencyFilter = $"{nameof(Currency.Kod)}~eq~{data.MenaKod}",
-                companyCountryFilter = $"{nameof(Country.Kod)}~eq~{data.FirmaStatKod}",
-                invoiceReceiverAddressCountryFilter = $"{nameof(Country.Kod)}~eq~{data.AdresaPrijemceFaktury.Stat}",
-                receiverAddressCountryFilter = $"{nameof(Country.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Stat}",
+                countriesFilter = new[]
+                    {
+                        data.FirmaStatKod,
+                        data.AdresaPrijemceFaktury.StatKod,
+                        data.AdresaKoncovehoPrijemce.StatKod,
+                    }
+                    .AsValueEnumerable()
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .Distinct()
+                    .Select(x => $"{nameof(Country.Kod)}~eq~{x}")
+                    .JoinToString('|'),
                 varClassificationFilter = $"{nameof(VATClassification.Kod)}~eq~{data.CleneniDphKod}",
                 invoiceGroupFilter = $"{nameof(MerpGroup.Kod)}~eq~{data.GroupKod}",
                 transportFilter = $"{nameof(TransportType.Kod)}~eq~{data.ZpusobDopravyKod}",
@@ -97,10 +110,9 @@ public class MoneyErpImportInvoiceTests
                 filters,
                 static (f, x) => new
                 {
+                    NumericalSeries = x.NumericalSeries(Filter: f.numericalSeriesFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev, c.Prefix }),
                     Currency = x.Currencies(Filter: f.currencyFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
-                    CompanyCountry = x.Countries(Filter: f.companyCountryFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
-                    InvoiceReceiverAddressCountry = x.Countries(Filter: f.invoiceReceiverAddressCountryFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
-                    ReceiverAddressCountry = x.Countries(Filter: f.receiverAddressCountryFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
+                    Countries = x.Countries(Filter: f.countriesFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
                     VATClassification = x.VATClassifications(Filter: f.varClassificationFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev }),
                     InvoiceGroup = x.MerpGroups(
                         Filter: f.invoiceGroupFilter,
@@ -125,10 +137,17 @@ public class MoneyErpImportInvoiceTests
             );
             Assert.Empty(graphResponse.Errors ?? []);
 
+            var numericalSeries = graphResponse.Data!.NumericalSeries!.AsValueEnumerable()
+                .ToDictionary(
+                    x => x!.Kod!,
+                    x => x!.ID.AsGuid()!.Value
+                );
             var currencyId = graphResponse.Data!.Currency!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
-            var companyCountryId = graphResponse.Data!.CompanyCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
-            var invoiceReceiverAddressCountryId = graphResponse.Data!.InvoiceReceiverAddressCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
-            var receiverAddressCountryId = graphResponse.Data!.ReceiverAddressCountry!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
+            var countryIds = graphResponse.Data!.Countries!.AsValueEnumerable()
+                .ToDictionary(
+                    x => x!.Kod!,
+                    x => x!.ID.AsGuid()!.Value
+                );
             var vatClassificationId = graphResponse.Data!.VATClassification!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var invoiceGroupId = graphResponse.Data!.InvoiceGroup!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
             var transportId = graphResponse.Data!.Transport!.AsValueEnumerable().FirstOrDefault()?.ID.AsGuid();
@@ -159,6 +178,8 @@ public class MoneyErpImportInvoiceTests
                     x => x!.ID.AsGuid()!.Value
                 );
 
+            Assert.Contains(data.CisloDokladuNumericSerieKod, numericalSeries);
+            Assert.Contains(data.FirmaKodNumericSerieKod, numericalSeries);
             Assert.All(data.Polozky, x =>
             {
                 Assert.Contains(x.PredkontaceKod, accountAssignmentIds);
@@ -170,190 +191,300 @@ public class MoneyErpImportInvoiceTests
             var secondaryFilters = new
             {
                 companyFilter = string.Join('#',
+                    $"{nameof(Company.Kod)}~eq~{data.FirmaKod}",
                     $"{nameof(Company.FaktNazev)}~eq~{data.FirmaNazev}",
                     $"{nameof(Company.FaktUlice)}~eq~{data.FirmaUlice}",
                     $"{nameof(Company.FaktMisto)}~eq~{data.FirmaMisto}",
                     $"{nameof(Company.FaktPsc)}~eq~{data.FirmaKodPsc}",
                     $"{nameof(Company.PlatceDPH)}~eq~{(data.FirmaPlatceDph ? "true" : "false")}",
-                    $"{nameof(Company.FaktStat_ID)}~eq~{companyCountryId}",
+                    $"{nameof(Company.FaktStat_ID)}~eq~{countryIds.GetValueOrDefault(data.FirmaStatKod)}",
                     $"{nameof(Company.DIC)}~eq~{data.FirmaDic}"
+                ),
+                companyInvoiceReceiverFilter = string.Join('#',
+                    $"{nameof(Company.FaktNazev)}~eq~{data.AdresaPrijemceFaktury.Nazev}",
+                    $"{nameof(Company.FaktUlice)}~eq~{data.AdresaPrijemceFaktury.Ulice}",
+                    $"{nameof(Company.FaktMisto)}~eq~{data.AdresaPrijemceFaktury.Misto}",
+                    $"{nameof(Company.FaktPsc)}~eq~{data.AdresaPrijemceFaktury.Psc}",
+                    $"{nameof(Company.FaktStat_ID)}~eq~{countryIds.GetValueOrDefault(data.AdresaPrijemceFaktury.StatKod)}"
+                ),
+                companyTerminalReceiverFilter = string.Join('#',
+                    $"{nameof(Company.FaktNazev)}~eq~{data.AdresaKoncovehoPrijemce.Nazev}",
+                    $"{nameof(Company.FaktUlice)}~eq~{data.AdresaKoncovehoPrijemce.Ulice}",
+                    $"{nameof(Company.FaktMisto)}~eq~{data.AdresaKoncovehoPrijemce.Misto}",
+                    $"{nameof(Company.FaktPsc)}~eq~{data.AdresaKoncovehoPrijemce.Psc}",
+                    $"{nameof(Company.FaktStat_ID)}~eq~{countryIds.GetValueOrDefault(data.AdresaKoncovehoPrijemce.StatKod)}"
                 ),
             };
             var secondaryGraphResponse = await graphqlClient.Query(
                 secondaryFilters,
                 static (f, x) => new
                 {
-                    Company = x.Companies(Filter: f.companyFilter, selector: c => new { c.ID, c.Deleted, c.Kod, c.Nazev, c.Create_Date }),
+                    Company = x.Companies(Filter: f.companyFilter, selector: c => new
+                    {
+                        c.ID, c.Deleted, c.Kod, c.Nazev, c.Create_Date,
+                        c.HlavniOsoba_ID,
+                        SeznamSpojeni = c.SeznamSpojeni(s => new
+                        {
+                            s.ID,
+                            s.TypSpojeni_ID,
+                            s.SpojeniCislo,
+                            s.SpojeniMistniPredvolba,
+                            s.Stat_ID,
+                        }),
+                    }),
+                    CompanyInvoiceReceiver = x.Companies(Filter: f.companyInvoiceReceiverFilter, selector: c => new
+                    {
+                        c.ID, c.Deleted, c.Kod, c.Nazev, c.Create_Date,
+                        c.HlavniOsoba_ID,
+                        SeznamSpojeni = c.SeznamSpojeni(s => new
+                        {
+                            s.ID,
+                            s.TypSpojeni_ID,
+                            s.SpojeniCislo,
+                            s.SpojeniMistniPredvolba,
+                            s.Stat_ID,
+                        }),
+                    }),
+                    CompanyTerminalReceiver = x.Companies(Filter: f.companyTerminalReceiverFilter, selector: c => new
+                    {
+                        c.ID, c.Deleted, c.Kod, c.Nazev, c.Create_Date,
+                        c.HlavniOsoba_ID,
+                        SeznamSpojeni = c.SeznamSpojeni(s => new
+                        {
+                            s.ID,
+                            s.TypSpojeni_ID,
+                            s.SpojeniCislo,
+                            s.SpojeniMistniPredvolba,
+                            s.Stat_ID,
+                        }),
+                    }),
                 },
                 cancellationToken: TestContext.Current.CancellationToken
             );
             Assert.Empty(secondaryGraphResponse.Errors ?? []);
 
-            var companyGuid = secondaryGraphResponse.Data?.Company?.AsValueEnumerable()
+            bool adresaPrijemceFakturyMatch = false;
+            bool adresaKoncovehoPrijemceMatch = false;
+            string? companyEmail = null;
+            string? companyPhone = null;
+            if (
+                data.AdresaPrijemceFaktury.Nazev == data.FirmaNazev
+                && data.AdresaPrijemceFaktury.Ulice == data.FirmaUlice
+                && data.AdresaPrijemceFaktury.Misto == data.FirmaMisto
+                && data.AdresaPrijemceFaktury.Psc == data.FirmaKodPsc
+                && data.AdresaPrijemceFaktury.StatKod == data.FirmaStatKod
+            )
+            {
+                adresaPrijemceFakturyMatch = true;
+                companyEmail = data.AdresaPrijemceFaktury.Email;
+                companyPhone = data.AdresaPrijemceFaktury.Telefon;
+            }
+
+            if (
+                data.AdresaKoncovehoPrijemce.Nazev == data.FirmaNazev
+                && data.AdresaKoncovehoPrijemce.Ulice == data.FirmaUlice
+                && data.AdresaKoncovehoPrijemce.Misto == data.FirmaMisto
+                && data.AdresaKoncovehoPrijemce.Psc == data.FirmaKodPsc
+                && data.AdresaKoncovehoPrijemce.StatKod == data.FirmaStatKod
+            )
+            {
+                adresaKoncovehoPrijemceMatch = true;
+                if (adresaPrijemceFakturyMatch is false)
+                {
+                    companyEmail = data.AdresaKoncovehoPrijemce.Email;
+                    companyPhone = data.AdresaKoncovehoPrijemce.Telefon;
+                }
+            }
+
+            var company = secondaryGraphResponse.Data?.Company?.AsValueEnumerable()
                 .Where(x => x!.Deleted is false)
                 .OrderBy(x => x!.Create_Date)
-                .FirstOrDefault()
-                ?.ID.AsGuid();
-
-            if (companyGuid is null)
-            {
-                var companyInput = new CompanyInput
+                .Select(x => new
                 {
-                    Kod = data.FirmaKod,
-                    Nazev = data.FirmaNazev,
-                    DIC = data.FirmaDic,
-                    FaktNazev = data.FirmaNazev,
-                    FaktUlice = data.FirmaUlice,
-                    FaktMisto = data.FirmaMisto,
-                    FaktPsc = data.FirmaKodPsc,
-                    FaktStat_ID = companyCountryId,
-                    ObchNazev = data.FirmaNazev,
-                    ObchUlice = data.FirmaUlice,
-                    ObchMisto = data.FirmaMisto,
-                    ObchPsc = data.FirmaKodPsc,
-                    ObchStat_ID = companyCountryId,
-                    ProvNazev = data.FirmaNazev,
-                    ProvUlice = data.FirmaUlice,
-                    ProvMisto = data.FirmaMisto,
-                    ProvPsc = data.FirmaKodPsc,
-                    ProvStat_ID = companyCountryId,
-                    PlatceDPH = data.FirmaPlatceDph,
+                    ID = x!.ID.AsGuid(),
+                    x.SeznamSpojeni,
+                })
+                .FirstOrDefault();
+
+            if (company is null)
+            {
+                ICollection<ConnectionInput> seznamSpojeni = [];
+                if (!string.IsNullOrEmpty(companyEmail))
+                {
+                    seznamSpojeni.Add(new ConnectionInput
+                    {
+                        TypSpojeni_ID = connectionsTypes.GetValueOrDefault("E-mail"),
+                        SpojeniCislo = companyEmail,
+                        Vychozi = true,
+                    });
+                }
+
+                if (!string.IsNullOrEmpty(companyPhone))
+                {
+                    seznamSpojeni.Add(new ConnectionInput
+                    {
+                        TypSpojeni_ID = connectionsTypes.GetValueOrDefault("Tel"),
+                        SpojeniCislo = companyPhone,
+                        Stat_ID = countryIds.GetValueOrDefault(data.FirmaStatKod),
+                        Vychozi = true,
+                    });
+                }
+
+                var companyInput = new
+                {
+                    companyInput = new CompanyInput
+                    {
+                        CiselnaRada_ID = numericalSeries.GetValueOrDefault(data.FirmaKodNumericSerieKod),
+                        Kod = data.FirmaKod,
+                        Nazev = data.FirmaNazev,
+                        DIC = data.FirmaDic,
+                        FaktNazev = data.FirmaNazev,
+                        FaktUlice = data.FirmaUlice,
+                        FaktMisto = data.FirmaMisto,
+                        FaktPsc = data.FirmaKodPsc,
+                        FaktStat_ID = countryIds.GetValueOrDefault(data.FirmaStatKod),
+                        ObchNazev = data.FirmaNazev,
+                        ObchUlice = data.FirmaUlice,
+                        ObchMisto = data.FirmaMisto,
+                        ObchPsc = data.FirmaKodPsc,
+                        ObchStat_ID = countryIds.GetValueOrDefault(data.FirmaStatKod),
+                        ProvNazev = data.FirmaNazev,
+                        ProvUlice = data.FirmaUlice,
+                        ProvMisto = data.FirmaMisto,
+                        ProvPsc = data.FirmaKodPsc,
+                        ProvStat_ID = countryIds.GetValueOrDefault(data.FirmaStatKod),
+                        PlatceDPH = data.FirmaPlatceDph,
+                        SeznamSpojeni = seznamSpojeni.ToArray(),
+                    },
                 };
                 var companyResponse = await graphqlClient.Mutation(
                     companyInput,
                     static (f, x) => new
                     {
-                        CompanyGuid = x.CreateCompany(f, selector: c => new
+                        CompanyGuid = x.CreateCompany(f.companyInput, selector: c => new
                         {
                             c.ID,
                             c.Deleted,
                             c.Kod,
                             c.Nazev,
                             c.Create_Date,
+                            c.HlavniOsoba_ID,
+                            SeznamSpojeni = c.SeznamSpojeni(s => new
+                            {
+                                s.ID,
+                                s.TypSpojeni_ID,
+                                s.SpojeniCislo,
+                                s.SpojeniMistniPredvolba,
+                                s.Stat_ID,
+                            }),
                         }),
                     },
                     cancellationToken: TestContext.Current.CancellationToken
                 );
                 Assert.Empty(companyResponse.Errors ?? []);
-                companyGuid = companyResponse.Data?.CompanyGuid?.ID.AsGuid();
-            }
-
-            IReadOnlyCollection<ConnectionRequestBuilderExtensions.Connection> invoiceReceiverPhones = [];
-            IReadOnlyCollection<ConnectionRequestBuilderExtensions.Connection> invoiceReceiverEmails = [];
-            if (connectionsTypes.TryGetValue("Tel", out var connectionTypeTelId))
-            {
-                if (data.AdresaPrijemceFaktury.Telefon is { } invoiceReceiverPhone)
+                company = new
                 {
-                    invoiceReceiverPhones = await restApiClient.GetConnectionAsync(connectionTypeTelId, invoiceReceiverPhone, TestContext.Current.CancellationToken);
-                }
-            }
-
-            if (connectionsTypes.TryGetValue("E-mail", out var connectionTypeEmailId))
-            {
-                if (data.AdresaPrijemceFaktury.Email is { } invoiceReceiverEmail)
-                {
-                    invoiceReceiverEmails = await restApiClient.GetConnectionAsync(connectionTypeEmailId, invoiceReceiverEmail, TestContext.Current.CancellationToken);
-                }
-            }
-
-            var personRequestInformation = restApiClient.AddCustomQueryParameters(
-                restApiClient.V20.Person.ToGetRequestInformation(),
-                x => { }
-            );
-
-            var persons = await restApiClient.V20.Person.GetAsync(personRequestInformation, cancellationToken: TestContext.Current.CancellationToken);
-            Assert.NotNull(persons);
-            Assert.Empty(persons.AdditionalData);
-            Assert.NotNull(persons.Data);
-            Assert.All(persons.Data, x => Assert.Empty(x.AdditionalData));
-            var invoiceReceiverPersonId = persons.Data.AsValueEnumerable().FirstOrDefault()?.ID;
-
-            if (invoiceReceiverPersonId is null)
-            {
-                var personInputDto = new PersonInputDto
-                {
-                    Nazev = data.AdresaPrijemceFaktury.Nazev,
-                    Email = data.AdresaPrijemceFaktury.Email,
-                    Tel2Cislo = data.AdresaPrijemceFaktury.Telefon,
-                    //TelefonSpojeni1ID = invoiceReceiverPhoneId,
-                    //EmailSpojeniID = invoiceReceiverEmailId,
-                    AdresaNazev = data.AdresaPrijemceFaktury.Nazev,
-                    AdresaMisto = data.AdresaPrijemceFaktury.Misto,
-                    AdresaUlice = data.AdresaPrijemceFaktury.Ulice,
-                    AdresaPsc = data.AdresaPrijemceFaktury.Psc,
-                    AdresaPscID = null,
-                    AdresaStat = null,
-                    AdresaStatID = invoiceReceiverAddressCountryId,
-                    Attachments = null,
-                    CisloOsoby = null,
-                    CisloS3 = null,
-                    CreateDate = null,
-                    CreateID = null,
-                    DatumPosty = null,
-                    Deleted = null,
-                    FaxCislo = null,
-                    FaxKlapka = null,
-                    FaxMistniCislo = null,
-                    FaxPredvolba = null,
-                    FaxPredvolbaStat = null,
-                    FaxSpojeniID = null,
-                    FaxStatID = null,
-                    Funkce = null,
-                    GroupID = null,
-                    Hidden = null,
-                    ID = null,
-                    IsNew = null,
-                    Jmeno = null,
-                    Kod = null,
-                    KrestniJmeno = null,
-                    Locked = null,
-                    ModifyDate = null,
-                    ModifyID = null,
-                    Osloveni = null,
-                    ParentID = null,
-                    Pohlavi = null,
-                    PosilatPostu = null,
-                    Poznamka = null,
-                    Prijmeni = null,
-                    RootID = null,
-                    Spojeni = null,
-                    TitulPred = null,
-                    TitulZa = null,
+                    ID = companyResponse.Data?.CompanyGuid?.ID.AsGuid(),
+                    SeznamSpojeni = companyResponse.Data?.CompanyGuid?.SeznamSpojeni,
                 };
-                var createPersonResponse = await restApiClient.V20.Person.PostAsync([
-                    personInputDto,
-                ], cancellationToken: TestContext.Current.CancellationToken);
-
-                Assert.NotNull(createPersonResponse);
-                Assert.Empty(createPersonResponse.AdditionalData);
-                Assert.NotNull(createPersonResponse.Data);
-
-                personInputDto.ID = invoiceReceiverPersonId = createPersonResponse.Data.AsValueEnumerable().FirstOrDefault();
-
-                if (data.AdresaPrijemceFaktury.Telefon is { } invoiceReceiverPhone)
+                companyInput.companyInput.ID = company.ID;
+                foreach (var connectionInput in companyInput.companyInput.SeznamSpojeni)
                 {
-                    personInputDto.TelefonSpojeni2ID = await restApiClient.CreateConnectionAsync(connectionTypeTelId, invoiceReceiverPhone, TestContext.Current.CancellationToken);
+                    var contact = company.SeznamSpojeni?.AsValueEnumerable()
+                        .Where(x =>
+                            x!.TypSpojeni_ID == connectionInput!.TypSpojeni_ID
+                            && x.SpojeniCislo == connectionInput.SpojeniCislo
+                            && x.Stat_ID == connectionInput.Stat_ID
+                        )
+                        .FirstOrDefault();
+
+                    if (
+                        contact is null
+                        && connectionInput!.TypSpojeni_ID.AsGuid() == connectionsTypes.GetValueOrDefault("Tel")
+                    )
+                    {
+                        contact = company.SeznamSpojeni?.AsValueEnumerable()
+                            .Where(x =>
+                                x!.TypSpojeni_ID == connectionInput!.TypSpojeni_ID
+                                && x.Stat_ID == connectionInput.Stat_ID
+                            )
+                            .FirstOrDefault();
+
+                        var phoneNumber = contact?.SpojeniCislo?.Split(' ', 2, StringSplitOptions.TrimEntries);
+
+                        if (
+                            phoneNumber?.Length == 2
+                            && phoneNumber[0].Replace("+", "00") is { } phonePrefix
+                            && connectionInput.SpojeniCislo?.StartsWith(phonePrefix) is true
+                        )
+                        {
+                            var numberAfterPrefix = connectionInput.SpojeniCislo.Substring(phonePrefix.Length);
+                            connectionInput.SpojeniCislo = $"{phoneNumber[0]} {numberAfterPrefix}";
+                        }
+                        else if (
+                            phoneNumber?.Length == 2
+                            && connectionInput.SpojeniCislo?.StartsWith("00") is false
+                            && connectionInput.SpojeniCislo == phoneNumber[1]
+                        )
+                        {
+                            connectionInput.SpojeniCislo = contact?.SpojeniCislo;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+
+                    connectionInput!.ID = contact?.ID;
                 }
 
-                if (data.AdresaPrijemceFaktury.Email is { } invoiceReceiverEmail)
-                {
-                    personInputDto.EmailSpojeniID = await restApiClient.CreateConnectionAsync(connectionTypeEmailId, invoiceReceiverEmail, TestContext.Current.CancellationToken);
-                }
+                companyResponse = await graphqlClient.Mutation(
+                    companyInput,
+                    static (f, x) => new
+                    {
+                        CompanyGuid = x.EditCompany(f.companyInput, selector: c => new
+                        {
+                            c.ID,
+                            c.Deleted,
+                            c.Kod,
+                            c.Nazev,
+                            c.Create_Date,
+                            c.HlavniOsoba_ID,
+                            SeznamSpojeni = c.SeznamSpojeni(s => new
+                            {
+                                s.ID,
+                                s.TypSpojeni_ID,
+                                s.SpojeniCislo,
+                                s.SpojeniMistniPredvolba,
+                                s.Stat_ID,
+                            }),
+                        }),
+                    },
+                    cancellationToken: TestContext.Current.CancellationToken
+                );
 
-                await restApiClient.V20.Person.PutAsync([
-                    personInputDto,
-                ], cancellationToken: TestContext.Current.CancellationToken);
+                Assert.Empty(companyResponse.Errors ?? []);
+                company = new
+                {
+                    ID = companyResponse.Data?.CompanyGuid?.ID.AsGuid(),
+                    SeznamSpojeni = companyResponse.Data?.CompanyGuid?.SeznamSpojeni,
+                };
             }
+
+            var companyInvoiceReceiver = company;
+            var companyTerminalReceiver = company;
 
             ids.Add((
-                companyGuid,
+                numericalSeries,
+                company.ID,
+                companyInvoiceReceiver.ID,
+                companyTerminalReceiver.ID,
                 currencyId,
-                companyCountryId,
+                countryIds,
                 vatClassificationId,
                 invoiceGroupId,
                 transportId,
                 paymentId,
-                invoiceReceiverPersonId,
                 accountAssignmentIds,
                 vatClassificationIds,
                 articles,
@@ -367,6 +498,9 @@ public class MoneyErpImportInvoiceTests
             {
                 companyInput = new IssuedInvoiceInput
                 {
+                    ZaokrouhleniCelkovaCastka_ID = Guid.Parse("186cfec6-7203-4c8c-acc5-715c78591ee3"), // TODO where to get this from?
+                    ZaokrouhleniPrevazujiciSazbaDPH = false,
+                    CiselnaRada_ID = resolvedIds.numericalSeries.GetValueOrDefault(invoice.CisloDokladuNumericSerieKod),
                     CisloDokladu = invoice.CisloDokladu,
                     OdkazNaDoklad = invoice.OdkazNaDoklad,
                     VariabilniSymbol = invoice.VariabilniSymbol,
@@ -384,8 +518,21 @@ public class MoneyErpImportInvoiceTests
                     CleneniDPH_ID = resolvedIds.vatClassificationId,
                     Group_ID = resolvedIds.invoiceGroupId,
                     Firma_ID = resolvedIds.companyGuid,
+                    FakturacniAdresaFirma_ID = resolvedIds.companyInvoiceReceiverGuid,
+                    FakturacniAdresaNazev = invoice.FirmaNazev,
+                    FakturacniAdresaUlice = invoice.FirmaUlice,
+                    FakturacniAdresaMisto = invoice.FirmaMisto,
+                    FakturacniAdresaPSC = invoice.FirmaKodPsc,
+                    FakturacniAdresaStat = invoice.FirmaStatKod,
+                    DodaciAdresaFirma_ID = resolvedIds.companyTerminalReceiverGuid,
+                    DodaciAdresaNazev = invoice.FirmaNazev,
+                    DodaciAdresaUlice = invoice.FirmaUlice,
+                    DodaciAdresaMisto = invoice.FirmaMisto,
+                    DodaciAdresaPSC = invoice.FirmaKodPsc,
+                    DodaciAdresaStat = invoice.FirmaStatKod,
 
-                    AdresaPrijemceFakturyKontaktniOsoba_ID = resolvedIds.invoiceReceiverPersonId,
+                    AdresaPrijemceFakturyStat_ID = resolvedIds.countryIds.GetValueOrDefault(invoice.AdresaPrijemceFaktury.StatKod),
+                    //AdresaPrijemceFakturyKontaktniOsoba_ID = resolvedIds.companyInvoiceReceiverGuid,
 
                     //invoice.AdresaPrijemceFaktury.Email,
                     //invoice.AdresaPrijemceFaktury.Telefon,
@@ -396,7 +543,8 @@ public class MoneyErpImportInvoiceTests
                     //invoice.AdresaPrijemceFaktury.Nazev,
                     AdresaKoncovehoPrijemceEmail = invoice.AdresaKoncovehoPrijemce.Email,
                     AdresaKoncovehoPrijemceTelefon = invoice.AdresaKoncovehoPrijemce.Telefon,
-                    AdresaKoncovehoPrijemceKontaktniOsoba_ID = resolvedIds.invoiceReceiverPersonId, // TODO
+                    //AdresaKoncovehoPrijemceKontaktniOsoba_ID = resolvedIds.companyTerminalReceiverGuid,
+                    AdresaKoncovehoPrijemceStat_ID = resolvedIds.countryIds.GetValueOrDefault(invoice.AdresaKoncovehoPrijemce.StatKod),
                     //invoice.AdresaKoncovehoPrijemce.Ulice,
                     //invoice.AdresaKoncovehoPrijemce.Misto,
                     //invoice.AdresaKoncovehoPrijemce.Psc,
@@ -442,17 +590,43 @@ public class MoneyErpImportInvoiceTests
                 importInvoice,
                 static (f, x) => new
                 {
-                    CreatedInvoiceGuid = x.CreateIssuedInvoice(f.companyInput, selector: c => new
+                    CreatedInvoice = x.CreateIssuedInvoice(f.companyInput, selector: c => new
                     {
                         c.ID,
                         c.Deleted,
                         c.Nazev,
                         c.Create_Date,
+                        c.CisloDokladu,
                     }),
                 },
                 cancellationToken: TestContext.Current.CancellationToken
             );
 
+            Assert.Empty(mutationResponse.Errors ?? []);
+
+            var updateInvoice = new
+            {
+                companyInput = new IssuedInvoiceInput
+                {
+                    ID = mutationResponse.Data!.CreatedInvoice!.ID,
+                    CisloDokladu = invoice.CisloDokladu,
+                }
+            };
+            mutationResponse = await graphqlClient.Mutation(
+                updateInvoice,
+                static (f, x) => new
+                {
+                    CreatedInvoice = x.EditIssuedInvoice(f.companyInput, selector: c => new
+                    {
+                        c.ID,
+                        c.Deleted,
+                        c.Nazev,
+                        c.Create_Date,
+                        c.CisloDokladu,
+                    }),
+                },
+                cancellationToken: TestContext.Current.CancellationToken
+            );
             Assert.Empty(mutationResponse.Errors ?? []);
         }
     }
@@ -470,6 +644,7 @@ public class MoneyErpImportInvoiceTests
                     authentication.Data,
                     [
                         new InvoiceData(
+                            CisloDokladuNumericSerieKod: "FAKT_VIN",
                             CisloDokladu: "IN2504259",
                             OdkazNaDoklad: "OR2516216",
                             VariabilniSymbol: "0002516216",
@@ -486,6 +661,7 @@ public class MoneyErpImportInvoiceTests
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř24OSS_S",
                             GroupKod: "DE",
+                            FirmaKodNumericSerieKod: "USER_ID",
                             FirmaKod: "UID786464",
                             FirmaPlatceDph: false,
                             FirmaDic: null,
@@ -502,6 +678,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Roding Strahlfeld",
                                 Psc: "93426",
+                                StatKod: "DE",
                                 Stat: "Germany",
                                 Nazev: "John Doe"
                             ),
@@ -511,6 +688,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Roding Strahlfeld",
                                 Psc: "93426",
+                                StatKod: "DE",
                                 Stat: "Germany",
                                 Nazev: "John Doe"
                             ),
@@ -547,6 +725,7 @@ public class MoneyErpImportInvoiceTests
                             Poznamka: null
                         ),
                         new InvoiceData(
+                            CisloDokladuNumericSerieKod: "FAKT_VIN",
                             CisloDokladu: "IN2504261",
                             OdkazNaDoklad: "OR2516222",
                             VariabilniSymbol: "0002516222",
@@ -563,6 +742,7 @@ public class MoneyErpImportInvoiceTests
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř26",
                             GroupKod: "CZ",
+                            FirmaKodNumericSerieKod: "USER_ID",
                             FirmaKod: "UID819953",
                             FirmaPlatceDph: false,
                             FirmaDic: null,
@@ -579,6 +759,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Arbaz",
                                 Psc: "1974",
+                                StatKod: "CH",
                                 Stat: "Switzerland",
                                 Nazev: "John Doe"
                             ),
@@ -588,6 +769,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Arbaz",
                                 Psc: "1974",
+                                StatKod: "CH",
                                 Stat: "Switzerland",
                                 Nazev: "John Doe"
                             ),
@@ -634,6 +816,7 @@ public class MoneyErpImportInvoiceTests
                     authentication.Data,
                     [
                         new InvoiceData(
+                            CisloDokladuNumericSerieKod: "FAKT_VIN",
                             CisloDokladu: "IN2504269",
                             OdkazNaDoklad: "OR2516237",
                             VariabilniSymbol: "0002516237",
@@ -650,6 +833,7 @@ public class MoneyErpImportInvoiceTests
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř21",
                             GroupKod: "CZ",
+                            FirmaKodNumericSerieKod: "LMS_ID",
                             FirmaKod: "LMS28119",
                             FirmaPlatceDph: true,
                             FirmaDic: "HU26524162",
@@ -666,6 +850,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Csomad",
                                 Psc: "2161",
+                                StatKod: "HU",
                                 Stat: "Hungary",
                                 Nazev: "Easy"
                             ),
@@ -675,6 +860,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Csomad",
                                 Psc: "2161",
+                                StatKod: "HU",
                                 Stat: "Hungary",
                                 Nazev: "Easy"
                             ),
@@ -721,6 +907,7 @@ public class MoneyErpImportInvoiceTests
                     authentication.Data,
                     [
                         new InvoiceData(
+                            CisloDokladuNumericSerieKod: "FAKT_VIN",
                             CisloDokladu: "IN2504279",
                             OdkazNaDoklad: "OR2516263",
                             VariabilniSymbol: "0002516263",
@@ -737,6 +924,7 @@ public class MoneyErpImportInvoiceTests
                             MenaKod: "EUR",
                             CleneniDphKod: "19Ř24OSS_S",
                             GroupKod: "LT",
+                            FirmaKodNumericSerieKod: "USER_ID",
                             FirmaKod: "UID233969",
                             FirmaPlatceDph: false,
                             FirmaDic: null,
@@ -753,6 +941,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Vilnius",
                                 Psc: "11000",
+                                StatKod: "LT",
                                 Stat: "Lithuania",
                                 Nazev: "John Doe"
                             ),
@@ -762,6 +951,7 @@ public class MoneyErpImportInvoiceTests
                                 Ulice: "Street 1",
                                 Misto: "Vilnius",
                                 Psc: "11000",
+                                StatKod: "LT",
                                 Stat: "Lithuania",
                                 Nazev: "John Doe"
                             ),
@@ -997,12 +1187,14 @@ public class MoneyErpImportInvoiceTests
         string Ulice,
         string Misto,
         string Psc,
+        string StatKod,
         string Stat,
         string Nazev
     );
 
     public sealed record InvoiceData(
         // Basic identifiers
+        string CisloDokladuNumericSerieKod,
         string CisloDokladu,
         string OdkazNaDoklad,
         string VariabilniSymbol,
@@ -1031,6 +1223,7 @@ public class MoneyErpImportInvoiceTests
         string GroupKod,
 
         // Supplier (Adresa/Firma)
+        string FirmaKodNumericSerieKod,
         string FirmaKod,
         bool FirmaPlatceDph,
         string? FirmaDic,
@@ -1109,7 +1302,7 @@ public class MoneyErpImportInvoiceTests
             ZpusobPlatbyKod,
             ZpusobPlatbyNazev,
             new JsonArray(Polozky.AsValueEnumerable()
-                .Select(x => (JsonNode) new JsonObject
+                .Select(JsonNode (x) => new JsonObject
                 {
                     [nameof(x.Nazev)] = x.Nazev,
                     [nameof(x.Mnozstvi)] = x.Mnozstvi,
@@ -1134,17 +1327,20 @@ public class MoneyErpImportInvoiceTests
                     [nameof(x.DphSazba)] = x.DphSazba,
                 })
                 .ToArray()),
-            Poznamka
+            Poznamka,
+            CisloDokladuNumericSerieKod,
+            FirmaKodNumericSerieKod
         ).ToString();
 
         public static InvoiceData Parse(string s, IFormatProvider? provider)
         {
-            if (JsonNode.Parse(s) is not JsonArray { Count: 34 } arr)
+            if (JsonNode.Parse(s) is not JsonArray { Count: 36 } arr)
             {
                 throw new FormatException("Input string is not a valid InvoiceData JSON array.");
             }
 
             return new InvoiceData(
+                CisloDokladuNumericSerieKod: arr[34]?.GetValue<string>() ?? throw new FormatException("CisloDokladuKod missing."),
                 CisloDokladu: arr[0]?.GetValue<string>() ?? throw new FormatException("CisloDokladu missing."),
                 OdkazNaDoklad: arr[1]?.GetValue<string>() ?? throw new FormatException("OdkazNaDoklad missing."),
                 VariabilniSymbol: arr[2]?.GetValue<string>() ?? throw new FormatException("VariabilniSymbol missing."),
@@ -1161,6 +1357,7 @@ public class MoneyErpImportInvoiceTests
                 MenaKod: arr[13]?.GetValue<string>() ?? throw new FormatException("MenaKod missing."),
                 CleneniDphKod: arr[14]?.GetValue<string>() ?? throw new FormatException("CleneniDPHKod missing."),
                 GroupKod: arr[15]?.GetValue<string>() ?? throw new FormatException("GroupKod missing."),
+                FirmaKodNumericSerieKod: arr[35]?.GetValue<string>() ?? throw new FormatException("FirmaKodNumericSerieKod missing."),
                 FirmaKod: arr[16]?.GetValue<string>() ?? throw new FormatException("FirmaKod missing."),
                 FirmaPlatceDph: arr[17]?.GetValue<bool>() ?? throw new FormatException("FirmaPlatceDPH missing."),
                 FirmaDic: arr[18]?.GetValue<string?>(),
@@ -1177,6 +1374,7 @@ public class MoneyErpImportInvoiceTests
                     Ulice: arr[26]?[nameof(InvoiceAddressData.Ulice)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Ulice missing."),
                     Misto: arr[26]?[nameof(InvoiceAddressData.Misto)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Misto missing."),
                     Psc: arr[26]?[nameof(InvoiceAddressData.Psc)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Psc missing."),
+                    StatKod: arr[26]?[nameof(InvoiceAddressData.StatKod)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.StatKod missing."),
                     Stat: arr[26]?[nameof(InvoiceAddressData.Stat)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Stat missing."),
                     Nazev: arr[26]?[nameof(InvoiceAddressData.Nazev)]?.GetValue<string>() ?? throw new FormatException("AdresaPrijemceFaktury.Nazev missing.")
                 ),
@@ -1186,6 +1384,7 @@ public class MoneyErpImportInvoiceTests
                     Ulice: arr[27]?[nameof(InvoiceAddressData.Ulice)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Ulice missing."),
                     Misto: arr[27]?[nameof(InvoiceAddressData.Misto)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Misto missing."),
                     Psc: arr[27]?[nameof(InvoiceAddressData.Psc)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Psc missing."),
+                    StatKod: arr[27]?[nameof(InvoiceAddressData.StatKod)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.StatKod missing."),
                     Stat: arr[27]?[nameof(InvoiceAddressData.Stat)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Stat missing."),
                     Nazev: arr[27]?[nameof(InvoiceAddressData.Nazev)]?.GetValue<string>() ?? throw new FormatException("AdresaKoncovehoPrijemce.Nazev missing.")
                 ),
