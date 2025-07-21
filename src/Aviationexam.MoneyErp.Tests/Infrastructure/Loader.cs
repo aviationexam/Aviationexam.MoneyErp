@@ -37,7 +37,10 @@ public static class Loader
                 StringSplitOptions.RemoveEmptyEntries
             );
 
-            Environment.SetEnvironmentVariable(parts[0], parts.Length > 1 ? parts[1] : null, EnvironmentVariableTarget.Process);
+            if (parts.Length > 0 && !string.IsNullOrEmpty(parts[0]))
+            {
+                Environment.SetEnvironmentVariable(parts[0], parts.Length > 1 ? parts[1] : null, EnvironmentVariableTarget.Process);
+            }
         }
     }
 }
