@@ -2,6 +2,7 @@ using Aviationexam.MoneyErp.Tests.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Nodes;
 using Xunit;
 
@@ -18,6 +19,7 @@ public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuth
         var clientId = Environment.GetEnvironmentVariable("MONEYERP_CLIENT_ID")?.Trim();
         var clientSecret = Environment.GetEnvironmentVariable("MONEYERP_CLIENT_SECRET")?.Trim();
         var endpoint = Environment.GetEnvironmentVariable("MONEYERP_ENDPOINT")?.Trim();
+        var endpointCertificatePath = Environment.GetEnvironmentVariable("MONEYERP_ENDPOINT_CERTIFICATE")?.Trim();
 
         if (
             clientId is null
@@ -32,19 +34,29 @@ public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuth
             yield break;
         }
 
-        yield return new TheoryDataRow<AuthenticationData?>(new AuthenticationData(clientId, clientSecret, endpoint));
+        X509Certificate2? endpointCertificate = null;
+        if (endpointCertificatePath is not null)
+        {
+#pragma warning disable CA2000
+            endpointCertificate = X509CertificateLoader.LoadCertificateFromFile(endpointCertificatePath);
+#pragma warning restore CA2000
+        }
+
+        yield return new TheoryDataRow<AuthenticationData?>(new AuthenticationData(clientId, clientSecret, endpoint, endpointCertificate));
     }
 
     public sealed record AuthenticationData(
         string ClientId,
         string ClientSecret,
-        string ServerAddress
+        string ServerAddress,
+        X509Certificate2? EndpointCertificate
     ) : IFormattable, IParsable<AuthenticationData>
     {
         public string ToString(string? format, IFormatProvider? formatProvider) => new JsonArray(
             ClientId,
             ClientSecret,
-            ServerAddress
+            ServerAddress,
+            EndpointCertificate?.ExportCertificatePem()
         ).ToString();
 
         public static AuthenticationData Parse(string s, IFormatProvider? provider)
@@ -54,10 +66,19 @@ public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuth
                 throw new FormatException("Input string is not a valid AuthenticationData JSON array.");
             }
 
+            X509Certificate2? endpointCertificate = null;
+            if (arr[3]?.GetValue<string>() is { } pemCertificate)
+            {
+#pragma warning disable CA2000
+                endpointCertificate = X509CertificateLoader.LoadCertificateFromFile(pemCertificate);
+#pragma warning restore CA2000
+            }
+
             return new AuthenticationData(
                 arr[0]?.GetValue<string>() ?? throw new FormatException("ClientId missing."),
                 arr[1]?.GetValue<string>() ?? throw new FormatException("ClientSecret missing."),
-                arr[2]?.GetValue<string>() ?? throw new FormatException("ServerAddress missing.")
+                arr[2]?.GetValue<string>() ?? throw new FormatException("ServerAddress missing."),
+                endpointCertificate
             );
         }
 

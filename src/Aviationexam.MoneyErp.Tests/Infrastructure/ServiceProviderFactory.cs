@@ -26,6 +26,7 @@ public static class ServiceProviderFactory
             x.ClientSecret = authenticationData.ClientSecret;
             x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
             x.Endpoint = new Uri(authenticationData.ServerAddress, UriKind.RelativeOrAbsolute);
+            x.EndpointCertificate = authenticationData.EndpointCertificate;
         }))
         .AddRestApiClient(_ => { }, shouldRedactHeaderValue)
         .AddGraphQlClient(_ => { }, shouldRedactHeaderValue)
