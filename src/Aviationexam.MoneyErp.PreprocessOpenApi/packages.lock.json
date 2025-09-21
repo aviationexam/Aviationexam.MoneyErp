@@ -4,15 +4,15 @@
     "net9.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.205, )",
-        "resolved": "2.0.205",
-        "contentHash": "adw/4fuYeVyu92yHtoKpjtaBe4VVEjc1nMO/Wy2rZ3ZtOGcNvN6SXwJYAxPDUgDPWwAvfoPYE/jO++1sCs3V8w=="
+        "requested": "[2.0.220, )",
+        "resolved": "2.0.220",
+        "contentHash": "LknH5tduuxY6jzPGUIBHrszk1fepyEWAD9Ht7Hq1rrGZ02BKx54ADXzrlXTkLNpnkVzRBHU4bO6HH7GwIeDR+w=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.7, )",
-        "resolved": "9.0.7",
-        "contentHash": "SZ1brSGoLnhLbE8QUZrtN6YwzN2gDT1wbx9qDBEfFFJcstiDTjJ6ygNuTPBV/K7SjGfx2YNbcJi5+ygbPOZpDg=="
+        "requested": "[9.0.9, )",
+        "resolved": "9.0.9",
+        "contentHash": "cHi1os/s6aobEgNkbOh/jW+ru//rHuedvj4PmTh2mMY7et/mJjqphBeXeKCesDvMd0+E2JyX9EPZZC4VRKslXg=="
       },
       "System.Text.Json": {
         "type": "Direct",
@@ -22,9 +22,9 @@
       },
       "ZLinq": {
         "type": "Direct",
-        "requested": "[1.4.12, )",
-        "resolved": "1.4.12",
-        "contentHash": "/Ibt52Bys+WM5suxl8JBik64IQoGshPPK2s6UoxAJGRm6PVdBa+HKIzcxfamkRuELBcmiFtx1RZeocQpqhSH/A=="
+        "requested": "[1.5.2, )",
+        "resolved": "1.5.2",
+        "contentHash": "Zd/afYvmwHMzAWFhK9XAEW9BN4iqXswuWUNsaVFPy4INnxZe/HdbC/DTMUkxmeG+8vPc/8VFVWnCvEYQcRwwmw=="
       }
     },
     "net9.0/linux-x64": {},
