@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 
@@ -30,6 +31,7 @@ public static class CommonDependencyInjectionExtensions
 #pragma warning disable MA0039
             httpClientHandler.ServerCertificateCustomValidationCallback =
 #pragma warning restore MA0039
+                [SuppressMessage("ReSharper", "UnusedParameter.Local")]
                 (sender, cert, chain, sslPolicyErrors) =>
                 {
                     var chain2 = new X509Chain();
