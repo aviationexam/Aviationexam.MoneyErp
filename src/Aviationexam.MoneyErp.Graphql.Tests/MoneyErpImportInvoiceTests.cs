@@ -218,7 +218,11 @@ public class MoneyErpImportInvoiceTests
                 {
                     Company = x.Companies(Filter: f.companyFilter, selector: c => new
                     {
-                        c.ID, c.Deleted, c.Kod, c.Nazev, c.Create_Date,
+                        c.ID,
+                        c.Deleted,
+                        c.Kod,
+                        c.Nazev,
+                        c.Create_Date,
                         c.HlavniOsoba_ID,
                         SeznamSpojeni = c.SeznamSpojeni(s => new
                         {
@@ -231,7 +235,11 @@ public class MoneyErpImportInvoiceTests
                     }),
                     CompanyInvoiceReceiver = x.Companies(Filter: f.companyInvoiceReceiverFilter, selector: c => new
                     {
-                        c.ID, c.Deleted, c.Kod, c.Nazev, c.Create_Date,
+                        c.ID,
+                        c.Deleted,
+                        c.Kod,
+                        c.Nazev,
+                        c.Create_Date,
                         c.HlavniOsoba_ID,
                         SeznamSpojeni = c.SeznamSpojeni(s => new
                         {
@@ -244,7 +252,11 @@ public class MoneyErpImportInvoiceTests
                     }),
                     CompanyTerminalReceiver = x.Companies(Filter: f.companyTerminalReceiverFilter, selector: c => new
                     {
-                        c.ID, c.Deleted, c.Kod, c.Nazev, c.Create_Date,
+                        c.ID,
+                        c.Deleted,
+                        c.Kod,
+                        c.Nazev,
+                        c.Create_Date,
                         c.HlavniOsoba_ID,
                         SeznamSpojeni = c.SeznamSpojeni(s => new
                         {
