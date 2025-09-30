@@ -64,11 +64,7 @@
   </Target>
 
   <Target Name="RemoveGeneratedClients" AfterTargets="Clean">
-    <ItemGroup>
-      <!-- mark the file as something to delete -->
-      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)" />
-    </ItemGroup>
-    <Delete Files="@(FilesToDelete)" />
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)" />
   </Target>
 
 </Project>

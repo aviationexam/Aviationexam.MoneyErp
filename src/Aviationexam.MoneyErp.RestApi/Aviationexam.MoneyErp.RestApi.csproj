@@ -150,12 +150,11 @@
 
   <Target Name="RemoveGeneratedClients" AfterTargets="Clean">
     <ItemGroup>
-      <!-- mark the file as something to delete -->
-      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)" />
-      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)" />
       <FilesToDelete Include="$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)" />
       <FilesToDelete Include="$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV2SpecificationFile)" />
     </ItemGroup>
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)" />
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)" />
     <Delete Files="@(FilesToDelete)" />
   </Target>
 
