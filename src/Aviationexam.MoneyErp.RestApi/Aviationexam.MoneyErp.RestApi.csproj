@@ -148,4 +148,13 @@
     <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="KIOTA_TUTORIAL_ENABLED=false" Command="$(KiotaV2Exec)" />
   </Target>
 
+  <Target Name="RemoveGeneratedClients" AfterTargets="Clean">
+    <ItemGroup>
+      <!-- mark the file as something to delete -->
+      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)" />
+      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
+
 </Project>

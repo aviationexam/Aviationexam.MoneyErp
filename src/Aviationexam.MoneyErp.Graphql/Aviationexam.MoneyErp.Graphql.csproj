@@ -63,4 +63,12 @@
     <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet zeroql generate -c ./config.zeroql.json  --output $(GeneratedCodeTarget)" />
   </Target>
 
+  <Target Name="RemoveGeneratedClients" AfterTargets="Clean">
+    <ItemGroup>
+      <!-- mark the file as something to delete -->
+      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
+
 </Project>
