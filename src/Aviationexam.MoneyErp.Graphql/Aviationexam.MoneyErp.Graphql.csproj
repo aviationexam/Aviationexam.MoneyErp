@@ -60,7 +60,9 @@
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
     Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)')"
   >
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet zeroql generate -c ./config.zeroql.json  --output $(GeneratedCodeTarget)" />
+    <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeTarget) using 'dotnet zeroql generate -c ./config.zeroql.json'" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet zeroql generate -c ./config.zeroql.json --output $(GeneratedCodeTarget)" />
   </Target>
 
   <Target Name="RemoveGeneratedClients" AfterTargets="Clean">
