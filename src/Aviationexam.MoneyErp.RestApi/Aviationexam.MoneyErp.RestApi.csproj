@@ -153,6 +153,8 @@
       <!-- mark the file as something to delete -->
       <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)" />
       <FilesToDelete Include="$(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)" />
+      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)" />
+      <FilesToDelete Include="$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV2SpecificationFile)" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
   </Target>
