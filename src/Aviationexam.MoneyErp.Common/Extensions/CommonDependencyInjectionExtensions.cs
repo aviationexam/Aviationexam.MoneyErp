@@ -31,8 +31,10 @@ public static class CommonDependencyInjectionExtensions
 #pragma warning disable MA0039
             httpClientHandler.ServerCertificateCustomValidationCallback =
 #pragma warning restore MA0039
+#pragma warning disable format
                 [SuppressMessage("ReSharper", "UnusedParameter.Local")]
                 (sender, cert, chain, sslPolicyErrors) =>
+#pragma warning restore format
                 {
                     var chain2 = new X509Chain();
                     chain2.ChainPolicy.ExtraStore.Add(endpointCertificate);
