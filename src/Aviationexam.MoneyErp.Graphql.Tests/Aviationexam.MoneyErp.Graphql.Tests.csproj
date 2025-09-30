@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
+    <ProjectName>Aviationexam.MoneyErp.Graphql.Tests</ProjectName>
   </PropertyGroup>
 
   <Import Project="..\WarningConfiguration.targets" />
@@ -22,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="ZLinq" />
   </ItemGroup>
 
@@ -36,7 +36,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aviationexam.MoneyErp.Graphql\Aviationexam.MoneyErp.Graphql.csproj" />
-    <ProjectReference Include="..\Aviationexam.MoneyErp.RestApi\Aviationexam.MoneyErp.RestApi.csproj" />
   </ItemGroup>
 
 </Project>

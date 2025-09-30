@@ -1,4 +1,4 @@
-using Aviationexam.MoneyErp.Tests.Infrastructure;
+using Aviationexam.MoneyErp.RestApi.Tests.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Nodes;
 using Xunit;
 
-namespace Aviationexam.MoneyErp.Tests;
+namespace Aviationexam.MoneyErp.RestApi.Tests;
 
 public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuthenticationsClassData.AuthenticationData?>(
     GetData()

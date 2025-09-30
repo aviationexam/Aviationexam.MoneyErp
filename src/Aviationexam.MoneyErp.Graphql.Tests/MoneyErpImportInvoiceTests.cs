@@ -1,6 +1,6 @@
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
-using Aviationexam.MoneyErp.Tests.Infrastructure;
+using Aviationexam.MoneyErp.Graphql.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using Xunit;
 using ZLinq;
 using Guid = System.Guid;
 
-namespace Aviationexam.MoneyErp.Tests;
+namespace Aviationexam.MoneyErp.Graphql.Tests;
 
 public class MoneyErpImportInvoiceTests
 {

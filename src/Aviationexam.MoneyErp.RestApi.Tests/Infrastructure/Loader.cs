@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace Aviationexam.MoneyErp.Tests.Infrastructure;
+namespace Aviationexam.MoneyErp.RestApi.Tests.Infrastructure;
 
 public static class Loader
 {

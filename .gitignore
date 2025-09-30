@@ -53,6 +53,7 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
+**/.idea/copilot.data.migration.*.xml
 *.sln.DotSettings.user
 
 /src/Aviationexam.MoneyErp.RestApi/openapi.*.original.json

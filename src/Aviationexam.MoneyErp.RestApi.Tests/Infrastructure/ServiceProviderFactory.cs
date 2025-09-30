@@ -1,5 +1,4 @@
 using Aviationexam.MoneyErp.Common.Extensions;
-using Aviationexam.MoneyErp.Graphql.Extensions;
 using Aviationexam.MoneyErp.RestApi.Extensions;
 using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using Xunit;
 
-namespace Aviationexam.MoneyErp.Tests.Infrastructure;
+namespace Aviationexam.MoneyErp.RestApi.Tests.Infrastructure;
 
 public static class ServiceProviderFactory
 {
@@ -29,7 +28,6 @@ public static class ServiceProviderFactory
             x.EndpointCertificate = authenticationData.EndpointCertificate;
         }))
         .AddRestApiClient(_ => { }, shouldRedactHeaderValue)
-        .AddGraphQlClient(_ => { }, shouldRedactHeaderValue)
         .Services
         .BuildServiceProvider();
 }

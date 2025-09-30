@@ -1,10 +1,10 @@
 using Aviationexam.MoneyErp.RestApi.ClientV1;
-using Aviationexam.MoneyErp.Tests.Infrastructure;
+using Aviationexam.MoneyErp.RestApi.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Aviationexam.MoneyErp.Tests;
+namespace Aviationexam.MoneyErp.RestApi.Tests;
 
 public class MoneyErpApiClientsTests
 {
