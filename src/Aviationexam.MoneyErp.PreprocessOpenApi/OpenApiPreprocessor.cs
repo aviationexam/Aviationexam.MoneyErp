@@ -78,6 +78,12 @@ public class OpenApiPreprocessor(
             "/v1.0/PrepaymentInvoice/{id}/Report/{reportConfigId}",
             "/v1.0/PrepaymentIssuedInvoice/{id}/Report/{reportConfigId}",
             "/v1.0/ReceivedInvoice/{id}/Report/{reportConfigId}",
+            "/v2.0/IssuedInvoice/{id}/Report/{reportId}",
+            "/v2.0/PrepaymentInvoice/{id}/Report/{reportConfigId}",
+            "/v2.0/PrepaymentIssuedInvoice/{id}/Report/{reportConfigId}",
+            "/v2.0/ReceivedInvoice/{id}/Report/{reportConfigId}",
+            "/v2.0/PriceList/{id}/Report/{reportConfigId}",
+            "/v2.0/Service/{id}/Report/{reportConfigId}",
         ]));
 
         var currentPath = new Stack<TreeItem>();
