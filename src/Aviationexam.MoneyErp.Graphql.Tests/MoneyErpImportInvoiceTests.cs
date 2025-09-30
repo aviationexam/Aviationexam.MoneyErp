@@ -305,6 +305,8 @@ public class MoneyErpImportInvoiceTests
                 }
             }
 
+            _ = adresaKoncovehoPrijemceMatch;
+
             var company = secondaryGraphResponse.Data?.Company?.AsValueEnumerable()
                 .Where(x => x!.Deleted is false)
                 .OrderBy(x => x!.Create_Date)
