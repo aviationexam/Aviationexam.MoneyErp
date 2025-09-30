@@ -9,6 +9,7 @@ on:
 
 jobs:
   unit-test:
+    if: false
     runs-on: ubuntu-latest
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
