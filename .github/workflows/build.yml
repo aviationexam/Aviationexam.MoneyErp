@@ -35,7 +35,7 @@ jobs:
         with:
           endpoint: ${{ secrets.MONEYERP_ENDPOINT }}
           access_token: ${{ steps.get_token.outputs.access_token }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: schema.graphql
           path: src/Aviationexam.MoneyErp.Graphql/schema.graphql
