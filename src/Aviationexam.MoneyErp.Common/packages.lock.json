@@ -4,9 +4,9 @@
     "net8.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.222, )",
-        "resolved": "2.0.222",
-        "contentHash": "uTbrrimffvEwxjtFFE7DKKGgJZzeRGuvfy6s275bl4hANdmzK5n3LW7MebYdNocqP7Lp8Yk20x4gZG9q/aXtdw=="
+        "requested": "[2.0.253, )",
+        "resolved": "2.0.253",
+        "contentHash": "YweEHdTOi+l8DMBui+66qkRlS8IVIbD1PJUgXrWpBSrNt6mf8BU6WM1dlAVCwufPohk4/7l+GJ+ekBgPlDIxMw=="
       },
       "Microsoft.Extensions.Caching.Abstractions": {
         "type": "Direct",
@@ -58,9 +58,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[8.0.20, )",
-        "resolved": "8.0.20",
-        "contentHash": "Rhcto2AjGvTO62+/VTmBpumBOmqIGp7nYEbTbmEXkCq4yPGxV8whju3/HsIA/bKyo2+DggaYk5+/8sxb1AbPTw=="
+        "requested": "[8.0.22, )",
+        "resolved": "8.0.22",
+        "contentHash": "MhcMithKEiyyNkD2ZfbDZPmcOdi0GheGfg8saEIIEfD/fol3iHmcV8TsZkD4ZYz5gdUuoX4YtlVySUU7Sxl9SQ=="
       },
       "System.Text.Json": {
         "type": "Direct",
@@ -153,9 +153,9 @@
     "net9.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.222, )",
-        "resolved": "2.0.222",
-        "contentHash": "uTbrrimffvEwxjtFFE7DKKGgJZzeRGuvfy6s275bl4hANdmzK5n3LW7MebYdNocqP7Lp8Yk20x4gZG9q/aXtdw=="
+        "requested": "[2.0.253, )",
+        "resolved": "2.0.253",
+        "contentHash": "YweEHdTOi+l8DMBui+66qkRlS8IVIbD1PJUgXrWpBSrNt6mf8BU6WM1dlAVCwufPohk4/7l+GJ+ekBgPlDIxMw=="
       },
       "Microsoft.Extensions.Caching.Abstractions": {
         "type": "Direct",
@@ -198,9 +198,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "cHi1os/s6aobEgNkbOh/jW+ru//rHuedvj4PmTh2mMY7et/mJjqphBeXeKCesDvMd0+E2JyX9EPZZC4VRKslXg=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "vvB9rtDmWaXgYkViT00KORBVmA3pcYsHlgd9vOPqL9sf5bKy3rvLMF1+sI1uUfVj28S3itirHlHmX5/kcpZKNw=="
       },
       "System.Text.Json": {
         "type": "Direct",
