@@ -25,9 +25,6 @@ public static class CommonDependencyInjectionExtensions
 
         if (endpointCertificate is not null)
         {
-            httpClientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            httpClientHandler.ClientCertificates.Add(endpointCertificate);
-
 #pragma warning disable MA0039
             httpClientHandler.ServerCertificateCustomValidationCallback =
 #pragma warning restore MA0039
