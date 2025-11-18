@@ -40,6 +40,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Microsoft.Extensions.Options" />
@@ -48,6 +49,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" VersionOverride="9.0.11" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" VersionOverride="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" VersionOverride="9.0.11" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="9.0.11" />
     <PackageReference Include="Microsoft.Extensions.Http" VersionOverride="9.0.11" />
     <PackageReference Include="Microsoft.Extensions.Options" VersionOverride="9.0.11" />
