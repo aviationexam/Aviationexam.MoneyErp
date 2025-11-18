@@ -280,6 +280,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Caching.Abstractions": "[10.0.0, )",
+          "Microsoft.Extensions.DependencyInjection": "[10.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.0, )",
           "Microsoft.Extensions.Http": "[10.0.0, )",
           "Microsoft.Extensions.Options": "[10.0.0, )"
@@ -291,6 +292,7 @@
           "Aviationexam.MoneyErp.Common": "[1.0.0, )",
           "Microsoft.AspNetCore.WebUtilities": "[10.0.0, )",
           "Microsoft.Extensions.Caching.Abstractions": "[10.0.0, )",
+          "Microsoft.Extensions.DependencyInjection": "[10.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.0, )",
           "Microsoft.Extensions.Http": "[10.0.0, )",
           "Microsoft.Extensions.Options": "[10.0.0, )",
