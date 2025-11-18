@@ -33,12 +33,27 @@ public static class CommonDependencyInjectionExtensions
                 (sender, cert, chain, sslPolicyErrors) =>
 #pragma warning restore format
                 {
-                    var chain2 = new X509Chain();
-                    chain2.ChainPolicy.ExtraStore.Add(endpointCertificate);
-                    chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                    chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                    if (cert is null)
+                    {
+                        return false;
+                    }
 
-                    return chain2.Build(cert ?? throw new ArgumentNullException(nameof(cert)));
+                    var expectedThumbprint = endpointCertificate.Thumbprint.Replace(" ", null);
+
+                    var actualThumbprint = cert.Thumbprint.Replace(" ", null);
+
+                    if (!string.Equals(actualThumbprint, expectedThumbprint, StringComparison.Ordinal))
+                    {
+                        return false;
+                    }
+
+                    using var chain2 = new X509Chain();
+                    chain2.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+                    chain2.ChainPolicy.CustomTrustStore.Add(endpointCertificate);
+                    chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                    chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
+
+                    return chain2.Build(cert);
                 };
         }
 
