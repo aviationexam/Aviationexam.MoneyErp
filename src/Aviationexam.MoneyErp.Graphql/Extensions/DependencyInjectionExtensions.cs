@@ -39,6 +39,7 @@ public static class DependencyInjectionExtensions
                 var options = serviceProvider.GetRequiredService<IOptions<MoneyErpGraphqlOptions>>();
                 httpClient.BaseAddress = options.Value.GraphqlEndpoint;
             })
+            .ConfigurePrimaryHttpMessageHandler(CommonDependencyInjectionExtensions.CreateHttpMessageHandler)
             .AddDefaultLogger();
 
         serviceCollection.Configure<HttpClientFactoryOptions>(

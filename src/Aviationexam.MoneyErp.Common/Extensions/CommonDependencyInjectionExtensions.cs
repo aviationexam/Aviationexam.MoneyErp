@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Aviationexam.MoneyErp.Common.Extensions;
@@ -25,9 +26,6 @@ public static class CommonDependencyInjectionExtensions
 
         if (endpointCertificate is not null)
         {
-            httpClientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            httpClientHandler.ClientCertificates.Add(endpointCertificate);
-
 #pragma warning disable MA0039
             httpClientHandler.ServerCertificateCustomValidationCallback =
 #pragma warning restore MA0039
@@ -36,12 +34,37 @@ public static class CommonDependencyInjectionExtensions
                 (sender, cert, chain, sslPolicyErrors) =>
 #pragma warning restore format
                 {
-                    var chain2 = new X509Chain();
-                    chain2.ChainPolicy.ExtraStore.Add(endpointCertificate);
-                    chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                    chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                    if (sslPolicyErrors.HasFlag(SslPolicyErrors.RemoteCertificateNotAvailable))
+                    {
+                        return false;
+                    }
 
-                    return chain2.Build(cert ?? throw new ArgumentNullException(nameof(cert)));
+                    if (sslPolicyErrors.HasFlag(SslPolicyErrors.RemoteCertificateNameMismatch))
+                    {
+                        return false;
+                    }
+
+                    if (cert is null)
+                    {
+                        return false;
+                    }
+
+                    var expectedThumbprint = endpointCertificate.Thumbprint.Replace(" ", null);
+
+                    var actualThumbprint = cert.Thumbprint.Replace(" ", null);
+
+                    if (!string.Equals(actualThumbprint, expectedThumbprint, StringComparison.Ordinal))
+                    {
+                        return false;
+                    }
+
+                    using var chain2 = new X509Chain();
+                    chain2.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+                    chain2.ChainPolicy.CustomTrustStore.Add(endpointCertificate);
+                    chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                    chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
+
+                    return chain2.Build(cert);
                 };
         }
 

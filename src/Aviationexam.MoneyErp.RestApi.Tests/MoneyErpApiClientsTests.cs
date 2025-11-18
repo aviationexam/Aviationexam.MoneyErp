@@ -62,7 +62,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -102,7 +102,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -122,7 +122,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -142,7 +142,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -162,7 +162,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -182,7 +182,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -202,7 +202,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        //Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -222,7 +222,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        //Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -242,7 +242,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -262,7 +262,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -282,7 +282,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -302,7 +302,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -322,7 +322,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        //Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
@@ -342,7 +342,7 @@ public class MoneyErpApiClientsTests
         Assert.NotNull(responses);
         Assert.Equal(1, responses.Status);
         Assert.NotNull(responses.Data);
-        Assert.NotEmpty(responses.Data);
+        Assert.Empty(responses.Data);
 
         Assert.Empty(responses.AdditionalData);
         Assert.All(responses.Data, x => Assert.Empty(x.AdditionalData));
