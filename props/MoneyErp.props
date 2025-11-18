@@ -5,6 +5,7 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
   <Target Name="DisableMoqStaticAnalysis" BeforeTargets="CoreCompile">
