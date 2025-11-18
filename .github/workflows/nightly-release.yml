@@ -57,12 +57,12 @@ jobs:
           name: openapi-original-${{ steps.gitversion.outputs.FullSemVer }}.json
           path: src/Aviationexam.MoneyErp.RestApi/openapi.*.original.json
       - name: Build with .Net
-        run: dotnet build --configuration Release --no-restore --nologo "-p:Version=${{ steps.gitversion.outputs.FullSemVer }}"
+        run: dotnet build --configuration Release --no-restore --nologo "-p:Version=${{ steps.gitversion.outputs.FullSemVer }}" -p:ContinuousIntegrationBuild=true
       - name: Pack with .Net
         run: |
-          dotnet pack src/Aviationexam.MoneyErp.Common/Aviationexam.MoneyErp.Common.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
-          dotnet pack src/Aviationexam.MoneyErp.RestApi/Aviationexam.MoneyErp.RestApi.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
-          dotnet pack src/Aviationexam.MoneyErp.Graphql/Aviationexam.MoneyErp.Graphql.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
+          dotnet pack src/Aviationexam.MoneyErp.Common/Aviationexam.MoneyErp.Common.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }} -p:ContinuousIntegrationBuild=true
+          dotnet pack src/Aviationexam.MoneyErp.RestApi/Aviationexam.MoneyErp.RestApi.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }} -p:ContinuousIntegrationBuild=true
+          dotnet pack src/Aviationexam.MoneyErp.Graphql/Aviationexam.MoneyErp.Graphql.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }} -p:ContinuousIntegrationBuild=true
       - uses: actions/upload-artifact@v5
         with:
           name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}

@@ -37,7 +37,7 @@ jobs:
       - name: Restore
         run: dotnet restore --nologo
       - name: Build
-        run: dotnet build --no-restore --nologo --configuration Release
+        run: dotnet build --no-restore --nologo --configuration Release -p:ContinuousIntegrationBuild=true
 
   code-style:
     runs-on: ubuntu-latest
