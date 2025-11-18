@@ -23,7 +23,7 @@ public class MoneyErpImportInvoiceTests
         InvoiceData[] invoiceData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: false);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: true);
 
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
 
