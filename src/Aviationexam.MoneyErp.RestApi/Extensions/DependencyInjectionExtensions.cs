@@ -43,6 +43,7 @@ public static class DependencyInjectionExtensions
                 var options = serviceProvider.GetRequiredService<IOptions<MoneyErpAuthenticationOptions>>();
                 httpClient.BaseAddress = options.Value.Endpoint;
             })
+            .ConfigurePrimaryHttpMessageHandler(CommonDependencyInjectionExtensions.CreateHttpMessageHandler)
             .AddDefaultLogger();
 
         serviceCollection.Configure<HttpClientFactoryOptions>(
