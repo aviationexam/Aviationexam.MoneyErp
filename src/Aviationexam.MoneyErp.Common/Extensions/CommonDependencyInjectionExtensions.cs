@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Aviationexam.MoneyErp.Common.Extensions;
@@ -33,6 +34,16 @@ public static class CommonDependencyInjectionExtensions
                 (sender, cert, chain, sslPolicyErrors) =>
 #pragma warning restore format
                 {
+                    if (sslPolicyErrors.HasFlag(SslPolicyErrors.RemoteCertificateNotAvailable))
+                    {
+                        return false;
+                    }
+
+                    if (sslPolicyErrors.HasFlag(SslPolicyErrors.RemoteCertificateNameMismatch))
+                    {
+                        return false;
+                    }
+
                     if (cert is null)
                     {
                         return false;
