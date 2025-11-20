@@ -22,6 +22,7 @@
   <Folder Name="/Solution Items/azure/">
     <File Path=".azure\azure-pipelines\unit-tests.yml" />
     <File Path=".azure\azure-pipelines\nightly-release.yml" />
+    <File Path=".azure\azure-pipelines\release.yml" />
   </Folder>
   <Folder Name="/Solution Items/workflow/">
     <File Path=".github\workflows\build.yml" />
