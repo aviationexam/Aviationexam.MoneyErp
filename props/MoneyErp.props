@@ -6,6 +6,10 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <DebugType>portable</DebugType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishSymbols>true</PublishSymbols>
   </PropertyGroup>
 
   <Target Name="DisableMoqStaticAnalysis" BeforeTargets="CoreCompile">
