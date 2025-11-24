@@ -20,11 +20,11 @@ public static class CommonDependencyInjectionExtensions
         this IServiceProvider serviceProvider
     )
     {
-        var endpointCertificate = serviceProvider.GetRequiredService<IOptions<MoneyErpAuthenticationOptions>>().Value.EndpointCertificate;
+        var endpointCertificateProvider = serviceProvider.GetRequiredService<IEndpointCertificateProvider>();
 
         var httpClientHandler = new HttpClientHandler();
 
-        if (endpointCertificate is not null)
+        if (endpointCertificateProvider.EndpointCertificate is { } endpointCertificate)
         {
 #pragma warning disable MA0039
             httpClientHandler.ServerCertificateCustomValidationCallback =
@@ -106,7 +106,8 @@ public static class CommonDependencyInjectionExtensions
             .Singleton<IValidateOptions<MoneyErpAuthenticationOptions>, MoneyErpAuthenticationOptionsValidate>()
         );
 
-        serviceCollection.TryAddKeyedSingleton<IMoneyErpAccessTokenProvider, MoneyErpAccessTokenProvider>(MoneyErpServiceKey);
+        serviceCollection.TryAddScoped<IEndpointCertificateProvider, DefaultEndpointCertificateProvider>();
+        serviceCollection.TryAddSingleton<IMoneyErpAccessTokenProvider, MoneyErpAccessTokenProvider>();
 
         return new MoneyErpBuilder(serviceCollection);
     }

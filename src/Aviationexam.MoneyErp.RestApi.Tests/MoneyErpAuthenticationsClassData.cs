@@ -34,29 +34,30 @@ public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuth
             yield break;
         }
 
-        X509Certificate2? endpointCertificate = null;
+        string? endpointCertificatePem = null;
         if (endpointCertificatePath is not null)
         {
-#pragma warning disable CA2000
-            endpointCertificate = X509CertificateLoader.LoadCertificateFromFile(endpointCertificatePath);
-#pragma warning restore CA2000
+            using var endpointCertificate = X509CertificateLoader.LoadCertificateFromFile(endpointCertificatePath);
+            endpointCertificatePem = endpointCertificate.ExportCertificatePem();
         }
 
-        yield return new TheoryDataRow<AuthenticationData?>(new AuthenticationData(clientId, clientSecret, endpoint, endpointCertificate));
+        yield return new TheoryDataRow<AuthenticationData?>(new AuthenticationData(
+            clientId, clientSecret, endpoint, endpointCertificatePem
+        ));
     }
 
     public sealed record AuthenticationData(
         string ClientId,
         string ClientSecret,
         string ServerAddress,
-        X509Certificate2? EndpointCertificate
+        string? EndpointCertificatePem
     ) : IFormattable, IParsable<AuthenticationData>
     {
         public string ToString(string? format, IFormatProvider? formatProvider) => new JsonArray(
             ClientId,
             ClientSecret,
             ServerAddress,
-            EndpointCertificate?.ExportCertificatePem()
+            EndpointCertificatePem
         ).ToString();
 
         public static AuthenticationData Parse(string s, IFormatProvider? provider)
@@ -66,19 +67,11 @@ public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuth
                 throw new FormatException("Input string is not a valid AuthenticationData JSON array.");
             }
 
-            X509Certificate2? endpointCertificate = null;
-            if (arr[3]?.GetValue<string>() is { } pemCertificate)
-            {
-#pragma warning disable CA2000
-                endpointCertificate = X509CertificateLoader.LoadCertificateFromFile(pemCertificate);
-#pragma warning restore CA2000
-            }
-
             return new AuthenticationData(
                 arr[0]?.GetValue<string>() ?? throw new FormatException("ClientId missing."),
                 arr[1]?.GetValue<string>() ?? throw new FormatException("ClientSecret missing."),
                 arr[2]?.GetValue<string>() ?? throw new FormatException("ServerAddress missing."),
-                endpointCertificate
+                arr[3]?.GetValue<string>()
             );
         }
 

@@ -1,6 +1,4 @@
-using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Common.Oidc;
-using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -11,7 +9,6 @@ namespace Aviationexam.MoneyErp.Graphql.ZeroQLServices;
 
 public class AuthenticatedHttpHandler(
     HttpClient client,
-    [FromKeyedServices(CommonDependencyInjectionExtensions.MoneyErpServiceKey)]
     IMoneyErpAccessTokenProvider accessTokenProvider,
     bool disposeClient = false
 ) : IHttpHandler

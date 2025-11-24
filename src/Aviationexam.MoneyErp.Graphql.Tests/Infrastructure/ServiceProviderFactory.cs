@@ -1,3 +1,4 @@
+using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Graphql.Extensions;
 using Meziantou.Extensions.Logging.Xunit.v3;
@@ -19,13 +20,13 @@ public static class ServiceProviderFactory
             .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
         )
         .AddSingleton<TimeProvider>(_ => TimeProvider.System)
+        .AddScoped<IEndpointCertificateProvider>(_ => new PemEndpointCertificateProvider(authenticationData.EndpointCertificatePem))
         .AddMoneyErp(builder => builder.Configure(x =>
         {
             x.ClientId = authenticationData.ClientId;
             x.ClientSecret = authenticationData.ClientSecret;
             x.JwtEarlyExpirationOffset = TimeSpan.FromMinutes(20);
             x.Endpoint = new Uri(authenticationData.ServerAddress, UriKind.RelativeOrAbsolute);
-            x.EndpointCertificate = authenticationData.EndpointCertificate;
         }))
         .AddGraphQlClient(_ => { }, shouldRedactHeaderValue)
         .Services

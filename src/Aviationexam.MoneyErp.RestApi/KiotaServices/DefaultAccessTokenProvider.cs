@@ -1,6 +1,4 @@
-using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Common.Oidc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions.Authentication;
 using System;
@@ -11,7 +9,6 @@ using System.Threading.Tasks;
 namespace Aviationexam.MoneyErp.RestApi.KiotaServices;
 
 public sealed class DefaultAccessTokenProvider(
-    [FromKeyedServices(CommonDependencyInjectionExtensions.MoneyErpServiceKey)]
     IMoneyErpAccessTokenProvider accessTokenProvider,
     IOptions<MoneyErpRestApiOptions> moneyErpRestApiOptions
 ) : IAccessTokenProvider
