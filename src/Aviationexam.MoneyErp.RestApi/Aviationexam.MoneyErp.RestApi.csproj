@@ -110,6 +110,8 @@
     Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)')"
   >
     <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV1SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
+    <Message Importance="High" Text="Default: curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
+    <Message Importance="High" Text="Fallback: curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/$(MoneyErpReleaseVersion)/openapi.v1.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
 
     <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/$(MoneyErpReleaseVersion)/openapi.v1.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
   </Target>
