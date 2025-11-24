@@ -19,8 +19,7 @@
     <MoneyErpEndpoint Condition=" '$(MONEYERP_ENDPOINT)' != '' ">$(MONEYERP_ENDPOINT)</MoneyErpEndpoint>
     <MoneyErpEndpoint Condition=" '$(MoneyErpEndpoint)' == '' ">https://demo.moneyerp.cz:82</MoneyErpEndpoint>
     <MoneyErpEndpointCertificate Condition=" '$(MONEYERP_ENDPOINT_CERTIFICATE)' != '' ">--cacert $(MONEYERP_ENDPOINT_CERTIFICATE)</MoneyErpEndpointCertificate>
-    <MoneyErpReleaseVersion Condition=" '$(LAST_RELEASE)' != '' ">download/$(LAST_RELEASE)</MoneyErpReleaseVersion>
-    <MoneyErpReleaseVersion Condition=" '$(MoneyErpReleaseVersion)' == '' ">latest/download</MoneyErpReleaseVersion>
+    <MoneyErpReleaseVersion Condition=" '$(LAST_RELEASE)' != '' ">$(LAST_RELEASE)</MoneyErpReleaseVersion>
     <MoneyErpOpenApiV1SpecificationUrl>$(MoneyErpEndpoint)/v1.0/docs/swagger.json</MoneyErpOpenApiV1SpecificationUrl>
     <MoneyErpOpenApiV2SpecificationUrl>$(MoneyErpEndpoint)/v2.0/docs/swagger.json</MoneyErpOpenApiV2SpecificationUrl>
     <MoneyErpOriginalOpenApiV1SpecificationFile>openapi.v1.original.json</MoneyErpOriginalOpenApiV1SpecificationFile>
@@ -28,6 +27,12 @@
     <MoneyErpOpenApiV1SpecificationFile>openapi.v1.json</MoneyErpOpenApiV1SpecificationFile>
     <MoneyErpOpenApiV2SpecificationFile>openapi.v2.json</MoneyErpOpenApiV2SpecificationFile>
   </PropertyGroup>
+
+  <Target Name="GetLatestRelease" Condition=" '$(MoneyErpReleaseVersion)' == '' ">
+    <Exec Command="gh release list --limit 1 --json 'tagName' --jq '.[].tagName' --exclude-drafts --exclude-pre-releases" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="MoneyErpReleaseVersion" />
+    </Exec>
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Kiota.Abstractions" />
@@ -107,23 +112,25 @@
   <Target
     Name="DownloadMoneyErpOpenApiV1Specification"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
+    DependsOnTargets="GetLatestRelease"
     Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)')"
   >
     <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV1SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
     <Message Importance="High" Text="Default: curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
-    <Message Importance="High" Text="Fallback: curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/$(MoneyErpReleaseVersion)/openapi.v1.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
+    <Message Importance="High" Text="Fallback: curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/download/$(MoneyErpReleaseVersion)/openapi.v1.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
 
-    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/$(MoneyErpReleaseVersion)/openapi.v1.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/download/$(MoneyErpReleaseVersion)/openapi.v1.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
   </Target>
 
   <Target
     Name="DownloadMoneyErpOpenApiV2Specification"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
+    DependsOnTargets="GetLatestRelease"
     Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)')"
   >
     <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV2SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
 
-    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV2SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/$(MoneyErpReleaseVersion)/openapi.v2.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV2SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/download/$(MoneyErpReleaseVersion)/openapi.v2.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
   </Target>
 
   <Target Name="PreprocessOpenApiV1Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV1Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)')">
