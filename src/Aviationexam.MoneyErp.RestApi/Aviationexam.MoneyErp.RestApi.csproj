@@ -29,7 +29,16 @@
   </PropertyGroup>
 
   <Target Name="GetLatestRelease" Condition=" '$(MoneyErpReleaseVersion)' == '' ">
-    <Exec Command="gh release list --limit 1 --json 'tagName' --jq '.[].tagName' --exclude-drafts --exclude-pre-releases" ConsoleToMSBuild="true">
+    <PropertyGroup>
+      <ReleaseLimit Condition=" '$(CURRENT_RELEASE)' != '' ">2</ReleaseLimit>
+      <ReleaseLimit Condition=" '$(ReleaseLimit)' == '' ">1</ReleaseLimit>
+    </PropertyGroup>
+    <PropertyGroup>
+      <ReleaseIndex Condition=" '$(CURRENT_RELEASE)' != '' ">1</ReleaseIndex>
+      <ReleaseIndex Condition=" '$(ReleaseIndex)' == '' ">0</ReleaseIndex>
+    </PropertyGroup>
+
+    <Exec Command="gh release list --limit $(ReleaseLimit) --json 'tagName' --jq '.[$(ReleaseIndex)].tagName' --exclude-drafts --exclude-pre-releases" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="MoneyErpReleaseVersion" />
     </Exec>
   </Target>
