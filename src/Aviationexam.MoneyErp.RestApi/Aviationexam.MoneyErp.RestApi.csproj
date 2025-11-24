@@ -109,7 +109,7 @@
   >
     <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV1SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
 
-    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/latest/download/openapi.v1.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
   </Target>
 
   <Target
@@ -119,7 +119,7 @@
   >
     <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV2SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
 
-    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV2SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV2SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/latest/download/openapi.v2.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
   </Target>
 
   <Target Name="PreprocessOpenApiV1Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV1Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)')">
