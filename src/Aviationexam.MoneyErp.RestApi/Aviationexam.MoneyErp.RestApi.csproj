@@ -16,8 +16,10 @@
   <PropertyGroup>
     <GeneratedCodeV1Target>ClientV1</GeneratedCodeV1Target>
     <GeneratedCodeV2Target>ClientV2</GeneratedCodeV2Target>
-    <MoneyErpOpenApiV1SpecificationUrl>https://demo.moneyerp.cz:82/v1.0/docs/swagger.json</MoneyErpOpenApiV1SpecificationUrl>
-    <MoneyErpOpenApiV2SpecificationUrl>https://demo.moneyerp.cz:82/v2.0/docs/swagger.json</MoneyErpOpenApiV2SpecificationUrl>
+    <MoneyErpEndpoint Condition=" '$(MONEYERP_ENDPOINT)' != '' ">$(MONEYERP_ENDPOINT)</MoneyErpEndpoint>
+    <MoneyErpEndpoint Condition=" '$(MoneyErpEndpoint)' == '' ">https://demo.moneyerp.cz:82</MoneyErpEndpoint>
+    <MoneyErpOpenApiV1SpecificationUrl>$(MoneyErpEndpoint)/v1.0/docs/swagger.json</MoneyErpOpenApiV1SpecificationUrl>
+    <MoneyErpOpenApiV2SpecificationUrl>$(MoneyErpEndpoint)/v2.0/docs/swagger.json</MoneyErpOpenApiV2SpecificationUrl>
     <MoneyErpOriginalOpenApiV1SpecificationFile>openapi.v1.original.json</MoneyErpOriginalOpenApiV1SpecificationFile>
     <MoneyErpOriginalOpenApiV2SpecificationFile>openapi.v2.original.json</MoneyErpOriginalOpenApiV2SpecificationFile>
     <MoneyErpOpenApiV1SpecificationFile>openapi.v1.json</MoneyErpOpenApiV1SpecificationFile>
