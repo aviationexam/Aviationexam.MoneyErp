@@ -14,8 +14,20 @@ public static partial class FilterForExtensions
             EFilterOperator.GreaterThanOrEqual, FilterFor<T>.GetPropertyName(property), value, format, provider
         );
 
+        public static string GreaterThanOrEqual<TP>(
+            Expression<Func<T, TP?>> property, TP value, string? format = null, IFormatProvider? provider = null
+        ) where TP : struct, INumberBase<TP> => FilterFor<T>.GetFilterClause(
+            EFilterOperator.GreaterThanOrEqual, FilterFor<T>.GetPropertyName(property), value, format, provider
+        );
+
         public static string GreaterThanOrEqual(
             Expression<Func<T, DateTimeOffset>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.GreaterThanOrEqual, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string GreaterThanOrEqual(
+            Expression<Func<T, DateTimeOffset?>> property, DateOnly value
         ) => FilterFor<T>.GetFilterClause(
             EFilterOperator.GreaterThanOrEqual, FilterFor<T>.GetPropertyName(property), value
         );
@@ -27,7 +39,19 @@ public static partial class FilterForExtensions
         );
 
         public static string GreaterThanOrEqual(
+            Expression<Func<T, DateTime?>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.GreaterThanOrEqual, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string GreaterThanOrEqual(
             Expression<Func<T, DateOnly>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.GreaterThanOrEqual, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string GreaterThanOrEqual(
+            Expression<Func<T, DateOnly?>> property, DateOnly value
         ) => FilterFor<T>.GetFilterClause(
             EFilterOperator.GreaterThanOrEqual, FilterFor<T>.GetPropertyName(property), value
         );

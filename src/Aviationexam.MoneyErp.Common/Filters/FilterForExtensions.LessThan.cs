@@ -14,8 +14,20 @@ public static partial class FilterForExtensions
             EFilterOperator.LessThan, FilterFor<T>.GetPropertyName(property), value, format, provider
         );
 
+        public static string LessThan<TP>(
+            Expression<Func<T, TP?>> property, TP value, string? format = null, IFormatProvider? provider = null
+        ) where TP : struct, INumberBase<TP> => FilterFor<T>.GetFilterClause(
+            EFilterOperator.LessThan, FilterFor<T>.GetPropertyName(property), value, format, provider
+        );
+
         public static string LessThan(
             Expression<Func<T, DateTimeOffset>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.LessThan, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string LessThan(
+            Expression<Func<T, DateTimeOffset?>> property, DateOnly value
         ) => FilterFor<T>.GetFilterClause(
             EFilterOperator.LessThan, FilterFor<T>.GetPropertyName(property), value
         );
@@ -27,9 +39,21 @@ public static partial class FilterForExtensions
         );
 
         public static string LessThan(
+            Expression<Func<T, DateTime?>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.LessThan, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string LessThan(
             Expression<Func<T, DateOnly>> property, DateOnly value
         ) => FilterFor<T>.GetFilterClause(
-            EFilterOperator.Equal, FilterFor<T>.GetPropertyName(property), value
+            EFilterOperator.LessThan, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string LessThan(
+            Expression<Func<T, DateOnly?>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.LessThan, FilterFor<T>.GetPropertyName(property), value
         );
     }
 }

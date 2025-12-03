@@ -20,8 +20,20 @@ public static partial class FilterForExtensions
             EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value, format, provider
         );
 
+        public static string NotEqual<TP>(
+            Expression<Func<T, TP?>> property, TP value, string? format = null, IFormatProvider? provider = null
+        ) where TP : struct, INumberBase<TP> => FilterFor<T>.GetFilterClause(
+            EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value, format, provider
+        );
+
         public static string NotEqual(
             Expression<Func<T, bool>> property, bool value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string NotEqual(
+            Expression<Func<T, bool?>> property, bool value
         ) => FilterFor<T>.GetFilterClause(
             EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value
         );
@@ -33,13 +45,31 @@ public static partial class FilterForExtensions
         );
 
         public static string NotEqual(
+            Expression<Func<T, DateTimeOffset?>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string NotEqual(
             Expression<Func<T, DateTime>> property, DateOnly value
         ) => FilterFor<T>.GetFilterClause(
             EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value
         );
 
         public static string NotEqual(
+            Expression<Func<T, DateTime?>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string NotEqual(
             Expression<Func<T, DateOnly>> property, DateOnly value
+        ) => FilterFor<T>.GetFilterClause(
+            EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value
+        );
+
+        public static string NotEqual(
+            Expression<Func<T, DateOnly?>> property, DateOnly value
         ) => FilterFor<T>.GetFilterClause(
             EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value
         );
