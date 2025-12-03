@@ -1,5 +1,6 @@
 using Aviationexam.MoneyErp.Common.Filters;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace Aviationexam.MoneyErp.Common.Tests;
@@ -14,6 +15,7 @@ public partial class FilterForTests
         Assert.Equal("AProperty", propertyName);
     }
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     private sealed class ApiModel
     {
         public required string AProperty { get; set; }
