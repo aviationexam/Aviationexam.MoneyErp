@@ -1,12 +1,26 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
+using ZLinq;
 
 namespace Aviationexam.MoneyErp.Common.Filters;
 
-public class FilterFor<T> where T : class
+public static partial class FilterFor<T> where T : class
 {
+    public static string And(
+        params IReadOnlyCollection<Func<FilterForBuilder<T>, string>> filters
+    ) => filters.AsValueEnumerable()
+        .Select(x => x(new FilterForBuilder<T>()))
+        .JoinToString('#');
+
+    public static string Or(
+        params IReadOnlyCollection<Func<FilterForBuilder<T>, string>> filters
+    ) => filters.AsValueEnumerable()
+        .Select(x => x(new FilterForBuilder<T>()))
+        .JoinToString('|');
+
     public static string GetFilterClause(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
