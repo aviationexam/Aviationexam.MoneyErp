@@ -1,3 +1,4 @@
+using Aviationexam.MoneyErp.Common.Filters;
 using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
 using Aviationexam.MoneyErp.Graphql.Tests.Infrastructure;
@@ -52,11 +53,12 @@ public class MoneyErpImportInvoiceTests
         {
             var filters = new
             {
-                numericalSeriesFilter = string.Join('|',
-                    $"{nameof(NumericalSerie.Kod)}~eq~{data.CisloDokladuNumericSerieKod}",
-                    $"{nameof(NumericalSerie.Kod)}~eq~{data.FirmaKodNumericSerieKod}"
-                ),
-                currencyFilter = $"{nameof(Currency.Kod)}~eq~{data.MenaKod}",
+                numericalSeriesFilter = FilterFor<NumericalSerie>.Or(
+                        x => x.Equal(m => m.Kod, data.CisloDokladuNumericSerieKod),
+                        x => x.Equal(m => m.Kod, data.FirmaKodNumericSerieKod)
+                    )
+                    .ToString(),
+                currencyFilter = FilterFor<Currency>.Equal(m => m.Kod, data.MenaKod).ToString(),
                 countriesFilter = new[]
                     {
                         data.FirmaStatKod,
@@ -66,41 +68,50 @@ public class MoneyErpImportInvoiceTests
                     .AsValueEnumerable()
                     .Where(x => !string.IsNullOrEmpty(x))
                     .Distinct()
-                    .Select(x => $"{nameof(Country.Kod)}~eq~{x}")
+                    .Select(x => FilterFor<Country>.Equal(m => m.Kod, x).ToString())
                     .JoinToString('|'),
-                varClassificationFilter = $"{nameof(VATClassification.Kod)}~eq~{data.CleneniDphKod}",
-                invoiceGroupFilter = $"{nameof(MerpGroup.Kod)}~eq~{data.GroupKod}",
-                transportFilter = $"{nameof(TransportType.Kod)}~eq~{data.ZpusobDopravyKod}",
-                paymentFilter = $"{nameof(PaymentType.Kod)}~eq~{data.ZpusobPlatbyKod}",
-                accountAssignmentsFilter = data.Polozky.AsValueEnumerable().Select(x => x.PredkontaceKod).Distinct().Select(x => $"{nameof(AccountAssignment.Kod)}~eq~{x}").JoinToString('|'),
-                varClassificationsFilter = data.Polozky.AsValueEnumerable().Select(x => x.CleneniDphKod).Distinct().Select(x => $"{nameof(VATClassification.Kod)}~eq~{x}").JoinToString('|'),
-                artiklPluFilter = data.Polozky.AsValueEnumerable().Select(x => x.ArtiklPlu).Distinct().Select(x => $"{nameof(Article.PLU)}~eq~{x}").JoinToString('|'),
-                warehouseFilter = data.Polozky.AsValueEnumerable().Select(x => x.SkladKod).Distinct().Select(x => $"{nameof(Warehouse.Kod)}~eq~{x}").JoinToString('|'),
-                connectionsTypesFilter = string.Join('|',
-                    $"{nameof(ConnectionsType.Kod)}~eq~E-mail",
-                    $"{nameof(ConnectionsType.Kod)}~eq~Mob",
-                    $"{nameof(ConnectionsType.Kod)}~eq~Tel"
-                ),
-                //invoiceReceiverEmailFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaPrijemceFaktury.Email}",
-                //receiverEmailFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaKoncovehoPrijemce.Email}",
-                //invoiceReceiverPhoneFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaPrijemceFaktury.Telefon}",
-                //receiverPhoneFilter = $"{nameof(Connection.Vychozi)}~eq~{data.AdresaKoncovehoPrijemce.Telefon}",
-                //invoiceReceiverAddressFilter = string.Join('#',
-                //    $"{nameof(Adresar_Firma.Kod)}~eq~{data.AdresaPrijemceFaktury.Email}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Telefon}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Ulice}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Misto}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Psc}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaPrijemceFaktury.Nazev}"
-                //),
-                //receiverAddressFilter = string.Join('#',
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Email}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Telefon}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Ulice}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Misto}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Psc}",
-                //    $"{nameof(PaymentType.Kod)}~eq~{data.AdresaKoncovehoPrijemce.Nazev}"
-                //),
+                varClassificationFilter = FilterFor<VATClassification>.Equal(m => m.Kod, data.CleneniDphKod).ToString(),
+                invoiceGroupFilter = FilterFor<MerpGroup>.Equal(m => m.Kod, data.GroupKod).ToString(),
+                transportFilter = FilterFor<TransportType>.Equal(m => m.Kod, data.ZpusobDopravyKod).ToString(),
+                paymentFilter = FilterFor<PaymentType>.Equal(m => m.Kod, data.ZpusobPlatbyKod).ToString(),
+                accountAssignmentsFilter = data.Polozky.AsValueEnumerable()
+                    .Select(x => x.PredkontaceKod)
+                    .Distinct()
+                    .Select(x => FilterFor<AccountAssignment>.Equal(m => m.Kod, x).ToString())
+                    .JoinToString('|'),
+                varClassificationsFilter = data.Polozky.AsValueEnumerable()
+                    .Select(x => x.CleneniDphKod)
+                    .Distinct()
+                    .Select(x => FilterFor<VATClassification>.Equal(m => m.Kod, x).ToString())
+                    .JoinToString('|'),
+                artiklPluFilter = data.Polozky.AsValueEnumerable().Select(x => x.ArtiklPlu).Distinct().Select(x => FilterFor<Article>.Equal(m => m.PLU, x).ToString()).JoinToString('|'),
+                warehouseFilter = data.Polozky.AsValueEnumerable().Select(x => x.SkladKod).Distinct().Select(x => FilterFor<Warehouse>.Equal(m => m.Kod, x).ToString()).JoinToString('|'),
+                connectionsTypesFilter = FilterFor<ConnectionsType>.Or(
+                        x => x.Equal(m => m.Kod, "E-mail"),
+                        x => x.Equal(m => m.Kod, "Mob"),
+                        x => x.Equal(m => m.Kod, "Tel")
+                    )
+                    .ToString(),
+                // invoiceReceiverEmailFilter = FilterFor<Connection>.Equal(m => m.Vychozi, data.AdresaPrijemceFaktury.Email).ToString(),
+                // receiverEmailFilter = FilterFor<Connection>.Equal(m => m.Vychozi, data.AdresaKoncovehoPrijemce.Email).ToString(),
+                // invoiceReceiverPhoneFilter = FilterFor<Connection>.Equal(m => m.Vychozi, data.AdresaPrijemceFaktury.Telefon).ToString(),
+                // receiverPhoneFilter = FilterFor<Connection>.Equal(m => m.Vychozi, data.AdresaKoncovehoPrijemce.Telefon).ToString(),
+                // invoiceReceiverAddressFilter = FilterFor<Adresar_Firma>.And(
+                //     x => x.Equal(m => m.Kod, data.AdresaPrijemceFaktury.Email),
+                //     x => x.Equal(m => m.Kod, data.AdresaPrijemceFaktury.Telefon),
+                //     x => x.Equal(m => m.Kod, data.AdresaPrijemceFaktury.Ulice),
+                //     x => x.Equal(m => m.Kod, data.AdresaPrijemceFaktury.Misto),
+                //     x => x.Equal(m => m.Kod, data.AdresaPrijemceFaktury.Psc),
+                //     x => x.Equal(m => m.Kod, data.AdresaPrijemceFaktury.Nazev)
+                // ),
+                // receiverAddressFilter = FilterFor<PaymentType>.And(
+                //     x => x.Equal(m => m.Kod, data.AdresaKoncovehoPrijemce.Email),
+                //     x => x.Equal(m => m.Kod, data.AdresaKoncovehoPrijemce.Telefon),
+                //     x => x.Equal(m => m.Kod, data.AdresaKoncovehoPrijemce.Ulice),
+                //     x => x.Equal(m => m.Kod, data.AdresaKoncovehoPrijemce.Misto),
+                //     x => x.Equal(m => m.Kod, data.AdresaKoncovehoPrijemce.Psc),
+                //     x => x.Equal(m => m.Kod, data.AdresaKoncovehoPrijemce.Nazev)
+                // ),
             };
 
             var graphResponse = await graphqlClient.Query(
@@ -187,29 +198,29 @@ public class MoneyErpImportInvoiceTests
 
             var secondaryFilters = new
             {
-                companyFilter = string.Join('#',
-                    $"{nameof(Company.Kod)}~eq~{data.FirmaKod}",
-                    $"{nameof(Company.FaktNazev)}~eq~{data.FirmaNazev}",
-                    $"{nameof(Company.FaktUlice)}~eq~{data.FirmaUlice}",
-                    $"{nameof(Company.FaktMisto)}~eq~{data.FirmaMisto}",
-                    $"{nameof(Company.FaktPsc)}~eq~{data.FirmaKodPsc}",
-                    $"{nameof(Company.PlatceDPH)}~eq~{(data.FirmaPlatceDph ? "true" : "false")}",
-                    $"{nameof(Company.FaktStat_ID)}~eq~{countryIds.GetValueOrDefault(data.FirmaStatKod)}",
-                    $"{nameof(Company.DIC)}~eq~{data.FirmaDic}"
+                companyFilter = FilterFor<Company>.And(
+                    x => x.Equal(m => m.Kod, data.FirmaKod),
+                    x => x.Equal(m => m.FaktNazev, data.FirmaNazev),
+                    x => x.Equal(m => m.FaktUlice, data.FirmaUlice),
+                    x => x.Equal(m => m.FaktMisto, data.FirmaMisto),
+                    x => x.Equal(m => m.FaktPsc, data.FirmaKodPsc),
+                    x => x.Equal(m => m.PlatceDPH, data.FirmaPlatceDph),
+                    x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.FirmaStatKod)),
+                    x => x.Equal(m => m.DIC, data.FirmaDic ?? string.Empty)
                 ),
-                companyInvoiceReceiverFilter = string.Join('#',
-                    $"{nameof(Company.FaktNazev)}~eq~{data.AdresaPrijemceFaktury.Nazev}",
-                    $"{nameof(Company.FaktUlice)}~eq~{data.AdresaPrijemceFaktury.Ulice}",
-                    $"{nameof(Company.FaktMisto)}~eq~{data.AdresaPrijemceFaktury.Misto}",
-                    $"{nameof(Company.FaktPsc)}~eq~{data.AdresaPrijemceFaktury.Psc}",
-                    $"{nameof(Company.FaktStat_ID)}~eq~{countryIds.GetValueOrDefault(data.AdresaPrijemceFaktury.StatKod)}"
+                companyInvoiceReceiverFilter = FilterFor<Company>.And(
+                    x => x.Equal(m => m.FaktNazev, data.AdresaPrijemceFaktury.Nazev),
+                    x => x.Equal(m => m.FaktUlice, data.AdresaPrijemceFaktury.Ulice),
+                    x => x.Equal(m => m.FaktMisto, data.AdresaPrijemceFaktury.Misto),
+                    x => x.Equal(m => m.FaktPsc, data.AdresaPrijemceFaktury.Psc),
+                    x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.AdresaPrijemceFaktury.StatKod))
                 ),
-                companyTerminalReceiverFilter = string.Join('#',
-                    $"{nameof(Company.FaktNazev)}~eq~{data.AdresaKoncovehoPrijemce.Nazev}",
-                    $"{nameof(Company.FaktUlice)}~eq~{data.AdresaKoncovehoPrijemce.Ulice}",
-                    $"{nameof(Company.FaktMisto)}~eq~{data.AdresaKoncovehoPrijemce.Misto}",
-                    $"{nameof(Company.FaktPsc)}~eq~{data.AdresaKoncovehoPrijemce.Psc}",
-                    $"{nameof(Company.FaktStat_ID)}~eq~{countryIds.GetValueOrDefault(data.AdresaKoncovehoPrijemce.StatKod)}"
+                companyTerminalReceiverFilter = FilterFor<Company>.And(
+                    x => x.Equal(m => m.FaktNazev, data.AdresaKoncovehoPrijemce.Nazev),
+                    x => x.Equal(m => m.FaktUlice, data.AdresaKoncovehoPrijemce.Ulice),
+                    x => x.Equal(m => m.FaktMisto, data.AdresaKoncovehoPrijemce.Misto),
+                    x => x.Equal(m => m.FaktPsc, data.AdresaKoncovehoPrijemce.Psc),
+                    x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.AdresaKoncovehoPrijemce.StatKod))
                 ),
             };
             var secondaryGraphResponse = await graphqlClient.Query(
