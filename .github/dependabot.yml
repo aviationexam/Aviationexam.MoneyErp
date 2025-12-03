@@ -18,6 +18,9 @@ updates:
         patterns:
           - xunit
           - xunit.*
+    ignore:
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests
