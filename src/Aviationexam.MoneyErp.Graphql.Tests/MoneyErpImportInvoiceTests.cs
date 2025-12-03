@@ -59,33 +59,64 @@ public class MoneyErpImportInvoiceTests
                     )
                     .ToString(),
                 currencyFilter = FilterFor<Currency>.Equal(m => m.Kod, data.MenaKod).ToString(),
-                countriesFilter = new[]
-                    {
-                        data.FirmaStatKod,
-                        data.AdresaPrijemceFaktury.StatKod,
-                        data.AdresaKoncovehoPrijemce.StatKod,
-                    }
-                    .AsValueEnumerable()
-                    .Where(x => !string.IsNullOrEmpty(x))
-                    .Distinct()
-                    .Select(x => FilterFor<Country>.Equal(m => m.Kod, x).ToString())
-                    .JoinToString('|'),
+                countriesFilter = FilterFor<Country>.Or(
+                        EFilterOperator.Equal,
+                        m => m.Kod,
+                        new[]
+                            {
+                                data.FirmaStatKod,
+                                data.AdresaPrijemceFaktury.StatKod,
+                                data.AdresaKoncovehoPrijemce.StatKod,
+                            }.AsValueEnumerable()
+                            .Where(x => !string.IsNullOrEmpty(x))
+                            .Distinct()
+                            .ToList()
+                    )
+                    .ToString(),
                 varClassificationFilter = FilterFor<VATClassification>.Equal(m => m.Kod, data.CleneniDphKod).ToString(),
                 invoiceGroupFilter = FilterFor<MerpGroup>.Equal(m => m.Kod, data.GroupKod).ToString(),
                 transportFilter = FilterFor<TransportType>.Equal(m => m.Kod, data.ZpusobDopravyKod).ToString(),
                 paymentFilter = FilterFor<PaymentType>.Equal(m => m.Kod, data.ZpusobPlatbyKod).ToString(),
-                accountAssignmentsFilter = data.Polozky.AsValueEnumerable()
-                    .Select(x => x.PredkontaceKod)
-                    .Distinct()
-                    .Select(x => FilterFor<AccountAssignment>.Equal(m => m.Kod, x).ToString())
-                    .JoinToString('|'),
-                varClassificationsFilter = data.Polozky.AsValueEnumerable()
-                    .Select(x => x.CleneniDphKod)
-                    .Distinct()
-                    .Select(x => FilterFor<VATClassification>.Equal(m => m.Kod, x).ToString())
-                    .JoinToString('|'),
-                artiklPluFilter = data.Polozky.AsValueEnumerable().Select(x => x.ArtiklPlu).Distinct().Select(x => FilterFor<Article>.Equal(m => m.PLU, x).ToString()).JoinToString('|'),
-                warehouseFilter = data.Polozky.AsValueEnumerable().Select(x => x.SkladKod).Distinct().Select(x => FilterFor<Warehouse>.Equal(m => m.Kod, x).ToString()).JoinToString('|'),
+                accountAssignmentsFilter = FilterFor<AccountAssignment>.Or(
+                        EFilterOperator.Equal,
+                        m => m.Kod,
+                        data.Polozky.AsValueEnumerable()
+                            .Select(x => x.PredkontaceKod)
+                            .Where(x => !string.IsNullOrEmpty(x))
+                            .Distinct()
+                            .ToList()
+                    )
+                    .ToString(),
+                varClassificationsFilter = FilterFor<VATClassification>.Or(
+                        EFilterOperator.Equal,
+                        m => m.Kod,
+                        data.Polozky.AsValueEnumerable()
+                            .Select(x => x.CleneniDphKod)
+                            .Where(x => !string.IsNullOrEmpty(x))
+                            .Distinct()
+                            .ToList()
+                    )
+                    .ToString(),
+                artiklPluFilter = FilterFor<Article>.Or(
+                        EFilterOperator.Equal,
+                        m => m.PLU,
+                        data.Polozky.AsValueEnumerable()
+                            .Select(x => x.ArtiklPlu)
+                            .Where(x => !string.IsNullOrEmpty(x))
+                            .Distinct()
+                            .ToList()
+                    )
+                    .ToString(),
+                warehouseFilter = FilterFor<Warehouse>.Or(
+                        EFilterOperator.Equal,
+                        m => m.Kod,
+                        data.Polozky.AsValueEnumerable()
+                            .Select(x => x.SkladKod)
+                            .Where(x => !string.IsNullOrEmpty(x))
+                            .Distinct()
+                            .ToList()
+                    )
+                    .ToString(),
                 connectionsTypesFilter = FilterFor<ConnectionsType>.Or(
                         x => x.Equal(m => m.Kod, "E-mail"),
                         x => x.Equal(m => m.Kod, "Mob"),
@@ -199,29 +230,32 @@ public class MoneyErpImportInvoiceTests
             var secondaryFilters = new
             {
                 companyFilter = FilterFor<Company>.And(
-                    x => x.Equal(m => m.Kod, data.FirmaKod),
-                    x => x.Equal(m => m.FaktNazev, data.FirmaNazev),
-                    x => x.Equal(m => m.FaktUlice, data.FirmaUlice),
-                    x => x.Equal(m => m.FaktMisto, data.FirmaMisto),
-                    x => x.Equal(m => m.FaktPsc, data.FirmaKodPsc),
-                    x => x.Equal(m => m.PlatceDPH, data.FirmaPlatceDph),
-                    x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.FirmaStatKod)),
-                    x => x.Equal(m => m.DIC, data.FirmaDic ?? string.Empty)
-                ),
+                        x => x.Equal(m => m.Kod, data.FirmaKod),
+                        x => x.Equal(m => m.FaktNazev, data.FirmaNazev),
+                        x => x.Equal(m => m.FaktUlice, data.FirmaUlice),
+                        x => x.Equal(m => m.FaktMisto, data.FirmaMisto),
+                        x => x.Equal(m => m.FaktPsc, data.FirmaKodPsc),
+                        x => x.Equal(m => m.PlatceDPH, data.FirmaPlatceDph),
+                        x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.FirmaStatKod)),
+                        x => x.Equal(m => m.DIC, data.FirmaDic ?? string.Empty)
+                    )
+                    .ToString(),
                 companyInvoiceReceiverFilter = FilterFor<Company>.And(
-                    x => x.Equal(m => m.FaktNazev, data.AdresaPrijemceFaktury.Nazev),
-                    x => x.Equal(m => m.FaktUlice, data.AdresaPrijemceFaktury.Ulice),
-                    x => x.Equal(m => m.FaktMisto, data.AdresaPrijemceFaktury.Misto),
-                    x => x.Equal(m => m.FaktPsc, data.AdresaPrijemceFaktury.Psc),
-                    x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.AdresaPrijemceFaktury.StatKod))
-                ),
+                        x => x.Equal(m => m.FaktNazev, data.AdresaPrijemceFaktury.Nazev),
+                        x => x.Equal(m => m.FaktUlice, data.AdresaPrijemceFaktury.Ulice),
+                        x => x.Equal(m => m.FaktMisto, data.AdresaPrijemceFaktury.Misto),
+                        x => x.Equal(m => m.FaktPsc, data.AdresaPrijemceFaktury.Psc),
+                        x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.AdresaPrijemceFaktury.StatKod))
+                    )
+                    .ToString(),
                 companyTerminalReceiverFilter = FilterFor<Company>.And(
-                    x => x.Equal(m => m.FaktNazev, data.AdresaKoncovehoPrijemce.Nazev),
-                    x => x.Equal(m => m.FaktUlice, data.AdresaKoncovehoPrijemce.Ulice),
-                    x => x.Equal(m => m.FaktMisto, data.AdresaKoncovehoPrijemce.Misto),
-                    x => x.Equal(m => m.FaktPsc, data.AdresaKoncovehoPrijemce.Psc),
-                    x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.AdresaKoncovehoPrijemce.StatKod))
-                ),
+                        x => x.Equal(m => m.FaktNazev, data.AdresaKoncovehoPrijemce.Nazev),
+                        x => x.Equal(m => m.FaktUlice, data.AdresaKoncovehoPrijemce.Ulice),
+                        x => x.Equal(m => m.FaktMisto, data.AdresaKoncovehoPrijemce.Misto),
+                        x => x.Equal(m => m.FaktPsc, data.AdresaKoncovehoPrijemce.Psc),
+                        x => x.Equal(m => m.FaktStat_ID, countryIds.GetValueOrDefault(data.AdresaKoncovehoPrijemce.StatKod))
+                    )
+                    .ToString(),
             };
             var secondaryGraphResponse = await graphqlClient.Query(
                 secondaryFilters,

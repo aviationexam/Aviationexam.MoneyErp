@@ -9,7 +9,10 @@ namespace Aviationexam.MoneyErp.Common.Filters;
 
 public partial class FilterFor<T> where T : class
 {
-    private static string CombineExpressions(
+    private const char AndOperator = '#';
+    private const char OrOperator = '|';
+
+    private static ReadOnlySpan<char> CombineExpressions(
         char joiningCharacter,
         IReadOnlyCollection<FilterForBuilder<T>.Filter> filters
     )
@@ -33,13 +36,48 @@ public partial class FilterFor<T> where T : class
         return resultBuilder.ToString();
     }
 
-    public static string And(
+    private static ReadOnlySpan<char> CombineExpressions<TValue>(
+        char joiningCharacter,
+        IReadOnlyCollection<TValue> values,
+        FilterForBuilder<T>.Filter<TValue> filter
+    )
+    {
+        var resultBuilder = new StringBuilder();
+        var isFirst = true;
+        foreach (var value in values)
+        {
+            if (!isFirst)
+            {
+                resultBuilder.Append(joiningCharacter);
+            }
+
+            isFirst = false;
+
+            resultBuilder.Append(filter(value));
+        }
+
+        return resultBuilder.ToString();
+    }
+
+    public static ReadOnlySpan<char> And(
         params IReadOnlyCollection<FilterForBuilder<T>.Filter> filters
-    ) => CombineExpressions('#', filters);
+    ) => CombineExpressions(AndOperator, filters);
+
+    public static ReadOnlySpan<char> And(
+        EFilterOperator filterOperator,
+        Expression<Func<T, string?>> property,
+        IReadOnlyCollection<string> values
+    ) => CombineExpressions(AndOperator, values, value => GetFilterClause(filterOperator, GetPropertyName(property), value));
 
     public static ReadOnlySpan<char> Or(
         params IReadOnlyCollection<FilterForBuilder<T>.Filter> filters
-    ) => CombineExpressions('|', filters);
+    ) => CombineExpressions(OrOperator, filters);
+
+    public static ReadOnlySpan<char> Or(
+        EFilterOperator filterOperator,
+        Expression<Func<T, string?>> property,
+        IReadOnlyCollection<string> values
+    ) => CombineExpressions(OrOperator, values, value => GetFilterClause(filterOperator, GetPropertyName(property), value));
 
     public static ReadOnlySpan<char> GetFilterClause(
         EFilterOperator filterOperator,

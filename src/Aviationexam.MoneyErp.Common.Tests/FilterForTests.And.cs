@@ -7,6 +7,24 @@ namespace Aviationexam.MoneyErp.Common.Tests;
 public partial class FilterForTests
 {
     [Fact]
+    public void AndAgregateWorks()
+    {
+        var filter = FilterFor<ApiModel>.And(
+            EFilterOperator.NotEqual,
+            m => m.AProperty,
+            [
+                "AProperty",
+                "BProperty",
+            ]
+        );
+
+        Assert.Equal(
+            "AProperty~ne~AProperty#AProperty~ne~BProperty",
+            filter
+        );
+    }
+
+    [Fact]
     public void AndWithEqualWorks()
     {
         var filter = FilterFor<ApiModel>.And(
