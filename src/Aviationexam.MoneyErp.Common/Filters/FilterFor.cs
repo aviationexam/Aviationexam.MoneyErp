@@ -3,25 +3,45 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using ZLinq;
+using System.Text;
 
 namespace Aviationexam.MoneyErp.Common.Filters;
 
 public static partial class FilterFor<T> where T : class
 {
+    private static string CombineExpressions(
+        char joiningCharacter,
+        IReadOnlyCollection<FilterForBuilder<T>.Filter> filters
+    )
+    {
+        var builder = new FilterForBuilder<T>();
+
+        var resultBuilder = new StringBuilder();
+        var isFirst = true;
+        foreach (var filter in filters)
+        {
+            if (!isFirst)
+            {
+                resultBuilder.Append(joiningCharacter);
+            }
+
+            isFirst = false;
+
+            resultBuilder.Append(filter(builder));
+        }
+
+        return resultBuilder.ToString();
+    }
+
     public static string And(
-        params IReadOnlyCollection<Func<FilterForBuilder<T>, string>> filters
-    ) => filters.AsValueEnumerable()
-        .Select(x => x(new FilterForBuilder<T>()))
-        .JoinToString('#');
+        params IReadOnlyCollection<FilterForBuilder<T>.Filter> filters
+    ) => CombineExpressions('#', filters);
 
-    public static string Or(
-        params IReadOnlyCollection<Func<FilterForBuilder<T>, string>> filters
-    ) => filters.AsValueEnumerable()
-        .Select(x => x(new FilterForBuilder<T>()))
-        .JoinToString('|');
+    public static ReadOnlySpan<char> Or(
+        params IReadOnlyCollection<FilterForBuilder<T>.Filter> filters
+    ) => CombineExpressions('|', filters);
 
-    public static string GetFilterClause(
+    public static ReadOnlySpan<char> GetFilterClause(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
         ReadOnlySpan<char> value
@@ -39,7 +59,7 @@ public static partial class FilterFor<T> where T : class
         _ => throw new ArgumentOutOfRangeException(nameof(filterOperator), filterOperator, null),
     };
 
-    public static string GetFilterClause<TP>(
+    public static ReadOnlySpan<char> GetFilterClause<TP>(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
         TP value,
@@ -49,7 +69,7 @@ public static partial class FilterFor<T> where T : class
         filterOperator, property, value.ToString(format, provider)
     );
 
-    public static string GetFilterClause(
+    public static ReadOnlySpan<char> GetFilterClause(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
         bool value
@@ -57,7 +77,7 @@ public static partial class FilterFor<T> where T : class
         filterOperator, property, value ? "true" : "false"
     );
 
-    public static string GetFilterClause(
+    public static ReadOnlySpan<char> GetFilterClause(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
         DateTimeOffset value
@@ -65,7 +85,7 @@ public static partial class FilterFor<T> where T : class
         filterOperator, property, value.ToString("yyyy-MM-dd")
     );
 
-    public static string GetFilterClause(
+    public static ReadOnlySpan<char> GetFilterClause(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
         DateTime value
@@ -73,7 +93,7 @@ public static partial class FilterFor<T> where T : class
         filterOperator, property, value.ToString("yyyy-MM-dd")
     );
 
-    public static string GetFilterClause(
+    public static ReadOnlySpan<char> GetFilterClause(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
         DateOnly value

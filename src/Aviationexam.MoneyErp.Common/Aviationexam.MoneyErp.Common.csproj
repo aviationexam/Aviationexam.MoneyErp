@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <Import Project="..\WarningConfiguration.targets" />
-  
+
   <ItemGroup>
     <InternalsVisibleTo Include="Aviationexam.MoneyErp.Common.Tests" />
   </ItemGroup>
