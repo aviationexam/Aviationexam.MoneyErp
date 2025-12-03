@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Aviationexam.MoneyErp.Common.Filters;
 
-public static partial class FilterFor<T>
+public partial class FilterFor<T>
 {
     public static ReadOnlySpan<char> Equal(
         Expression<Func<T, string?>> property, string value

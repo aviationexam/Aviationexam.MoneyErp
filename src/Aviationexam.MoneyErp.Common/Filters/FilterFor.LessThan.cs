@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Aviationexam.MoneyErp.Common.Filters;
 
-public static partial class FilterFor<T>
+public partial class FilterFor<T>
 {
     public static ReadOnlySpan<char> LessThan<TP>(
         Expression<Func<T, TP>> property, TP value, string? format = null, IFormatProvider? provider = null

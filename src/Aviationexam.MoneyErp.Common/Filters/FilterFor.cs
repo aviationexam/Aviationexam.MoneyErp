@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Aviationexam.MoneyErp.Common.Filters;
 
-public static partial class FilterFor<T> where T : class
+public partial class FilterFor<T> where T : class
 {
     private static string CombineExpressions(
         char joiningCharacter,
@@ -145,7 +145,7 @@ public static partial class FilterFor<T> where T : class
         Expression<Func<T, DateOnly?>> property
     ) => GetPropertyName(property.Body);
 
-    private static ReadOnlySpan<char> GetPropertyName(
+    public static ReadOnlySpan<char> GetPropertyName(
         Expression expressionBody
     ) => expressionBody switch
     {
