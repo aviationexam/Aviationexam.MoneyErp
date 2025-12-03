@@ -75,8 +75,16 @@ public class FilterFor<T> where T : class
         Expression<Func<T, TP>> property
     ) where TP : INumberBase<TP> => GetPropertyName(property.Body);
 
+    internal static ReadOnlySpan<char> GetPropertyName<TP>(
+        Expression<Func<T, TP?>> property
+    ) where TP : struct, INumberBase<TP> => GetPropertyName(property.Body);
+
     internal static ReadOnlySpan<char> GetPropertyName(
         Expression<Func<T, bool>> property
+    ) => GetPropertyName(property.Body);
+
+    internal static ReadOnlySpan<char> GetPropertyName(
+        Expression<Func<T, bool?>> property
     ) => GetPropertyName(property.Body);
 
     internal static ReadOnlySpan<char> GetPropertyName(
@@ -84,11 +92,23 @@ public class FilterFor<T> where T : class
     ) => GetPropertyName(property.Body);
 
     internal static ReadOnlySpan<char> GetPropertyName(
+        Expression<Func<T, DateTimeOffset?>> property
+    ) => GetPropertyName(property.Body);
+
+    internal static ReadOnlySpan<char> GetPropertyName(
         Expression<Func<T, DateTime>> property
     ) => GetPropertyName(property.Body);
 
     internal static ReadOnlySpan<char> GetPropertyName(
+        Expression<Func<T, DateTime?>> property
+    ) => GetPropertyName(property.Body);
+
+    internal static ReadOnlySpan<char> GetPropertyName(
         Expression<Func<T, DateOnly>> property
+    ) => GetPropertyName(property.Body);
+
+    internal static ReadOnlySpan<char> GetPropertyName(
+        Expression<Func<T, DateOnly?>> property
     ) => GetPropertyName(property.Body);
 
     private static ReadOnlySpan<char> GetPropertyName(

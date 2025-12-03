@@ -69,4 +69,60 @@ public partial class FilterForTests
 
         Assert.Equal("DateOnlyProperty~eq~2023-05-15", filter);
     }
+
+    [Fact]
+    public void NullableIntEqualWorks()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.NullableIntProperty, 42);
+
+        Assert.Equal("NullableIntProperty~eq~42", filter);
+    }
+
+    [Fact]
+    public void NullableLongEqualWorks()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.NullableLongProperty, 42L);
+
+        Assert.Equal("NullableLongProperty~eq~42", filter);
+    }
+
+    [Fact]
+    public void NullableBoolEqualWorks()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.NullableBoolProperty, true);
+
+        Assert.Equal("NullableBoolProperty~eq~true", filter);
+    }
+
+    [Fact]
+    public void NullableBoolEqualFalseWorks()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.NullableBoolProperty, false);
+
+        Assert.Equal("NullableBoolProperty~eq~false", filter);
+    }
+
+    [Fact]
+    public void NullableDateTimeOffsetEqualWorks()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.NullableDateTimeOffsetProperty, new DateOnly(2023, 5, 15));
+
+        Assert.Equal("NullableDateTimeOffsetProperty~eq~2023-05-15", filter);
+    }
+
+    [Fact]
+    public void NullableDateTimeEqualWorks()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.NullableDateTimeProperty, new DateOnly(2023, 5, 15));
+
+        Assert.Equal("NullableDateTimeProperty~eq~2023-05-15", filter);
+    }
+
+    [Fact]
+    public void NullableDateOnlyEqualWorks()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.NullableDateOnlyProperty, new DateOnly(2023, 5, 15));
+
+        Assert.Equal("NullableDateOnlyProperty~eq~2023-05-15", filter);
+    }
 }
