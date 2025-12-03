@@ -72,7 +72,10 @@ public partial class FilterForTests
             x => x.LessThan(m => m.NullableLongProperty, 10L)
         );
 
-        Assert.Equal("IntProperty~lt~100#LongProperty~lt~200#DateOnlyProperty~lt~2024-01-01#NullableIntProperty~lt~50", filter);
+        Assert.Equal(
+            "IntProperty~lt~100#LongProperty~lt~200#DateTimeOffsetProperty~lt~2023-05-15#NullableDateTimeOffsetProperty~lt~2023-05-15#DateTimeProperty~lt~2023-05-15#NullableDateTimeProperty~lt~2023-05-15#DateOnlyProperty~lt~2023-05-15#NullableDateOnlyProperty~lt~2023-05-15#NullableIntProperty~lt~10#NullableLongProperty~lt~10",
+            filter
+        );
     }
 
     [Fact]
@@ -91,7 +94,10 @@ public partial class FilterForTests
             x => x.LessThanOrEqual(m => m.NullableLongProperty, 10L)
         );
 
-        Assert.Equal("IntProperty~lte~100#DateTimeOffsetProperty~lte~2024-12-31#NullableDateOnlyProperty~lte~2025-01-01", filter);
+        Assert.Equal(
+            "IntProperty~lte~100#LongProperty~lte~200#DateTimeOffsetProperty~lte~2023-05-15#NullableDateTimeOffsetProperty~lte~2023-05-15#DateTimeProperty~lte~2023-05-15#NullableDateTimeProperty~lte~2023-05-15#DateOnlyProperty~lte~2023-05-15#NullableDateOnlyProperty~lte~2023-05-15#NullableIntProperty~lte~10#NullableLongProperty~lte~10",
+            filter
+        );
     }
 
     [Fact]
@@ -110,7 +116,10 @@ public partial class FilterForTests
             x => x.GreaterThan(m => m.NullableLongProperty, 10L)
         );
 
-        Assert.Equal("IntProperty~gt~10#LongProperty~gt~20#DateTimeProperty~gt~2023-01-01#NullableLongProperty~gt~5", filter);
+        Assert.Equal(
+            "IntProperty~gt~100#LongProperty~gt~200#DateTimeOffsetProperty~gt~2023-05-15#NullableDateTimeOffsetProperty~gt~2023-05-15#DateTimeProperty~gt~2023-05-15#NullableDateTimeProperty~gt~2023-05-15#DateOnlyProperty~gt~2023-05-15#NullableDateOnlyProperty~gt~2023-05-15#NullableIntProperty~gt~10#NullableLongProperty~gt~10",
+            filter
+        );
     }
 
     [Fact]
@@ -129,7 +138,10 @@ public partial class FilterForTests
             x => x.GreaterThanOrEqual(m => m.NullableLongProperty, 10L)
         );
 
-        Assert.Equal("IntProperty~gte~10#DateOnlyProperty~gte~2023-01-01#NullableDateTimeProperty~gte~2022-06-01", filter);
+        Assert.Equal(
+            "IntProperty~gte~100#LongProperty~gte~200#DateTimeOffsetProperty~gte~2023-05-15#NullableDateTimeOffsetProperty~gte~2023-05-15#DateTimeProperty~gte~2023-05-15#NullableDateTimeProperty~gte~2023-05-15#DateOnlyProperty~gte~2023-05-15#NullableDateOnlyProperty~gte~2023-05-15#NullableIntProperty~gte~10#NullableLongProperty~gte~10",
+            filter
+        );
     }
 
     [Fact]
