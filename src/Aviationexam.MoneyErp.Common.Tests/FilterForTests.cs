@@ -24,7 +24,7 @@ public partial class FilterForTests
 
         public int? NullableIntProperty { get; set; }
 
-        public int LongProperty { get; set; }
+        public long LongProperty { get; set; }
 
         public long? NullableLongProperty { get; set; }
 
