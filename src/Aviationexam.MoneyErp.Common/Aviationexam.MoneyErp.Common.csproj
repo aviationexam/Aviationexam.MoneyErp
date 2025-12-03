@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <Import Project="..\WarningConfiguration.targets" />
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="Aviationexam.MoneyErp.Common.Tests" />
+  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
