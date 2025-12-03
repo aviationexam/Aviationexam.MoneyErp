@@ -102,7 +102,7 @@ public static partial class FilterFor<T> where T : class
     );
 
     internal static ReadOnlySpan<char> GetPropertyName(
-        Expression<Func<T, string>> property
+        Expression<Func<T, string?>> property
     ) => GetPropertyName(property.Body);
 
     internal static ReadOnlySpan<char> GetPropertyName<TP>(

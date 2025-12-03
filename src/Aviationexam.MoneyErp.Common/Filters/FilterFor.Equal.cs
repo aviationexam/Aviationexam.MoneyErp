@@ -7,7 +7,7 @@ namespace Aviationexam.MoneyErp.Common.Filters;
 public static partial class FilterFor<T>
 {
     public static ReadOnlySpan<char> Equal(
-        Expression<Func<T, string>> property, string value
+        Expression<Func<T, string?>> property, string value
     ) => GetFilterClause(EFilterOperator.Equal, GetPropertyName(property), value);
 
     public static ReadOnlySpan<char> Equal<TP>(
