@@ -25,7 +25,7 @@ public partial class FilterForTests
     [Fact]
     public void LongNotEqualWorks()
     {
-        var filter = FilterFor<ApiModel>.NotEqual(x => x.LongProperty, 42);
+        var filter = FilterFor<ApiModel>.NotEqual(x => x.LongProperty, 42L);
 
         Assert.Equal("LongProperty~ne~42", filter);
     }

@@ -17,7 +17,7 @@ public partial class FilterForTests
     [Fact]
     public void LongGreaterThanOrEqualWorks()
     {
-        var filter = FilterFor<ApiModel>.GreaterThanOrEqual(x => x.LongProperty, 42);
+        var filter = FilterFor<ApiModel>.GreaterThanOrEqual(x => x.LongProperty, 42L);
 
         Assert.Equal("LongProperty~gte~42", filter);
     }
