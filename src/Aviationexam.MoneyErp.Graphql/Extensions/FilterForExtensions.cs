@@ -19,10 +19,10 @@ public static class FilterForExtensions
 
         public static ReadOnlySpan<char> Equal(
             Expression<Func<T, ID?>> property, Guid value
-        ) => FilterFor<T>.GetFilterClause(EFilterOperator.Equal, FilterFor<T>.GetPropertyName(property), value);
+        ) => FilterFor<T>.GetFilterClause(EFilterOperator.Equal, FilterFor<T>.GetPropertyName(property.Body), value);
 
         public static ReadOnlySpan<char> NotEqual(
             Expression<Func<T, ID?>> property, Guid value
-        ) => FilterFor<T>.GetFilterClause(EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property), value);
+        ) => FilterFor<T>.GetFilterClause(EFilterOperator.NotEqual, FilterFor<T>.GetPropertyName(property.Body), value);
     }
 }
