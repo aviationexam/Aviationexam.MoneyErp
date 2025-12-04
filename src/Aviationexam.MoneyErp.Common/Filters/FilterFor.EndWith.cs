@@ -1,0 +1,13 @@
+using System;
+using System.Linq.Expressions;
+
+namespace Aviationexam.MoneyErp.Common.Filters;
+
+public partial class FilterFor<T>
+{
+    public static ReadOnlySpan<char> EndWith(
+        Expression<Func<T, string?>> property, string value
+    ) => GetFilterClause(
+        EFilterOperator.EndWith, GetPropertyName(property), value
+    );
+}
