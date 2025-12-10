@@ -2,7 +2,6 @@ using Aviationexam.MoneyErp.Common.Filters;
 using Aviationexam.MoneyErp.Graphql.Extensions;
 using System;
 using Xunit;
-using ZeroQL;
 
 namespace Aviationexam.MoneyErp.Graphql.Tests;
 
