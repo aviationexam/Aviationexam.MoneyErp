@@ -9,8 +9,8 @@ namespace Aviationexam.MoneyErp.Common.Filters;
 
 public partial class FilterFor<T> where T : class
 {
-    private const char AndOperator = '#';
-    private const char OrOperator = '|';
+    public const char AndOperator = '#';
+    public const char OrOperator = '|';
 
     private static ReadOnlySpan<char> CombineExpressions(
         char joiningCharacter,
@@ -36,10 +36,9 @@ public partial class FilterFor<T> where T : class
         return resultBuilder.ToString();
     }
 
-    private static ReadOnlySpan<char> CombineExpressions<TValue>(
+    public static ReadOnlySpan<char> CombineExpressions<TValue>(
         char joiningCharacter,
-        IReadOnlyCollection<TValue> values,
-        FilterForBuilder<T>.Filter<TValue> filter
+        IReadOnlyCollection<TValue> values, FilterForBuilder<T>.Filter<TValue> filter
     )
     {
         var resultBuilder = new StringBuilder();
@@ -79,6 +78,18 @@ public partial class FilterFor<T> where T : class
         IReadOnlyCollection<string> values
     ) => CombineExpressions(OrOperator, values, value => GetFilterClause(filterOperator, GetPropertyName(property), value));
 
+
+    public static ReadOnlySpan<char> Or(
+        EFilterOperator filterOperator,
+        Expression<Func<T, Guid?>> property,
+        IReadOnlyCollection<Guid> values
+    ) => CombineExpressions(
+        OrOperator,
+        values,
+        value => GetFilterClause(filterOperator, GetPropertyName(property), value)
+    );
+
+
     public static ReadOnlySpan<char> GetFilterClause(
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
@@ -105,6 +116,14 @@ public partial class FilterFor<T> where T : class
         IFormatProvider? provider = null
     ) where TP : INumberBase<TP> => GetFilterClause(
         filterOperator, property, value.ToString(format, provider)
+    );
+
+    public static ReadOnlySpan<char> GetFilterClause(
+        EFilterOperator filterOperator,
+        ReadOnlySpan<char> property,
+        Guid value
+    ) => GetFilterClause(
+        filterOperator, property, value.ToString()
     );
 
     public static ReadOnlySpan<char> GetFilterClause(
@@ -150,6 +169,14 @@ public partial class FilterFor<T> where T : class
     internal static ReadOnlySpan<char> GetPropertyName<TP>(
         Expression<Func<T, TP?>> property
     ) where TP : struct, INumberBase<TP> => GetPropertyName(property.Body);
+
+    internal static ReadOnlySpan<char> GetPropertyName(
+        Expression<Func<T, Guid>> property
+    ) => GetPropertyName(property.Body);
+
+    internal static ReadOnlySpan<char> GetPropertyName(
+        Expression<Func<T, Guid?>> property
+    ) => GetPropertyName(property.Body);
 
     internal static ReadOnlySpan<char> GetPropertyName(
         Expression<Func<T, bool>> property
