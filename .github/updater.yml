@@ -28,7 +28,7 @@ updates:
           - xunit
           - xunit.*
     ignore:
-      - dependency-name: "Microsoft.Extensions.*"
+      - dependency-name: "Microsoft.*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "System.Text.Json"
+      - dependency-name: "System.*"
         update-types: ["version-update:semver-major"]
