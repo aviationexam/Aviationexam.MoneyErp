@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
@@ -122,7 +122,7 @@
     Name="DownloadMoneyErpOpenApiV1Specification"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
     DependsOnTargets="GetLatestRelease"
-    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)')"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)') And '$(DependencyUpdaterMinimalRestore)' != 'true'"
   >
     <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV1SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
     <Message Importance="High" Text="Default: curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV1SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV1SpecificationFile)" />
@@ -135,7 +135,7 @@
     Name="DownloadMoneyErpOpenApiV2Specification"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
     DependsOnTargets="GetLatestRelease"
-    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)')"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)') And '$(DependencyUpdaterMinimalRestore)' != 'true'"
   >
     <Message Importance="High" Text="Downloading $(MoneyErpOpenApiV2SpecificationUrl) to the $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
 
