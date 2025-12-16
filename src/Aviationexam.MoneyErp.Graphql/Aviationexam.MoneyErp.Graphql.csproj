@@ -65,7 +65,7 @@
   <Target
     Name="GenerateGraphQlMoneyErpClient"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
-    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)')"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeTarget)') And '$(DependencyUpdaterMinimalRestore)' != 'true'"
   >
     <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeTarget) using 'dotnet zeroql generate -c ./config.zeroql.json'" />
 
