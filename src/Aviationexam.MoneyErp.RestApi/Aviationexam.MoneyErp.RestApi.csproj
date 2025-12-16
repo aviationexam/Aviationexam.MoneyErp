@@ -142,14 +142,14 @@
     <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(MoneyErpEndpointCertificate) $(MoneyErpOpenApiV2SpecificationUrl) --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile) || curl -sS -L https://github.com/aviationexam/Aviationexam.MoneyErp/releases/download/$(MoneyErpReleaseVersion)/openapi.v2.original.json --output $(MSBuildProjectDirectory)/$(MoneyErpOriginalOpenApiV2SpecificationFile)" />
   </Target>
 
-  <Target Name="PreprocessOpenApiV1Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV1Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)')">
+  <Target Name="PreprocessOpenApiV1Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV1Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV1SpecificationFile)') And '$(DependencyUpdaterMinimalRestore)' != 'true'">
     <Message Importance="High" Text="Preprocess $(MoneyErpOriginalOpenApiV1SpecificationFile) to the $(MoneyErpOpenApiV1SpecificationFile)" />
     <Message Importance="High" Text="dotnet run --project $(ProjectDir)\..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiV1SpecificationFile) $(MoneyErpOpenApiV1SpecificationFile)" />
 
     <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet run --project $(ProjectDir)..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiV1SpecificationFile) $(MoneyErpOpenApiV1SpecificationFile)" />
   </Target>
 
-  <Target Name="PreprocessOpenApiV2Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV2Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV2SpecificationFile)')">
+  <Target Name="PreprocessOpenApiV2Specification" BeforeTargets="Restore;_GenerateRestoreProjectSpec" AfterTargets="DownloadMoneyErpOpenApiV2Specification" Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(MoneyErpOpenApiV2SpecificationFile)') And '$(DependencyUpdaterMinimalRestore)' != 'true'">
     <Message Importance="High" Text="Preprocess $(MoneyErpOriginalOpenApiV2SpecificationFile) to the $(MoneyErpOpenApiV2SpecificationFile)" />
     <Message Importance="High" Text="dotnet run --project $(ProjectDir)\..\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj -c Release $(MoneyErpOriginalOpenApiV2SpecificationFile) $(MoneyErpOpenApiV2SpecificationFile)" />
 
@@ -160,7 +160,7 @@
     Name="GenerateV1Client"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
     AfterTargets="PreprocessOpenApiV1Specification"
-    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)')"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeV1Target)') And '$(DependencyUpdaterMinimalRestore)' != 'true'"
   >
     <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeV1Target) using $(KiotaCommand)" />
     <Message Importance="High" Text="Command: $(KiotaV1Exec)" />
@@ -171,7 +171,7 @@
     Name="GenerateV2Client"
     BeforeTargets="Restore;_GenerateRestoreProjectSpec"
     AfterTargets="PreprocessOpenApiV2Specification"
-    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)')"
+    Condition=" $(GenerateClient) == 'true' And !Exists('$(MSBuildProjectDirectory)/$(GeneratedCodeV2Target)') And '$(DependencyUpdaterMinimalRestore)' != 'true'"
   >
     <Message Importance="High" Text="Generating client to the $(MSBuildProjectDirectory)/$(GeneratedCodeV2Target) using $(KiotaCommand)" />
     <Message Importance="High" Text="Command: $(KiotaV2Exec)" />
