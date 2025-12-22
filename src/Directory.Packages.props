@@ -47,7 +47,7 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.21.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="ZeroQL" Version="8.0.0-preview.7" />
+    <PackageVersion Include="ZeroQL" Version="8.0.0-preview.8" />
     <PackageVersion Include="ZLinq" Version="1.5.4" />
   </ItemGroup>
   <ItemGroup>
