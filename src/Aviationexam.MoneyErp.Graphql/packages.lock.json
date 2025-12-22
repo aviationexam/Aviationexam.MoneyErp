@@ -64,9 +64,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[8.0.0-preview.7, )",
-        "resolved": "8.0.0-preview.7",
-        "contentHash": "L6TvB2kDtuFGCoGTr+2UOwDWhVzywk4v/W0yWAkxIV+hPTBAMYdYr927sInbjq/xhwu+f9TqMTiSAyXhWTc6Lg=="
+        "requested": "[8.0.0-preview.8, )",
+        "resolved": "8.0.0-preview.8",
+        "contentHash": "W8Pf51zi8YQz7IK/pI0NABQXhxfxk6GtLsXE/0TWFTs2f4DpwH2d3Hzl5GzbKnRDxztx2y/4bb6kEaxk2UKZCQ=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -224,9 +224,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[8.0.0-preview.7, )",
-        "resolved": "8.0.0-preview.7",
-        "contentHash": "L6TvB2kDtuFGCoGTr+2UOwDWhVzywk4v/W0yWAkxIV+hPTBAMYdYr927sInbjq/xhwu+f9TqMTiSAyXhWTc6Lg=="
+        "requested": "[8.0.0-preview.8, )",
+        "resolved": "8.0.0-preview.8",
+        "contentHash": "W8Pf51zi8YQz7IK/pI0NABQXhxfxk6GtLsXE/0TWFTs2f4DpwH2d3Hzl5GzbKnRDxztx2y/4bb6kEaxk2UKZCQ=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -383,9 +383,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[8.0.0-preview.7, )",
-        "resolved": "8.0.0-preview.7",
-        "contentHash": "L6TvB2kDtuFGCoGTr+2UOwDWhVzywk4v/W0yWAkxIV+hPTBAMYdYr927sInbjq/xhwu+f9TqMTiSAyXhWTc6Lg=="
+        "requested": "[8.0.0-preview.8, )",
+        "resolved": "8.0.0-preview.8",
+        "contentHash": "W8Pf51zi8YQz7IK/pI0NABQXhxfxk6GtLsXE/0TWFTs2f4DpwH2d3Hzl5GzbKnRDxztx2y/4bb6kEaxk2UKZCQ=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
