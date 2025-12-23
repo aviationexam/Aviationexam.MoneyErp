@@ -282,7 +282,7 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.1, )",
           "Microsoft.Extensions.Http": "[10.0.1, )",
           "Microsoft.Extensions.Options": "[10.0.1, )",
-          "ZeroQL": "[8.0.0-preview.8, )"
+          "ZeroQL": "[8.0.0, )"
         }
       },
       "Castle.Core": {
@@ -350,9 +350,9 @@
       },
       "ZeroQL": {
         "type": "CentralTransitive",
-        "requested": "[8.0.0-preview.8, )",
-        "resolved": "8.0.0-preview.8",
-        "contentHash": "W8Pf51zi8YQz7IK/pI0NABQXhxfxk6GtLsXE/0TWFTs2f4DpwH2d3Hzl5GzbKnRDxztx2y/4bb6kEaxk2UKZCQ=="
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "Q20YAhHH3SSMqeCh8RYBsMZ1sbfY695UWuIEkLrUFtruKGBB/3j25w6yraSH5uLVoTtpXwe70ADzYvu9LDl4mA=="
       }
     },
     "net10.0/linux-x64": {
