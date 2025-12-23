@@ -1,8 +1,4 @@
-<Project>
-  <PropertyGroup>
-    <NoWarn>$(NoWarn);NU1507</NoWarn>
-  </PropertyGroup>
-
+ <Project>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
