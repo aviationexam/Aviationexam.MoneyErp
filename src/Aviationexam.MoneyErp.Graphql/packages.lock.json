@@ -64,9 +64,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[8.0.0-preview.8, )",
-        "resolved": "8.0.0-preview.8",
-        "contentHash": "W8Pf51zi8YQz7IK/pI0NABQXhxfxk6GtLsXE/0TWFTs2f4DpwH2d3Hzl5GzbKnRDxztx2y/4bb6kEaxk2UKZCQ=="
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "Q20YAhHH3SSMqeCh8RYBsMZ1sbfY695UWuIEkLrUFtruKGBB/3j25w6yraSH5uLVoTtpXwe70ADzYvu9LDl4mA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -224,9 +224,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[8.0.0-preview.8, )",
-        "resolved": "8.0.0-preview.8",
-        "contentHash": "W8Pf51zi8YQz7IK/pI0NABQXhxfxk6GtLsXE/0TWFTs2f4DpwH2d3Hzl5GzbKnRDxztx2y/4bb6kEaxk2UKZCQ=="
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "Q20YAhHH3SSMqeCh8RYBsMZ1sbfY695UWuIEkLrUFtruKGBB/3j25w6yraSH5uLVoTtpXwe70ADzYvu9LDl4mA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -383,9 +383,9 @@
       },
       "ZeroQL": {
         "type": "Direct",
-        "requested": "[8.0.0-preview.8, )",
-        "resolved": "8.0.0-preview.8",
-        "contentHash": "W8Pf51zi8YQz7IK/pI0NABQXhxfxk6GtLsXE/0TWFTs2f4DpwH2d3Hzl5GzbKnRDxztx2y/4bb6kEaxk2UKZCQ=="
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "Q20YAhHH3SSMqeCh8RYBsMZ1sbfY695UWuIEkLrUFtruKGBB/3j25w6yraSH5uLVoTtpXwe70ADzYvu9LDl4mA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
