@@ -15,7 +15,9 @@ using Guid = System.Guid;
 
 namespace Aviationexam.MoneyErp.Graphql.Tests;
 
-public class MoneyErpImportInvoiceTests
+public class MoneyErpImportInvoiceTests(
+    ITestOutputHelper testOutputHelper
+)
 {
     [Theory]
     [ClassData(typeof(MoneyErpInvoiceClassData), Explicit = true)]
@@ -24,7 +26,9 @@ public class MoneyErpImportInvoiceTests
         InvoiceData[] invoiceData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: true);
+        await using var serviceProvider = ServiceProviderFactory.Create(
+            authenticationData!, testOutputHelper, shouldRedactHeaderValue: true
+        );
 
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
 

@@ -9,6 +9,7 @@
     <File Path=".github\updater.yml" />
     <File Path=".gitignore" />
     <File Path=".github\dependabot.yml" />
+    <File Path="justfile" />
     <File Path="Makefile" />
     <File Path=".env.local" />
     <File Path=".config\dotnet-tools.json" />
