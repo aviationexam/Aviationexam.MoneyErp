@@ -1,7 +1,7 @@
 using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Graphql.Extensions;
-using Meziantou.Extensions.Logging.Xunit.v3;
+using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,7 +17,7 @@ public static class ServiceProviderFactory
     ) => new ServiceCollection()
         .AddLogging(builder => builder
             .SetMinimumLevel(LogLevel.Trace)
-            .AddProvider(new XUnitLoggerProvider(TestContext.Current.TestOutputHelper, appendScope: false))
+            .AddXUnit(TestContext.Current.TestOutputHelper!)
         )
         .AddSingleton<TimeProvider>(_ => TimeProvider.System)
         .AddScoped<IEndpointCertificateProvider>(_ => new PemEndpointCertificateProvider(authenticationData.EndpointCertificatePem))
