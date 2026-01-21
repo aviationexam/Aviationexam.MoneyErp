@@ -4,9 +4,9 @@
     "net10.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.279, )",
-        "resolved": "2.0.279",
-        "contentHash": "5U7m9nnFkhnPUJrJRdAQouGdB22HUAnA1u/dNAm1YRsjij04d75FAbS38D5R3FIklNKCijxvyoAlndIgA2GmTA=="
+        "requested": "[2.0.284, )",
+        "resolved": "2.0.284",
+        "contentHash": "bFa91HPH7i6pszMSrvL0XPeijwy+Yd/7RZnPVJY8was8KbrLRX0H0enQh7d8NvnyxdcZVeVOV+Dow9+O9nw4yQ=="
       },
       "Microsoft.AspNetCore.WebUtilities": {
         "type": "Direct",
@@ -249,9 +249,9 @@
     "net8.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.279, )",
-        "resolved": "2.0.279",
-        "contentHash": "5U7m9nnFkhnPUJrJRdAQouGdB22HUAnA1u/dNAm1YRsjij04d75FAbS38D5R3FIklNKCijxvyoAlndIgA2GmTA=="
+        "requested": "[2.0.284, )",
+        "resolved": "2.0.284",
+        "contentHash": "bFa91HPH7i6pszMSrvL0XPeijwy+Yd/7RZnPVJY8was8KbrLRX0H0enQh7d8NvnyxdcZVeVOV+Dow9+O9nw4yQ=="
       },
       "Microsoft.AspNetCore.WebUtilities": {
         "type": "Direct",
@@ -499,9 +499,9 @@
     "net9.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.279, )",
-        "resolved": "2.0.279",
-        "contentHash": "5U7m9nnFkhnPUJrJRdAQouGdB22HUAnA1u/dNAm1YRsjij04d75FAbS38D5R3FIklNKCijxvyoAlndIgA2GmTA=="
+        "requested": "[2.0.284, )",
+        "resolved": "2.0.284",
+        "contentHash": "bFa91HPH7i6pszMSrvL0XPeijwy+Yd/7RZnPVJY8was8KbrLRX0H0enQh7d8NvnyxdcZVeVOV+Dow9+O9nw4yQ=="
       },
       "Microsoft.AspNetCore.WebUtilities": {
         "type": "Direct",
