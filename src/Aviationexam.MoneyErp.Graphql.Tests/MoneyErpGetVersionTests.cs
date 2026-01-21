@@ -6,7 +6,9 @@ using Xunit;
 
 namespace Aviationexam.MoneyErp.Graphql.Tests;
 
-public class MoneyErpGetVersionTests
+public class MoneyErpGetVersionTests(
+    ITestOutputHelper testOutputHelper
+)
 {
     [Theory]
     [ClassData(typeof(MoneyErpAuthenticationsClassData))]
@@ -14,7 +16,9 @@ public class MoneyErpGetVersionTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, shouldRedactHeaderValue: true);
+        await using var serviceProvider = ServiceProviderFactory.Create(
+            testOutputHelper, authenticationData!, shouldRedactHeaderValue: true
+        );
 
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();
 
