@@ -17,7 +17,7 @@ public class MoneyErpGetVersionTests(
     )
     {
         await using var serviceProvider = ServiceProviderFactory.Create(
-            testOutputHelper, authenticationData!, shouldRedactHeaderValue: true
+            authenticationData!, testOutputHelper, shouldRedactHeaderValue: true
         );
 
         var graphqlClient = serviceProvider.GetRequiredService<MoneyErpGraphqlClient>();

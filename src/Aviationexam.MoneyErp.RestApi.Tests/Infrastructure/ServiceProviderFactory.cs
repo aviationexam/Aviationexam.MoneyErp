@@ -13,11 +13,12 @@ public static class ServiceProviderFactory
 {
     public static ServiceProvider Create(
         MoneyErpAuthenticationsClassData.AuthenticationData authenticationData,
+        ITestOutputHelper testOutputHelper,
         bool shouldRedactHeaderValue = true
     ) => new ServiceCollection()
         .AddLogging(builder => builder
             .SetMinimumLevel(LogLevel.Trace)
-            .AddXUnit(TestContext.Current.TestOutputHelper!)
+            .AddXUnit(testOutputHelper)
         )
         .AddSingleton<TimeProvider>(_ => TimeProvider.System)
         .AddScoped<IEndpointCertificateProvider>(_ => new PemEndpointCertificateProvider(authenticationData.EndpointCertificatePem))

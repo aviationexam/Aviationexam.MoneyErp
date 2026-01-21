@@ -6,7 +6,9 @@ using Xunit;
 
 namespace Aviationexam.MoneyErp.RestApi.Tests;
 
-public class MoneyErpApiClientsTests
+public class MoneyErpApiClientsTests(
+    ITestOutputHelper testOutputHelper
+)
 {
     [Theory]
     [ClassData(typeof(MoneyErpAuthenticationsClassData))]
@@ -14,7 +16,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -34,7 +36,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -54,7 +56,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -74,7 +76,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -94,7 +96,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -114,7 +116,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -134,7 +136,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -154,7 +156,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -174,7 +176,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -194,7 +196,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -214,7 +216,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -234,7 +236,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -254,7 +256,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -274,7 +276,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -294,7 +296,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -314,7 +316,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
@@ -334,7 +336,7 @@ public class MoneyErpApiClientsTests
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
     )
     {
-        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!);
+        await using var serviceProvider = ServiceProviderFactory.Create(authenticationData!, testOutputHelper);
 
         var client = serviceProvider.GetRequiredService<MoneyErpApiV1Client>();
 
