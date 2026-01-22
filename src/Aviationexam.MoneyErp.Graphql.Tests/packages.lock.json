@@ -4,11 +4,11 @@
     "net10.0": {
       "MartinCostello.Logging.XUnit.v3": {
         "type": "Direct",
-        "requested": "[0.6.0, )",
-        "resolved": "0.6.0",
-        "contentHash": "9AjzwkmqezSeoJ+JmZRWUQsbYBF51RqYGIkTkCGj8PsdCVAOaRnsslyGRT9sQWiXsnDVvWqqCr0uKFNL0CtaPw==",
+        "requested": "[0.7.0, )",
+        "resolved": "0.7.0",
+        "contentHash": "8N+LAJWPf3lkk7KVB9wb6/0N/x/0SEowWoVO0iepopCOnlU4RNyJukK5Yuv1j2227ZGcYhJhGVPuUl/ulC7/WA==",
         "dependencies": {
-          "Microsoft.Extensions.Logging": "8.0.1",
+          "Microsoft.Extensions.Logging": "10.0.0",
           "xunit.v3.extensibility.core": "2.0.1"
         }
       },
