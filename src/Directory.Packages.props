@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="ZeroQL" Version="8.0.0" />
-    <PackageVersion Include="ZLinq" Version="1.5.4" />
+    <PackageVersion Include="ZLinq" Version="1.5.5" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Castle.Core" Version="5.2.1" />
