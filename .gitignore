@@ -56,9 +56,7 @@ nunit-*.xml
 **/.idea/copilot.data.migration.*.xml
 *.sln.DotSettings.user
 
-/src/Aviationexam.MoneyErp.RestApi/openapi.*.original.json
-/src/Aviationexam.MoneyErp.RestApi/ClientV*
-/src/Aviationexam.MoneyErp.RestApi/openapi.*.json
+
 .env.local
 /src/Aviationexam.MoneyErp.Graphql/schema.graphql
 /src/Aviationexam.MoneyErp.Graphql/schema.json
