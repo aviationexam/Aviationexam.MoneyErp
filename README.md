@@ -9,13 +9,9 @@
 [![NuGet](https://img.shields.io/nuget/v/Aviationexam.MoneyErp.Graphql.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/Aviationexam.MoneyErp.Graphql/)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Ff.feedz.io%2Faviationexam%2Fmoney-erp%2Fshield%2FAviationexam.MoneyErp.Graphql%2Flatest&label=Aviationexam.MoneyErp.Graphql)](https://f.feedz.io/aviationexam/money-erp/packages/Aviationexam.MoneyErp.Graphql/latest/download)
 
-### Aviationexam.MoneyErp.RestApi
-[![NuGet](https://img.shields.io/nuget/v/Aviationexam.MoneyErp.RestApi.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/Aviationexam.MoneyErp.RestApi/)
-[![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Ff.feedz.io%2Faviationexam%2Fmoney-erp%2Fshield%2FAviationexam.MoneyErp.RestApi%2Flatest&label=Aviationexam.MoneyErp.RestApi)](https://f.feedz.io/aviationexam/money-erp/packages/Aviationexam.MoneyErp.RestApi/latest/download)
-
 # Aviationexam.MoneyErp Clients
 
-This repository contains .NET clients for interacting with the Money ERP system, a popular accounting and business management software in the Czech Republic and Slovakia. The clients provide convenient access to both the GraphQL and REST APIs of Money ERP.
+This repository contains .NET clients for interacting with the Money ERP system, a popular accounting and business management software in the Czech Republic and Slovakia. The clients provide convenient access to the GraphQL API of Money ERP.
 
 ## Getting Started
 
@@ -83,59 +79,6 @@ public class MyService(MoneyErpGraphqlClient graphqlClient)
     {
         var version = await graphqlClient.Query(x => x.Version);
         return version.Data;
-    }
-}
-```
-
-## REST API Client
-
-To use the REST API client, you need to add the `Aviationexam.MoneyErp.RestApi` package to your project:
-
-```bash
-dotnet add package Aviationexam.MoneyErp.RestApi
-```
-
-Then, chain the `AddRestApiClient` method to the `AddMoneyErp` call:
-
-```csharp
-using Aviationexam.MoneyErp.RestApi.Extensions;
-
-// ...
-
-builder.Services.AddMoneyErp(
-    options => options.Configure(builder.Configuration.GetSection("MoneyErp"))
-)
-.AddRestApiClient(
-    options => options.Configure(builder.Configuration.GetSection("MoneyErp"))
-);
-```
-
-You can then inject `MoneyErpApiV1Client` or `MoneyErpApiV2Client` into your services to interact with the v1 and v2 REST APIs respectively.
-
-### V1 Client Example
-
-```csharp
-public class MyService(MoneyErpApiV1Client client)
-{
-    public async Task<ArticleResponse?> GetArticles()
-    {
-        var articles = await client.V10.Article.GetAsync();
-        return articles;
-    }
-}
-```
-
-### V2 Client Example
-
-```csharp
-public class MyService(MoneyErpApiV2Client client)
-{
-    public async Task<SomeV2Response?> GetSomething()
-    {
-        // Example usage of V2 client
-        // var result = await client.SomeEndpoint.GetAsync();
-        // return result;
-        return null;
     }
 }
 ```
