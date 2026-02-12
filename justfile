@@ -18,6 +18,10 @@ rebase-continue: restore-lock
 restore-dotnet:
 	dotnet restore --force-evaluate
 
+# Fix formatting
+format:
+	dotnet format --no-restore -v diag
+
 # Clear dotnet HTTP cache
 reset-dotnet-cache:
 	dotnet nuget locals -c http-cache
