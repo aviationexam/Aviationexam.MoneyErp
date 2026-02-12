@@ -37,7 +37,5 @@
   <Project Path="src\Aviationexam.MoneyErp.Common\Aviationexam.MoneyErp.Common.csproj" />
   <Project Path="src\Aviationexam.MoneyErp.Graphql.Tests\Aviationexam.MoneyErp.Graphql.Tests.csproj" />
   <Project Path="src\Aviationexam.MoneyErp.Graphql\Aviationexam.MoneyErp.Graphql.csproj" />
-  <Project Path="src\Aviationexam.MoneyErp.PreprocessOpenApi\Aviationexam.MoneyErp.PreprocessOpenApi.csproj" />
-  <Project Path="src\Aviationexam.MoneyErp.RestApi.Tests\Aviationexam.MoneyErp.RestApi.Tests.csproj" />
-  <Project Path="src\Aviationexam.MoneyErp.RestApi\Aviationexam.MoneyErp.RestApi.csproj" />
+
 </Solution>
