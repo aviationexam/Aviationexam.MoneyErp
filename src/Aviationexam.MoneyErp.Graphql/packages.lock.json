@@ -62,6 +62,16 @@
         "resolved": "10.0.5",
         "contentHash": "A+5ZuQ0f449tM+MQrhf6R9ZX7lYpjk/ODEwLYKrnF6111rtARx8fVsm4YznUnQiKnnXfaXNBqgxmil6RW3L3SA=="
       },
+      "OpenTelemetry.Api.ProviderBuilderExtensions": {
+        "type": "Direct",
+        "requested": "[1.15.1, )",
+        "resolved": "1.15.1",
+        "contentHash": "aZedpOfXtHmVSWlebxJBeJg2DCdzds86mMowBTS6l+sjwV9LvQuZa0JDU9+S7FQvta4hnauxlCEYplbiDiYGeg==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0",
+          "OpenTelemetry.Api": "1.15.1"
+        }
+      },
       "ZeroQL": {
         "type": "Direct",
         "requested": "[8.0.0, )",
@@ -148,6 +158,11 @@
         "resolved": "10.0.5",
         "contentHash": "/HUHJ0tw/LQvD0DZrz50eQy/3z7PfX7WWEaXnjKTV9/TNdcgFlNTZGo49QhS7PTmhDqMyHRMqAXSBxLh0vso4g=="
       },
+      "OpenTelemetry.Api": {
+        "type": "Transitive",
+        "resolved": "1.15.1",
+        "contentHash": "+LJP0YBrysh4kPCRZhEyTUTcd+FFP0NPDvV4AzULBmiInGt6fp+RgBieRhUzVX/yyVEyshg3s82RWFYZJIkeGQ=="
+      },
       "aviationexam.moneyerp.common": {
         "type": "Project",
         "dependencies": {
@@ -221,6 +236,16 @@
         "requested": "[8.0.25, )",
         "resolved": "8.0.25",
         "contentHash": "sqX4nmBft05ivqKvUT4nxaN8rT3apCLt9SWFkfRrQPwra1zPwFknQAw1lleuMCKOCLvVmOWwrC2iPSm9RiXZUg=="
+      },
+      "OpenTelemetry.Api.ProviderBuilderExtensions": {
+        "type": "Direct",
+        "requested": "[1.9.0, )",
+        "resolved": "1.9.0",
+        "contentHash": "L0D4LBR5JFmwLun5MCWVGapsJLV0ANZ+XXu9NEI3JE/HRKkRuUO+J2MuHD5DBwiU//QMYYM4B22oev1hVLoHDQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
+          "OpenTelemetry.Api": "1.9.0"
+        }
       },
       "ZeroQL": {
         "type": "Direct",
@@ -307,6 +332,11 @@
         "resolved": "8.0.0",
         "contentHash": "bXJEZrW9ny8vjMF1JV253WeLhpEVzFo1lyaZu1vQ4ZxWUlVvknZ/+ftFgVheLubb4eZPSwwxBeqS1JkCOjxd8g=="
       },
+      "OpenTelemetry.Api": {
+        "type": "Transitive",
+        "resolved": "1.9.0",
+        "contentHash": "Xz8ZvM1Lm0m7BbtGBnw2JlPo++YKyMp08zMK5p0mf+cIi5jeMt2+QsYu9X6YEAbjCxBQYwEak5Z8sY6Ig2WcwQ=="
+      },
       "aviationexam.moneyerp.common": {
         "type": "Project",
         "dependencies": {
@@ -380,6 +410,16 @@
         "requested": "[9.0.14, )",
         "resolved": "9.0.14",
         "contentHash": "+MeWjj5sGq6Oj/l0E9RPMgXDyCIPxczzCbGuvuVTZFEGiy2S/atsfoAoKUnkEin/GeGpN+HenCzRmiQKSc99eQ=="
+      },
+      "OpenTelemetry.Api.ProviderBuilderExtensions": {
+        "type": "Direct",
+        "requested": "[1.15.1, )",
+        "resolved": "1.15.1",
+        "contentHash": "aZedpOfXtHmVSWlebxJBeJg2DCdzds86mMowBTS6l+sjwV9LvQuZa0JDU9+S7FQvta4hnauxlCEYplbiDiYGeg==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.0",
+          "OpenTelemetry.Api": "1.15.1"
+        }
       },
       "ZeroQL": {
         "type": "Direct",
@@ -465,6 +505,19 @@
         "type": "Transitive",
         "resolved": "9.0.14",
         "contentHash": "1bP1fEv6MdXvX4TsxrT94AE2aOIPI9p0xgVsxUliB91wDXHUwbBHV1hXKbfu0ZHEdBuYEusyTVoUwUXp71fh8w=="
+      },
+      "OpenTelemetry.Api": {
+        "type": "Transitive",
+        "resolved": "1.15.1",
+        "contentHash": "+LJP0YBrysh4kPCRZhEyTUTcd+FFP0NPDvV4AzULBmiInGt6fp+RgBieRhUzVX/yyVEyshg3s82RWFYZJIkeGQ==",
+        "dependencies": {
+          "System.Diagnostics.DiagnosticSource": "10.0.0"
+        }
+      },
+      "System.Diagnostics.DiagnosticSource": {
+        "type": "Transitive",
+        "resolved": "10.0.0",
+        "contentHash": "0KdBK+h7G13PuOSC2R/DalAoFMvdYMznvGRuICtkdcUMXgl/gYXsG6z4yUvTxHSMACorWgHCU1Faq0KUHU6yAQ=="
       },
       "aviationexam.moneyerp.common": {
         "type": "Project",
