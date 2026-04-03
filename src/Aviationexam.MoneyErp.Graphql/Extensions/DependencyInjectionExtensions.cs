@@ -1,6 +1,7 @@
 using Aviationexam.MoneyErp.Common;
 using Aviationexam.MoneyErp.Common.Extensions;
 using Aviationexam.MoneyErp.Graphql.Client;
+using Aviationexam.MoneyErp.Graphql.Pipelines;
 using Aviationexam.MoneyErp.Graphql.ZeroQLServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -19,7 +20,8 @@ public static class DependencyInjectionExtensions
     public static MoneyErpBuilder AddGraphQlClient(
         this MoneyErpBuilder builder,
         Action<OptionsBuilder<MoneyErpGraphqlOptions>> optionsBuilder,
-        bool shouldRedactHeaderValue = true
+        bool shouldRedactHeaderValue = true,
+        Action<MoneyErpGraphqlInstrumentationOptions>? configureInstrumentation = null
     )
     {
         var serviceCollection = builder.Services;
@@ -53,11 +55,23 @@ public static class DependencyInjectionExtensions
                 .Configure<HttpClientFactoryOptions>(httpClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false);
         }
 
-        serviceCollection.TryAddKeyedScoped<IGraphQLQueryPipeline, FullQueryPipeline>(CommonDependencyInjectionExtensions.MoneyErpServiceKey);
+        serviceCollection.TryAddKeyedScoped<FullQueryPipeline>(CommonDependencyInjectionExtensions.MoneyErpServiceKey);
+        serviceCollection.TryAddKeyedScoped<IGraphQLQueryPipeline>(
+            CommonDependencyInjectionExtensions.MoneyErpServiceKey,
+            static (serviceProvider, key) => new InstrumentedGraphQLQueryPipeline(
+                serviceProvider.GetRequiredKeyedService<FullQueryPipeline>(key),
+                serviceProvider.GetRequiredService<IOptions<MoneyErpGraphqlInstrumentationOptions>>()
+            )
+        );
         serviceCollection.AddScoped<MoneyErpGraphqlClient>(serviceProvider => new MoneyErpGraphqlClient(
             serviceProvider.GetRequiredService<AuthenticatedHttpHandler>(),
             serviceProvider.GetRequiredKeyedService<IGraphQLQueryPipeline>(CommonDependencyInjectionExtensions.MoneyErpServiceKey)
         ));
+
+        if (configureInstrumentation is not null)
+        {
+            serviceCollection.Configure(configureInstrumentation);
+        }
 
         optionsBuilder(serviceCollection
             .AddOptions<MoneyErpGraphqlOptions>()
