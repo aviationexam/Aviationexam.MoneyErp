@@ -15,7 +15,7 @@ using ZeroQL.Stores;
 
 namespace Aviationexam.MoneyErp.Graphql.Tests;
 
-public class InstrumentedGraphQLQueryPipelineTests
+public class InstrumentedGraphQlQueryPipelineTests
 {
     [Theory]
     [InlineData("query GetVersion { version }", "GetVersion")]
@@ -76,12 +76,10 @@ public class InstrumentedGraphQLQueryPipelineTests
         try
         {
             var capturedActivities = new List<Activity>();
-            using var listener = new ActivityListener
-            {
-                ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName,
-                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-                ActivityStopped = activity => capturedActivities.Add(activity),
-            };
+            using var listener = new ActivityListener();
+            listener.ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName;
+            listener.Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded;
+            listener.ActivityStopped = capturedActivities.Add;
             ActivitySource.AddActivityListener(listener);
 
             var innerPipeline = Substitute.For<IGraphQLQueryPipeline>();
@@ -113,8 +111,7 @@ public class InstrumentedGraphQLQueryPipelineTests
                 _ => new StringContent("")
             );
 
-            Assert.Single(capturedActivities);
-            var activity = capturedActivities[0];
+            var activity = Assert.Single(capturedActivities);
             Assert.Equal("query TestOp", activity.DisplayName);
             Assert.Equal(ActivityKind.Client, activity.Kind);
             Assert.Equal("query", activity.GetTagItem("graphql.operation.type"));
@@ -145,12 +142,10 @@ public class InstrumentedGraphQLQueryPipelineTests
         try
         {
             var capturedActivities = new List<Activity>();
-            using var listener = new ActivityListener
-            {
-                ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName,
-                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-                ActivityStopped = activity => capturedActivities.Add(activity),
-            };
+            using var listener = new ActivityListener();
+            listener.ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName;
+            listener.Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded;
+            listener.ActivityStopped = capturedActivities.Add;
             ActivitySource.AddActivityListener(listener);
 
             var innerPipeline = Substitute.For<IGraphQLQueryPipeline>();
@@ -185,8 +180,7 @@ public class InstrumentedGraphQLQueryPipelineTests
                 _ => new StringContent("")
             );
 
-            Assert.Single(capturedActivities);
-            var activity = capturedActivities[0];
+            var activity = Assert.Single(capturedActivities);
             Assert.Equal(queryDocument, activity.GetTagItem("graphql.document"));
         }
         finally
@@ -212,12 +206,10 @@ public class InstrumentedGraphQLQueryPipelineTests
         try
         {
             var capturedActivities = new List<Activity>();
-            using var listener = new ActivityListener
-            {
-                ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName,
-                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-                ActivityStopped = activity => capturedActivities.Add(activity),
-            };
+            using var listener = new ActivityListener();
+            listener.ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName;
+            listener.Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded;
+            listener.ActivityStopped = capturedActivities.Add;
             ActivitySource.AddActivityListener(listener);
 
             var innerPipeline = Substitute.For<IGraphQLQueryPipeline>();
@@ -250,8 +242,7 @@ public class InstrumentedGraphQLQueryPipelineTests
                 _ => new StringContent("")
             );
 
-            Assert.Single(capturedActivities);
-            var activity = capturedActivities[0];
+            var activity = Assert.Single(capturedActivities);
             Assert.Equal(ActivityStatusCode.Error, activity.Status);
             Assert.Equal(1, activity.GetTagItem("graphql.error.count"));
         }
@@ -278,12 +269,10 @@ public class InstrumentedGraphQLQueryPipelineTests
         try
         {
             var capturedActivities = new List<Activity>();
-            using var listener = new ActivityListener
-            {
-                ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName,
-                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-                ActivityStopped = activity => capturedActivities.Add(activity),
-            };
+            using var listener = new ActivityListener();
+            listener.ShouldListenTo = source => source.Name == InstrumentationConstants.ActivitySourceName;
+            listener.Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded;
+            listener.ActivityStopped = capturedActivities.Add;
             ActivitySource.AddActivityListener(listener);
 
             var innerPipeline = Substitute.For<IGraphQLQueryPipeline>();
@@ -321,8 +310,7 @@ public class InstrumentedGraphQLQueryPipelineTests
                 _ => new StringContent("")
             );
 
-            Assert.Single(capturedActivities);
-            var activity = capturedActivities[0];
+            var activity = Assert.Single(capturedActivities);
             Assert.Equal("graphql", activity.DisplayName);
             Assert.Null(activity.GetTagItem("graphql.operation.type"));
             Assert.Null(activity.GetTagItem("graphql.operation.name"));
