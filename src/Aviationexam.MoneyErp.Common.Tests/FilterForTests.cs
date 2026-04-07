@@ -20,6 +20,14 @@ public partial class FilterForTests
     {
         public required string AProperty { get; set; }
 
+        public string? BProperty { get; set; }
+
+        public string? CProperty { get; set; }
+
+        public string? DProperty { get; set; }
+
+        public string? EProperty { get; set; }
+
         public int IntProperty { get; set; }
 
         public int? NullableIntProperty { get; set; }
@@ -43,5 +51,9 @@ public partial class FilterForTests
         public DateOnly DateOnlyProperty { get; set; }
 
         public DateOnly? NullableDateOnlyProperty { get; set; }
+
+        public Guid GuidProperty { get; set; }
+
+        public Guid? NullableGuidProperty { get; set; }
     }
 }
