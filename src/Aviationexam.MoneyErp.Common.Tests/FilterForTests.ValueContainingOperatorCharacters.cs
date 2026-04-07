@@ -1,4 +1,5 @@
 using Aviationexam.MoneyErp.Common.Filters;
+using System;
 using Xunit;
 
 namespace Aviationexam.MoneyErp.Common.Tests;
@@ -8,15 +9,12 @@ public partial class FilterForTests
     /// <summary>
     /// Reproduces a real-world failure where a street address value contains '#',
     /// which is also the AND operator in the filter DSL.
-    /// The filter string becomes ambiguous without proper escaping.
     ///
-    /// Original (anonymized) request:
-    /// AProperty~sw~ABC123#BProperty~eq~John Doe#CProperty~eq~Street 80A # 17-85#DProperty~eq~Prague#EProperty~eq~11000#BoolProperty~eq~false#AProperty~eq~b679009e-4d3c-40a0-9031-bc00b24ec9d6#AProperty~eq~
-    ///
-    /// The '#' inside "Street 80A # 17-85" is incorrectly parsed as an AND operator.
+    /// Original (anonymized) request had "Street 80A # 17-85" as FaktUlice value.
+    /// Without escaping, the '#' was misinterpreted as an AND operator.
     /// </summary>
     [Fact]
-    public void AndWithValueContainingHashIsAmbiguous()
+    public void AndWithValueContainingHashIsEscaped()
     {
         var filter = FilterFor<ApiModel>.And(
             x => x.StartWith(m => m.AProperty, "ABC123"),
@@ -29,11 +27,8 @@ public partial class FilterForTests
             x => x.Empty(m => m.AProperty)
         );
 
-        // TODO: This assert documents the BROKEN output - the '#' inside the street address
-        // is indistinguishable from the AND operator. The server will parse 9 clauses instead of 8,
-        // splitting "Street 80A # 17-85" into "Street 80A " and an invalid " 17-85".
         Assert.Equal(
-            "AProperty~sw~ABC123#BProperty~eq~John Doe#CProperty~eq~Street 80A # 17-85#DProperty~eq~Prague#EProperty~eq~11000#BoolProperty~eq~false#AProperty~eq~b679009e-4d3c-40a0-9031-bc00b24ec9d6#AProperty~eq~",
+            @"AProperty~sw~ABC123#BProperty~eq~John Doe#CProperty~eq~Street 80A \# 17-85#DProperty~eq~Prague#EProperty~eq~11000#BoolProperty~eq~false#AProperty~eq~b679009e-4d3c-40a0-9031-bc00b24ec9d6#AProperty~eq~",
             filter
         );
     }
@@ -43,9 +38,7 @@ public partial class FilterForTests
     {
         var filter = FilterFor<ApiModel>.Equal(x => x.AProperty, "Street 80A # 17-85");
 
-        // Currently produces unescaped output - the '#' will be misinterpreted as AND operator
-        // when combined with other filters
-        Assert.Equal("AProperty~eq~Street 80A # 17-85", filter);
+        Assert.Equal(@"AProperty~eq~Street 80A \# 17-85", filter);
     }
 
     [Fact]
@@ -53,8 +46,7 @@ public partial class FilterForTests
     {
         var filter = FilterFor<ApiModel>.Equal(x => x.AProperty, "value~with~tildes");
 
-        // The '~' in the value will be misinterpreted as operator delimiter
-        Assert.Equal("AProperty~eq~value~with~tildes", filter);
+        Assert.Equal(@"AProperty~eq~value\~with\~tildes", filter);
     }
 
     [Fact]
@@ -62,7 +54,48 @@ public partial class FilterForTests
     {
         var filter = FilterFor<ApiModel>.Equal(x => x.AProperty, "option A|option B");
 
-        // The '|' in the value will be misinterpreted as OR operator
-        Assert.Equal("AProperty~eq~option A|option B", filter);
+        Assert.Equal(@"AProperty~eq~option A\|option B", filter);
+    }
+
+    [Fact]
+    public void EqualWithValueContainingBackslash()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.AProperty, @"path\to\file");
+
+        Assert.Equal(@"AProperty~eq~path\\to\\file", filter);
+    }
+
+    [Fact]
+    public void EqualWithValueContainingMultipleSpecialCharacters()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.AProperty, "a#b|c~d");
+
+        Assert.Equal(@"AProperty~eq~a\#b\|c\~d", filter);
+    }
+
+    [Fact]
+    public void EqualWithValueWithoutSpecialCharactersIsUnchanged()
+    {
+        var filter = FilterFor<ApiModel>.Equal(x => x.AProperty, "normal value 123");
+
+        Assert.Equal("AProperty~eq~normal value 123", filter);
+    }
+
+    [Fact]
+    public void EscapeFilterValueReturnsInputWhenNoSpecialChars()
+    {
+        ReadOnlySpan<char> input = "hello world";
+        var result = FilterFor<ApiModel>.EscapeFilterValue(input);
+
+        Assert.Equal("hello world", result);
+    }
+
+    [Fact]
+    public void EscapeFilterValueEscapesAllOperatorCharacters()
+    {
+        ReadOnlySpan<char> input = @"a#b|c~d\e";
+        var result = FilterFor<ApiModel>.EscapeFilterValue(input);
+
+        Assert.Equal(@"a\#b\|c\~d\\e", result);
     }
 }
