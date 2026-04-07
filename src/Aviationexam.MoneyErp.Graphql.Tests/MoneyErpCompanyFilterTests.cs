@@ -3,6 +3,7 @@ using Aviationexam.MoneyErp.Graphql.Client;
 using Aviationexam.MoneyErp.Graphql.Extensions;
 using Aviationexam.MoneyErp.Graphql.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 using ZLinq;
@@ -18,16 +19,29 @@ public class MoneyErpCompanyFilterTests(
     ITestOutputHelper testOutputHelper
 )
 {
-    private const string TestCompanyKod = "TEST_SPECIAL_CHAR";
-    private const string TestCompanyStreet = "Street 80A # 17-85";
-    private const string TestCompanyName = "Test Company Special Chars";
-    private const string TestCompanyTown = "Prague";
-    private const string TestCompanyZip = "11000";
+    [Theory]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData), Explicit = false)]
+    public Task QueryCompanyWithHashInFilterValueWorks(
+        MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
+    ) => QueryCompanyWithSpecialCharInFilterValue(authenticationData, "TEST_HASH", "Street 80A # 17-85", '#');
 
     [Theory]
     [ClassData(typeof(MoneyErpAuthenticationsClassData), Explicit = false)]
-    public async Task QueryCompanyWithHashInFilterValueWorks(
+    public Task QueryCompanyWithTildeInFilterValueWorks(
         MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
+    ) => QueryCompanyWithSpecialCharInFilterValue(authenticationData, "TEST_TILDE", "Street~80A~17", '~');
+
+    [Theory]
+    [ClassData(typeof(MoneyErpAuthenticationsClassData), Explicit = false)]
+    public Task QueryCompanyWithPipeInFilterValueWorks(
+        MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData
+    ) => QueryCompanyWithSpecialCharInFilterValue(authenticationData, "TEST_PIPE", "Street 80A|17-85", '|');
+
+    private async Task QueryCompanyWithSpecialCharInFilterValue(
+        MoneyErpAuthenticationsClassData.AuthenticationData? authenticationData,
+        string testCompanyKod,
+        string testCompanyStreet,
+        char specialChar
     )
     {
         await using var serviceProvider = ServiceProviderFactory.Create(
@@ -44,14 +58,14 @@ public class MoneyErpCompanyFilterTests(
         Assert.NotNull(version.Data);
         Assert.NotEmpty(version.Data);
 
-        // Step 2: Resolve country ID for CZ
-        var countryFilter = new
+        // Step 2: Resolve country ID for CZ and numerical series
+        var metadataFilter = new
         {
             countryFilter = FilterFor<Country>.Equal(m => m.Kod, "CZ").ToString(),
             numericalSeriesFilter = FilterFor<NumericalSerie>.Equal(m => m.Kod, "USER_ID").ToString(),
         };
         var metadataResponse = await graphqlClient.Query(
-            countryFilter,
+            metadataFilter,
             static (f, x) => new
             {
                 Countries = x.Countries(
@@ -67,27 +81,29 @@ public class MoneyErpCompanyFilterTests(
         );
         Assert.Empty(metadataResponse.Errors ?? []);
 
-        var countryId = Assert.Single(
-            metadataResponse.Data!.Countries!,
-            c => c!.Deleted is false
-        )!.ID.AsGuid()!.Value;
+        var country = Assert.Single(metadataResponse.Data!.Countries!
+            .AsValueEnumerable()
+            .Where(c => c!.Deleted is false)
+            .ToArray());
+        var countryId = country!.ID.AsGuid()!.Value;
 
-        var numericalSerieId = Assert.Single(
-            metadataResponse.Data!.NumericalSeries!, c => c!.Deleted is false
-        )!.ID.AsGuid()!.Value;
+        var numericalSerie = Assert.Single(metadataResponse.Data!.NumericalSeries!
+            .AsValueEnumerable()
+            .Where(c => c!.Deleted is false)
+            .ToArray());
+        var numericalSerieId = numericalSerie!.ID.AsGuid()!.Value;
 
-        // Step 3: Query company with '#' in FaktUlice value
-        var companyWithHashFilter = new
+        // Step 3: Query company with special char in FaktUlice value
+        var companyWithSpecialCharFilter = new
         {
             companyFilter = FilterFor<Company>.And(
-                    x => x.StartWith(m => m.Kod, TestCompanyKod),
-                    x => x.Equal(m => m.FaktUlice, TestCompanyStreet),
-                    x => x.Equal(m => m.FaktMisto, TestCompanyTown)
+                    x => x.StartWith(m => m.Kod, testCompanyKod),
+                    x => x.Equal(m => m.FaktUlice, testCompanyStreet)
                 )
                 .ToString(),
         };
         var companyResponse = await graphqlClient.Query(
-            companyWithHashFilter,
+            companyWithSpecialCharFilter,
             static (f, x) => new
             {
                 Companies = x.Companies(
@@ -106,23 +122,18 @@ public class MoneyErpCompanyFilterTests(
 
         if (existingCompany is not null)
         {
-            // Company already exists with '#' in street - the filter query works
-            Assert.Equal(TestCompanyStreet, existingCompany.FaktUlice);
+            Assert.Equal(testCompanyStreet, existingCompany.FaktUlice);
             return;
         }
 
-        // Step 4: Verify the filter isn't silently broken — query without '#' to distinguish
-        // "filter returned nothing because of escaping bug" vs "company doesn't exist"
-        var companyWithoutHashFilter = new
+        // Step 4: Query without the special char field to distinguish
+        // "filter broken by special char" vs "company doesn't exist"
+        var fallbackFilter = new
         {
-            companyFilter = FilterFor<Company>.And(
-                    x => x.StartWith(m => m.Kod, TestCompanyKod),
-                    x => x.Equal(m => m.FaktMisto, TestCompanyTown)
-                )
-                .ToString(),
+            companyFilter = FilterFor<Company>.StartWith(m => m.Kod, testCompanyKod).ToString(),
         };
         var fallbackResponse = await graphqlClient.Query(
-            companyWithoutHashFilter,
+            fallbackFilter,
             static (f, x) => new
             {
                 Companies = x.Companies(
@@ -141,32 +152,32 @@ public class MoneyErpCompanyFilterTests(
 
         if (fallbackCompany is not null)
         {
-            // Company exists but the '#' filter didn't find it — escaping bug confirmed
             Assert.Fail(
                 $"Company '{fallbackCompany.Kod}' with FaktUlice='{fallbackCompany.FaktUlice}' exists "
-                + "but was NOT found when '#' was included in the filter value. "
-                + "This confirms the '#' character in filter values is misinterpreted as the AND operator."
+                + $"but was NOT found when '{specialChar}' was included in the filter value. "
+                + $"This confirms the '{specialChar}' character in filter values is misinterpreted as an operator."
             );
         }
 
-        // Step 5: Company doesn't exist — create it with '#' in street
+        // Step 5: Company doesn't exist — create it
+        var testCompanyName = $"Test Company {specialChar}";
         var companyInput = new
         {
             companyInput = new CompanyInput
             {
                 CiselnaRada_ID = numericalSerieId,
-                Kod = TestCompanyKod,
-                Nazev = TestCompanyName,
+                Kod = testCompanyKod,
+                Nazev = testCompanyName,
                 PlatceDPH = false,
-                FaktNazev = TestCompanyName,
-                FaktUlice = TestCompanyStreet,
-                FaktMisto = TestCompanyTown,
-                FaktPsc = TestCompanyZip,
+                FaktNazev = testCompanyName,
+                FaktUlice = testCompanyStreet,
+                FaktMisto = "Prague",
+                FaktPsc = "11000",
                 FaktStat_ID = countryId,
-                ObchNazev = TestCompanyName,
-                ObchUlice = TestCompanyStreet,
-                ObchMisto = TestCompanyTown,
-                ObchPsc = TestCompanyZip,
+                ObchNazev = testCompanyName,
+                ObchUlice = testCompanyStreet,
+                ObchMisto = "Prague",
+                ObchPsc = "11000",
                 ObchStat_ID = countryId,
             },
         };
@@ -183,11 +194,11 @@ public class MoneyErpCompanyFilterTests(
         );
         Assert.Empty(createResponse.Errors ?? []);
         Assert.NotNull(createResponse.Data?.Company);
-        Assert.Equal(TestCompanyStreet, createResponse.Data!.Company!.FaktUlice);
+        Assert.Equal(testCompanyStreet, createResponse.Data!.Company!.FaktUlice);
 
-        // Step 6: Re-query with the '#' filter — this is the real test
+        // Step 6: Re-query with the special char filter
         var verifyResponse = await graphqlClient.Query(
-            companyWithHashFilter,
+            companyWithSpecialCharFilter,
             static (f, x) => new
             {
                 Companies = x.Companies(
@@ -205,6 +216,6 @@ public class MoneyErpCompanyFilterTests(
             .FirstOrDefault();
 
         Assert.NotNull(foundCompany);
-        Assert.Equal(TestCompanyStreet, foundCompany.FaktUlice);
+        Assert.Equal(testCompanyStreet, foundCompany.FaktUlice);
     }
 }
