@@ -28,7 +28,9 @@ updates:
           - xunit
           - xunit.*
     ignore:
-      - dependency-name: "*"
+      - dependency-name: "OpenTelemetry.Api.*"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "OpenTelemetry.Api"
         update-types: ["version-update:semver-minor"]
       - dependency-name: "Microsoft.*"
         update-types: ["version-update:semver-major"]
