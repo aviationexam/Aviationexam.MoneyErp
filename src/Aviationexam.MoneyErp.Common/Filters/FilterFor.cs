@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
@@ -11,6 +12,16 @@ public partial class FilterFor<T> where T : class
 {
     public const char AndOperator = '#';
     public const char OrOperator = '|';
+    private const char OperatorDelimiter = '~';
+
+    [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
+    private static readonly IReadOnlyCollection<(char Character, string Replacement)> EscapeRules =
+    [
+        ('\\', "\\\\"),
+        (AndOperator, $"\\{AndOperator}"),
+        (OrOperator, $"\\{OrOperator}"),
+        (OperatorDelimiter, $"\\{OperatorDelimiter}"),
+    ];
 
     private static ReadOnlySpan<char> CombineExpressions(
         char joiningCharacter,
@@ -94,19 +105,68 @@ public partial class FilterFor<T> where T : class
         EFilterOperator filterOperator,
         ReadOnlySpan<char> property,
         ReadOnlySpan<char> value
-    ) => filterOperator switch
+    )
     {
-        EFilterOperator.Equal => $"{property}~eq~{value}",
-        EFilterOperator.NotEqual => $"{property}~ne~{value}",
-        EFilterOperator.LessThan => $"{property}~lt~{value}",
-        EFilterOperator.LessThanOrEqual => $"{property}~lte~{value}",
-        EFilterOperator.GreaterThan => $"{property}~gt~{value}",
-        EFilterOperator.GreaterThanOrEqual => $"{property}~gte~{value}",
-        EFilterOperator.StartWith => $"{property}~sw~{value}",
-        EFilterOperator.Contains => $"{property}~ct~{value}",
-        EFilterOperator.EndWith => $"{property}~ew~{value}",
-        _ => throw new ArgumentOutOfRangeException(nameof(filterOperator), filterOperator, null),
-    };
+        var escapedValue = EscapeFilterValue(value);
+
+        return filterOperator switch
+        {
+            EFilterOperator.Equal => $"{property}~eq~{escapedValue}",
+            EFilterOperator.NotEqual => $"{property}~ne~{escapedValue}",
+            EFilterOperator.LessThan => $"{property}~lt~{escapedValue}",
+            EFilterOperator.LessThanOrEqual => $"{property}~lte~{escapedValue}",
+            EFilterOperator.GreaterThan => $"{property}~gt~{escapedValue}",
+            EFilterOperator.GreaterThanOrEqual => $"{property}~gte~{escapedValue}",
+            EFilterOperator.StartWith => $"{property}~sw~{escapedValue}",
+            EFilterOperator.Contains => $"{property}~ct~{escapedValue}",
+            EFilterOperator.EndWith => $"{property}~ew~{escapedValue}",
+            _ => throw new ArgumentOutOfRangeException(nameof(filterOperator), filterOperator, null),
+        };
+    }
+
+    internal static ReadOnlySpan<char> EscapeFilterValue(ReadOnlySpan<char> value)
+    {
+        if (!ContainsAnyEscapableCharacter(value))
+        {
+            return value;
+        }
+
+        var sb = new StringBuilder(value.Length + 4);
+
+        foreach (var ch in value)
+        {
+            var replaced = false;
+            foreach (var (character, replacement) in EscapeRules)
+            {
+                if (ch == character)
+                {
+                    sb.Append(replacement);
+                    replaced = true;
+                    break;
+                }
+            }
+
+            if (!replaced)
+            {
+                sb.Append(ch);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    private static bool ContainsAnyEscapableCharacter(ReadOnlySpan<char> value)
+    {
+        foreach (var (character, _) in EscapeRules)
+        {
+            if (value.Contains(character))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public static ReadOnlySpan<char> GetFilterClause<TP>(
         EFilterOperator filterOperator,
