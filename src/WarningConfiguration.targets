@@ -33,6 +33,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- OpenTelemetry propagation header DoS (CVE-2026-40894). Patched in 1.15.3, but that requires bumping off net8. We stay on net8 for now. -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-g94r-2vxg-569j" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Meziantou.Analyzer">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
