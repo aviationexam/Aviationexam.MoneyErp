@@ -869,7 +869,7 @@ public class MoneyErpImportInvoiceTests(
                 )
                 {
                     Skip = authentication.Skip,
-                };
+                }.WithTestDisplayName("Money ERP import invoices OR2516216 and OR2516222");
 
                 // Invoice 3: EX_20250630_0245_OR2516237.xml
                 yield return new TheoryDataRow<MoneyErpAuthenticationsClassData.AuthenticationData?, InvoiceData[]>(
@@ -960,7 +960,7 @@ public class MoneyErpImportInvoiceTests(
                 )
                 {
                     Skip = authentication.Skip,
-                };
+                }.WithTestDisplayName("Money ERP import invoice OR2516237");
 
                 // Invoice 4: EX_20250701_0245_ OR2516263.xml
                 yield return new TheoryDataRow<MoneyErpAuthenticationsClassData.AuthenticationData?, InvoiceData[]>(
@@ -1212,7 +1212,7 @@ public class MoneyErpImportInvoiceTests(
                 )
                 {
                     Skip = authentication.Skip,
-                };
+                }.WithTestDisplayName("Money ERP import invoice OR2516263");
             }
         }
     }
