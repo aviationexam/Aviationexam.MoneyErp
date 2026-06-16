@@ -30,7 +30,7 @@ public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuth
             yield return new TheoryDataRow<AuthenticationData?>(null)
             {
                 Skip = "Authentication data is not set. Please set MONEYERP_CLIENT_ID, MONEYERP_CLIENT_SECRET, and MONEYERP_ENDPOINT environment variables.",
-            };
+            }.WithTestDisplayName("Money ERP authentication data is missing");
             yield break;
         }
 
@@ -43,7 +43,7 @@ public sealed class MoneyErpAuthenticationsClassData() : TheoryData<MoneyErpAuth
 
         yield return new TheoryDataRow<AuthenticationData?>(new AuthenticationData(
             clientId, clientSecret, endpoint, endpointCertificatePem
-        ));
+        )).WithTestDisplayName("Money ERP authentication data is configured");
     }
 
     public sealed record AuthenticationData(
