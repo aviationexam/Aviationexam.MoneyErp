@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-.NET client libraries for Money ERP (Czech/Slovak accounting software). Provides GraphQL and REST API clients published as NuGet packages. Multi-target: **net8.0, net9.0, net10.0**. C# **LangVersion 15**.
+.NET client libraries for Money ERP (Czech/Slovak accounting software). Provides GraphQL and REST API clients published as NuGet packages. Multi-target: **net8.0, net9.0, net10.0, net11.0**. C# **LangVersion 15**.
 
 ### Project Structure
 
