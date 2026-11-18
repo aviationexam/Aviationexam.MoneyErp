@@ -1,12 +1,16 @@
 name: Nuget Package Deploy
 
+# The Azure release pipeline starts this workflow after it attaches the GraphQL schema to the GitHub release.
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag of the GitHub release to build and publish'
+        required: true
+        type: string
 
 jobs:
   publish:
-    if: false
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -14,6 +18,7 @@ jobs:
       id-token: write # nuget.org trusted publishing exchanges the GitHub OIDC token for a short-lived API key
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+      RELEASE_TAG: ${{ inputs.tag }}
     steps:
       - name: Setup .Net
         uses: actions/setup-dotnet@v6
@@ -25,6 +30,7 @@ jobs:
             11.0.x
       - uses: actions/checkout@v7
         with:
+          ref: refs/tags/${{ inputs.tag }}
           fetch-depth: 0
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.7.0
@@ -37,22 +43,16 @@ jobs:
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}"
           echo "FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}"
           echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
-      - name: Get access token
-        id: get_token
-        uses: ./.github/actions/get-access-token
-        with:
-          token_server_url: ${{ secrets.MONEYERP_ENDPOINT }}
-          client_id: ${{ secrets.MONEYERP_CLIENT_ID }}
-          client_secret: ${{ secrets.MONEYERP_CLIENT_SECRET }}
-      - name: Fetch GrapQL schema
-        uses: ./.github/actions/fetch-graphql-schema
-        with:
-          endpoint: ${{ secrets.MONEYERP_ENDPOINT }}
-          access_token: ${{ steps.get_token.outputs.access_token }}
-      - uses: actions/upload-artifact@v7
-        with:
-          name: schema-${{ steps.gitversion.outputs.FullSemVer }}.graphql
-          path: src/Aviationexam.MoneyErp.Graphql/schema.graphql
+      - name: Check the version matches the tag
+        run: |
+          if [ "${{ steps.gitversion.outputs.FullSemVer }}" != "$RELEASE_TAG" ]; then
+            echo "::error::GitVersion computed ${{ steps.gitversion.outputs.FullSemVer }} for the tag $RELEASE_TAG"
+            exit 1
+          fi
+      - name: Download schema.graphql from the release
+        run: gh release download "$RELEASE_TAG" --pattern schema.graphql --dir src/Aviationexam.MoneyErp.Graphql
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Tool restore
         run: dotnet tool restore
       - name: Restore
